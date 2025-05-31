@@ -1,0 +1,88 @@
+### Journal Entry - May 1, 2025
+
+#### Open Reflection
+This week's journal entry is somewhat abbreviated as I've been ill for the past few days, having caught a virus from Oscar who also has had conjunctivitis. With him being off nursery this week, I've needed to look after him, which has limited my productivity. Despite this, spending time with him is always a joy.
+
+The market situation has been weighing heavily on my mind, and I find myself oscillating between different perspectives. From a bullish standpoint, the market seems to have digested much of the volatility stemming from Trump's policies and has seemingly discounted the notion that tariffs will remain and damage the economy. Additionally, the AI boom presents a strong bullish argument - Scott Alexander's paper predicting AGI by 2027 suggests massive benefits potentially accruing to the major tech companies (the Magnificent 7). However, Yann LeCun from Meta contends that LLMs will never achieve AGI, arguing that we need models that go beyond language to model the world more directly.
+
+The term AGI itself is somewhat vague. The real question is whether there will be massive productivity gains driving up major tech company share prices in the next few years. After considering this, I'm less confident because we've already witnessed considerable AI hype. Though the momentum might continue for a while longer.
+
+On the bearish side, we could be heading into a recession, not just from Trump's growth-constraining domestic policies, but also due to technical indicators like the 2-year/10-year bond curve, which turned positive and historically precedes a recession by approximately 6 months.
+
+Considering the more generally bullish perspective that "stonks go up," we've just experienced a 20% dip. In retrospect, my action at that point should have been to buy into the dip in my pension and ISA accounts while remaining risk-off in my trading account. I need clearer rules around this - a 20% dip is healthy, but technically this does appear to be a bear market rally.
+
+The market influencers I follow are generally bearish. Lord Fed believes this is a bear market rally. Thiccy has lost about £13,000 of my money in the hyper liquid account attempting to short this market. Giver's Hyper Liquid Vault has been short and is losing money maintaining that position. I'm grateful I haven't been actively shorting here, though I have significantly reduced exposure, leaving me with deployable cash. I'm uncertain about the tactical approach for deployment, unsure whether this will be a sustained upward movement.
+
+Another interesting development is the relative strength of Bitcoin versus SPX. Bob Loukas's cycle theory suggests that a new 60-day cycle has started on Bitcoin. This could be used as a hard stop for a long Bitcoin position around 95, stopping out at the recent low - though that would be a brutal stop out. I'd prefer to be buying at those lower levels, which means potentially setting an earlier stop out around the 90 level. This highlights the need for a clear distinction between trades and long-term investments, as I'm more comfortable stopping out a trade at 90 if I'm simultaneously buying for the long-term portfolio (like SPX) at those levels.
+
+There's also an emerging narrative about Bitcoin potentially decoupling from SPX, as it can function both as a safe haven and a risk asset. This narrative has gained popularity recently, even though both SPX and Bitcoin have rallied this week, not showing clear decoupling yet.
+
+#### Emotional State
+**Rating**: 3 out of 5  
+**Why this rating?**: Despite being ill and having limited productivity due to caring for Oscar, spending time with him has been enjoyable. Market uncertainty is creating some stress, but having cash available for deployment provides some security. Overall feeling moderate with mixed factors affecting my emotional state.
+
+#### Trading Journal
+- Significantly reduced market exposure, maintaining higher cash position
+- Not actively shorting despite bearish signals
+- Lost approximately £13,000 in Thiccy's hyper liquid account through shorting attempts
+- Giver's Hyper Liquid Vault has been short and is losing money with this position
+- Considering long Bitcoin position around 95 with potential stop at 90 (rather than at recent low)
+
+#### Market Thoughts
+- Market appears to have digested much of the uncertainty from Trump's policies
+- Technical indicators suggest this could be a bear market rally
+- 2-year/10-year bond curve indicator has turned positive, historically preceding recession by ~6 months
+- Recent 20% dip represents a buying opportunity in longer-term accounts (pension, ISA)
+- AI developments present a bullish case for major tech companies (Magnificent 7)
+- Debate about AGI timeline and impact: Scott Alexander predicting AGI by 2027 vs. Yann LeCun's skepticism about LLMs achieving AGI
+- Need clearer rules distinguishing trading approach from long-term investment accounts
+- Most followed market influencers (Lord Fed, others) are currently bearish
+- Question remains whether the current upward movement will be sustained
+- Bitcoin showing relative strength compared to SPX
+- Popular narrative emerging about Bitcoin potentially decoupling from SPX, functioning as both safe haven and risk asset
+- Both SPX and Bitcoin rallied this week, not yet showing clear decoupling despite the narrative
+- Bob Loukas's cycle theory suggests a new 60-day cycle has started on Bitcoin
+- Potential strategy: different entry/exit rules for trading accounts versus long-term investment positions
+- Short-term opportunity in boop.fun, a pumped-up Fun competitor being launched
+
+#### Weekly Review
+What was accomplished this week:
+- Cared for Oscar during his illness and conjunctivitis
+- Maintained reduced market exposure during uncertain conditions
+- Managed to reflect on market strategy despite illness
+
+#### Goals for Next Week
+- Develop clearer rules for distinguishing trading vs. long-term investment account strategies
+- Formulate tactical approach for cash deployment based on market conditions
+- Recovery from illness
+- Support Oscar's recovery from conjunctivitis
+- Resume regular work activities once health improves
+- Define specific entry/exit rules for Bitcoin position if deciding to enter
+- Create strategic framework differentiating between trading stops and long-term investment entries
+- Investigate boop.fun opportunity as a short-term play
+- Purchase birthday gift for mom
+- Plan next week in detail (excluding exercise routines)
+- Create health optimization plan for recovery
+- Develop productivity framework for getting back on track after illness
+
+#### Things I'm Grateful For
+- Time spent with Oscar despite the circumstances of illness
+- Having cash position available during market uncertainty
+- Not actively shorting during what appears to be a bear market rally
+- The perspective gained through market analysis during downtime
+
+#### Questions for Future Self
+- Did your market analysis regarding the bear market rally prove accurate?
+- How effective were the rules you developed for distinguishing trading vs. investment account strategies?
+- Did you find an optimal approach for deploying your available cash?
+- How did you balance returning to productivity while ensuring full recovery from illness?
+- Were there unexpected benefits from the forced downtime with Oscar?
+- Did the 2-year/10-year bond indicator's recession prediction materialize as expected?
+- How did you adjust your AI investment thesis after additional market developments?
+- Did the new Bitcoin cycle identified by Bob Loukas's theory play out as expected?
+- Has your approach of separating trading and investment strategies improved your overall performance?
+- Did the boop.fun opportunity provide the expected short-term returns?
+- How effective was your detailed weekly planning in improving productivity after illness?
+- Did Bitcoin begin to show actual decoupling from SPX in line with the emerging narrative?
+
+Looking at your previous entries, your cautious market approach with significant cash reserves has been consistent. The current entry shows continued uncertainty about market direction, though you're now considering how to potentially deploy some cash. Your concern about distinguishing trading from long-term investment strategies is a new theme that could provide better structure to your financial decision-making. The Bitcoin cycle observation and potential decoupling from SPX adds specific tactical considerations to your broader market analysis. This entry also introduces more personal planning goals, suggesting a desire to restore structure after the disruption of illness.

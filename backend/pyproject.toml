@@ -1,0 +1,77 @@
+[project]
+name = "cassidy-backend-v2"
+version = "2.0.0"
+description = "Cassidy AI Journaling Assistant Backend V2"
+requires-python = ">=3.11"
+dependencies = [
+    # Core Framework
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "python-multipart>=0.0.6",
+    
+    # Database
+    "sqlalchemy>=2.0.23",
+    "aiosqlite>=0.19.0",  # SQLite for local development
+    "asyncpg>=0.29.0",    # PostgreSQL for production
+    "alembic>=1.12.1",
+    "greenlet>=3.0.0",    # Required for SQLAlchemy async
+    
+    # AI Agent
+    "pydantic-ai>=0.2.3",
+    "anthropic>=0.7.8",
+    
+    # Authentication
+    "bcrypt>=4.0.1",
+    "PyJWT>=2.8.0",
+    
+    # Configuration
+    "pydantic-settings>=2.0.3",
+    "python-dotenv>=1.0.0",
+    
+    # AWS Lambda (for future deployment)
+    "mangum>=0.17.0",
+    "boto3>=1.34.0",
+    
+    # Testing
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.27.0",
+    "pytest-mock>=3.11.1",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["tests*", "alembic*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings"
+]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests"
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"

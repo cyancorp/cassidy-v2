@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(python test_journal_tools.py)",
+      "WebFetch(domain:ai.pydantic.dev)"
+    ],
+    "deny": []
+  }
+}

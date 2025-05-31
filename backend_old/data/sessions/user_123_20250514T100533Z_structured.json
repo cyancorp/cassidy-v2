@@ -1,0 +1,20 @@
+{
+  "created_at": "2025-05-14T10:07:32.898597",
+  "updated_at": "2025-05-14T10:07:32.898608",
+  "session_id": "20250514T100533Z",
+  "data": {
+    "Open Reflection": "It's been a while since my last entry, close to 2 weeks. In that time, I have made good progress on finishing the studio. Hung the cloud panel, all of the stuff is in place now really apart from some final wiring up to do for guitar, octatrack, and the space echo.",
+    "Market Thoughts": "I reached out to Connor today to talk about his idea, and I'm not particularly keen on it because he wants to do some sort of project that's similar to character AI and I'm pretty skeptical. The best competitors out there include character AI with about 5,000,000 DAUs but they spend a lot on User acquisition, and shy AI which is also trying to do a social AI thing. I don't see a great point in competing with these products where I don't see a great deal of upside and average customer value being relatively low. You'd probably have to use an ad model to get the ARPU. TikTok's ARPU is like $50. I don't see myself having a great advantage in building one of these consumer app hits.",
+    "Strategy Considerations": [
+      "Next step for Connor may be to explore some other ideas which we both feel are closer to the money, i.e., something with a higher average customer value, perhaps with enterprise sales.",
+      "I've been working on the journaling app which is what I'm journaling into now for the first time. This is my first entry that's going straight into the journaling app.",
+      "I have reservations about the journaling app because I don't think it's a big market. Different categories it might go into are generally consumer or personal productivity, personal well-being, or therapeutic direction, but all relatively low value.",
+      "There is potential for enterprise sale as an AI executive coach. I researched competitors like Valence. In that direction, you need features beyond journaling, like practicing skills such as negotiations and role conversations.",
+      "Could have a social element where the shareable object is a prompt that guides users through journeys to optimize health, thinking through ideas, planning things.",
+      "The market would be executives who have limited time and budget to spend on optimizing personal performance.",
+      "Building a good agent-based backend with a nice mobile frontend affords optionality in directions it could go, including being a platform sold white-label to people who want to build agents.",
+      "The value of code is decreasing since it can be generated more readily with AI."
+    ]
+  },
+  "user_edited": false
+}

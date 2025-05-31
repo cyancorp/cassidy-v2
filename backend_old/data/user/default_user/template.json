@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "thoughts": {
+      "description": "Content for thoughts",
+      "aliases": []
+    },
+    "emotions": {
+      "description": "Content for emotions",
+      "aliases": []
+    },
+    "tasks": {
+      "description": "Content for tasks",
+      "aliases": []
+    }
+  },
+  "last_updated": "2025-05-15T15:21:29.104464"
+}
