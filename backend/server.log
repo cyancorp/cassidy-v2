@@ -1,0 +1,36 @@
+INFO:     Will watch for changes in these directories: ['/Users/cyan/code/cassidy-claudecode/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [6603] using StatReload
+INFO:     Started server process [6605]
+INFO:     Waiting for application startup.
+2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("auth_sessions")
+2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_preferences")
+2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_templates")
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_sessions")
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_messages")
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_drafts")
+2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_entries")
+2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 20:14:37,434 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 20:14:37,447 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+FROM users 
+WHERE users.username = ? AND users.is_active = 1
+2025-05-31 20:14:37,447 INFO sqlalchemy.engine.Engine [generated in 0.00015s] ('user_123',)
+Sample user 'user_123' already exists
+2025-05-31 20:14:37,448 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6605]
+INFO:     Stopping reloader process [6603]

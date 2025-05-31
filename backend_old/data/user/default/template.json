@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "content": {
+      "description": "Content for content",
+      "aliases": []
+    },
+    "sentiment": {
+      "description": "Content for sentiment",
+      "aliases": []
+    },
+    "topic": {
+      "description": "Content for topic",
+      "aliases": []
+    },
+    "prediction": {
+      "description": "Content for prediction",
+      "aliases": []
+    }
+  },
+  "last_updated": "2025-05-15T14:55:14.561264"
+}

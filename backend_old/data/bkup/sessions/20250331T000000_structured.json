@@ -1,0 +1,49 @@
+{
+  "created_at": "2025-05-12T17:08:08.595340",
+  "updated_at": "2025-05-12T17:08:08.596628",
+  "session_id": "20250331T000000",
+  "data": {
+    "Open Reflection": "This week is starting with a bit of a mixed feeling. The weekend was occupied with my parents staying over in London, which likely affected my usual routine. I spent some quality time with my dad, particularly while building the standing desk for my office, which was really our main time together. We also discussed his diet for CKD, which was nice. I tried not to harang him too much about it, and he seemed receptive, though I recognize that making such changes is difficult, so I should remain understanding and supportive. I'm feeling some concern about the markets and my productivity levels. There's also an underlying question about whether we should have another child, which seems to be lingering in my thoughts. Being ill last week limited my workout routine, which typically helps with my overall wellbeing. I did go out to Ronnie Scott's with Ollie on Saturday and smoked a bit, though I'm noting this was \"self-contained.\"",
+    "Emotional State": "Rating: 3 out of 5. Why this rating?: I'm feeling stable but somewhat concerned about the market, my productivity levels, and personal family decisions. The recent illness and disrupted routine may be contributing to this middling emotional state.",
+    "Trading Journal": [
+      "Currently slightly long Bitcoin, but hedged",
+      "ETH position is hedged",
+      "Hedged about a fifth of my Solana position (wish I had hedged more at the recent highs)"
+    ],
+    "Market Thoughts": [
+      "Everyone is looking toward April 2nd as a day of reckoning for the Trump tariffs",
+      "Trying to avoid making big moves prior to this significant date",
+      "Beginning to favor a mean reversion strategy (getting longer as prices fall, shorter as prices rise)",
+      "Looking to implement technical indicators to determine position sizing at different price values",
+      "Considering Bollinger Bands or volatility-based metrics for decision-making",
+      "Generally aligning trading with giver and thiccy's hyper liquid vaults"
+    ],
+    "Strategy Considerations": "Beginning to favor a mean reversion strategy (getting longer as prices fall, shorter as prices rise). Looking to implement technical indicators to determine position sizing at different price values. Considering Bollinger Bands or volatility-based metrics for decision-making.",
+    "Weekly Review": [
+      "Completed the property purchase",
+      "Set up a basic workspace with desk and monitor",
+      "Purchased acoustic panels",
+      "Created a thorough plan for remaining items needed (studio desk, monitor for studio, sofa, rugs)",
+      "Launched the new atchai.com website",
+      "Tax reconciliation with Zach didn't start as planned, now scheduled to begin this week",
+      "Built a standing desk for the office with my dad's help"
+    ],
+    "Goals for Next Week": [
+      "Complete tax reconciliation with Zach by end of week",
+      "Connect with Connor from Coinbase about potential collaboration",
+      "Start releasing something interesting and open source",
+      "Build or implement a technical indicator system for Bitcoin trading",
+      "Research what trader SKU uses for technical indicators",
+      "Continue setting up studio space and office",
+      "Have basic studio setup completed within 2 weeks"
+    ],
+    "Things I'm Grateful For": null,
+    "Questions for Future Self": [
+      "How did the conversation with Connor from Coinbase go?",
+      "Was waiting for April 2nd before making big moves the right strategy?",
+      "Did the studio and office setup progress as planned?",
+      "Have I reached a decision about having another child?"
+    ]
+  },
+  "user_edited": false
+}
