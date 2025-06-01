@@ -1,15 +1,17 @@
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List
 from uuid import UUID
+from dataclasses import dataclass
 
 from app.models.api import SectionDetailDef
 
 
-class CassidyAgentDependencies(BaseModel):
+@dataclass
+class CassidyAgentDependencies:
     """Dependencies provided to the Cassidy AI agent"""
     user_id: str
     session_id: str
-    conversation_type: str = "journaling"
+    conversation_type: str
     user_template: Dict[str, Any]  # Will contain sections as dict
     user_preferences: Dict[str, Any]  # User preferences
     current_journal_draft: Dict[str, Any]  # Current draft data

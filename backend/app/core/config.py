@@ -8,8 +8,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./cassidy.db"
     
     # Anthropic
-    ANTHROPIC_API_KEY: str
-    ANTHROPIC_DEFAULT_MODEL: str = "claude-3-7-sonnet-latest"
+    ANTHROPIC_API_KEY: str = ""  # Make optional to allow startup without API key
+    ANTHROPIC_DEFAULT_MODEL: str = "claude-sonnet-4-20250514"  # Use Sonnet 4 for everything
+    ANTHROPIC_STRUCTURING_MODEL: str = "claude-sonnet-4-20250514"  # Model for LLM analysis tasks
     
     # JWT Authentication
     JWT_SECRET_KEY: str = "your-secret-key-change-in-production"

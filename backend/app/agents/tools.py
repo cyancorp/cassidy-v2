@@ -73,6 +73,12 @@ Output: Use the most specific sections available for: completed work, future tas
 Input: "Made some trades today and feeling optimistic about the market direction."
 Output: Use sections that best match: trading actions, market sentiment, and personal feelings.
 
+Input: "My goal is to go to the moon"
+Output: {{"long_term_goals": ["go to the moon"]}}
+
+Input: "I want to travel to space"
+Output: {{"long_term_goals": ["travel to space"]}}
+
 Raw User Input:
 ---
 {user_text}
@@ -91,8 +97,9 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         from app.core.config import settings
         
         # Set API key from settings
-        os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
-        model = AnthropicModel("claude-sonnet-4-20250514")  # Use latest Sonnet 4 model for best content analysis
+        if settings.ANTHROPIC_API_KEY:
+            os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        model = AnthropicModel(settings.ANTHROPIC_STRUCTURING_MODEL)
         
         # Create a simple agent for content structuring
         analysis_agent = Agent(model=model)
@@ -198,16 +205,236 @@ async def update_preferences_tool(
     request: UpdatePreferencesRequest
 ) -> UpdatePreferencesResponse:
     """
-    Tool to update user preferences and template settings.
+    Tool to intelligently update user preferences and template settings from natural language.
     
-    This tool allows users to modify their preferences and journal template sections.
-    Supports both preference updates and template modifications.
+    Uses LLM analysis to extract preference changes from conversational context,
+    making preference updates feel natural and fluid.
     """
+    print(f"TOOL: update_preferences_tool called!")
+    print(f"TOOL: Context user_id: '{ctx.user_id}'")
+    print(f"TOOL: Request received: {request}")
+    print(f"TOOL: preference_updates: {request.preference_updates}")
+    
+    # WORKAROUND: Get user_id from request if context is wrong
+    request_user_id = request.preference_updates.get("user_id", "")
+    actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.user_id
+    print(f"TOOL: Using user_id: '{actual_user_id}' (context: '{ctx.user_id}', request: '{request_user_id}')")
+    
+    # Extract the user text that might contain preference updates  
+    # The agent should pass the user's conversational text in preference_updates["user_text"]
+    user_text = request.preference_updates.get("user_text", "")
+    
+    # If no user_text provided, try to extract from other string values
+    if not user_text.strip():
+        text_values = [str(v) for v in request.preference_updates.values() if isinstance(v, str) and v.strip()]
+        user_text = " ".join(text_values)
+        print(f"TOOL: Extracted user_text from other values: '{user_text}'")
+    
+    if not user_text.strip():
+        print(f"TOOL: No user_text found, falling back to legacy behavior")
+        # Fallback to old behavior for direct API calls
+        return await _legacy_update_preferences(ctx, request)
+    
+    print(f"UpdatePreferencesTool analyzing: {user_text}")
+    
+    # Get current preferences for context
+    current_prefs = ctx.user_preferences.copy()
+    
+    # Create LLM prompt for preference analysis
+    preferences_prompt = f"""Analyze the following user input to identify any preference updates or changes they want to make to their journaling system.
+
+USER PREFERENCES THAT CAN BE UPDATED:
+- purpose_statement: Why they use this journaling tool (string or null)
+- long_term_goals: List of goals they're working toward (array of strings)
+- known_challenges: Areas they struggle with or want to improve (array of strings)  
+- preferred_feedback_style: How they want feedback ("supportive", "detailed", "brief", "challenging")
+- personal_glossary: Custom terms/definitions they use (object with key-value pairs)
+
+TEMPLATE ACTIONS:
+- template_info: User wants to see template information
+- template_sections: User wants to see available sections
+- template_reload: User wants to reload template from file
+- template_request: User wants to request template changes
+
+CURRENT USER PREFERENCES:
+- Purpose: {current_prefs.get('purpose_statement', 'None set')}
+- Goals: {current_prefs.get('long_term_goals', [])}
+- Challenges: {current_prefs.get('known_challenges', [])}
+- Feedback Style: {current_prefs.get('preferred_feedback_style', 'supportive')}
+- Glossary: {len(current_prefs.get('personal_glossary', {}))} terms defined
+
+INSTRUCTIONS:
+1. Identify if the user is expressing any preference changes or updates
+2. Extract the specific changes they want to make
+3. For lists (goals, challenges), determine if they want to ADD, REPLACE, or REMOVE items
+4. Return JSON with only the fields that should be updated
+5. If no preference updates are detected, return an empty object
+
+EXAMPLES:
+Input: "My goal is to become a better trader and improve my risk management"
+Output: {{"long_term_goals": ["become a better trader", "improve risk management"]}}
+
+Input: "I want to go to the moon"
+Output: {{"long_term_goals": ["go to the moon"]}}
+
+Input: "I want to travel to space"
+Output: {{"long_term_goals": ["travel to space"]}}
+
+Input: "I prefer detailed feedback when you respond to me"
+Output: {{"preferred_feedback_style": "detailed"}}
+
+Input: "I struggle with emotional trading decisions"
+Output: {{"known_challenges": ["emotional trading decisions"]}}
+
+Input: "Can you show me my template sections?"
+Output: {{"template_sections": true}}
+
+Input: "The purpose of my journaling is to track my trading psychology and personal growth"
+Output: {{"purpose_statement": "to track my trading psychology and personal growth"}}
+
+User Input:
+---
+{user_text}
+---
+
+JSON Output (only include fields that should be updated):"""
+
+    try:
+        # Set up LLM for preference analysis
+        import json
+        import os
+        from pydantic_ai import Agent
+        from pydantic_ai.models.anthropic import AnthropicModel
+        from app.core.config import settings
+        
+        # Set API key from settings
+        if settings.ANTHROPIC_API_KEY:
+            os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        model = AnthropicModel(settings.ANTHROPIC_STRUCTURING_MODEL)
+        
+        # Create agent for preference analysis
+        preferences_agent = Agent(model=model)
+        
+        # Run the analysis
+        result = await preferences_agent.run(preferences_prompt)
+        analysis_output = result.output.strip()
+        
+        print(f"Preferences LLM analysis output: {analysis_output}")
+        
+        # Extract JSON from the response
+        if analysis_output.startswith("```json"):
+            analysis_output = analysis_output[7:]
+        if analysis_output.endswith("```"):
+            analysis_output = analysis_output[:-3]
+        analysis_output = analysis_output.strip()
+        
+        # Parse the preference updates
+        try:
+            preference_updates = json.loads(analysis_output)
+        except json.JSONDecodeError as e:
+            print(f"JSON parse error in preferences: {e}, no updates made")
+            preference_updates = {}
+        
+    except Exception as e:
+        print(f"LLM analysis failed for preferences: {e}, no updates made")
+        preference_updates = {}
+    
+    # Apply the extracted preference updates
+    updated_fields = []
+    
+    for field, value in preference_updates.items():
+        if field == "purpose_statement":
+            current_prefs[field] = value
+            updated_fields.append(field)
+            print(f"Updated purpose statement: {value}")
+            
+        elif field == "preferred_feedback_style" and value in ["supportive", "detailed", "brief", "challenging"]:
+            current_prefs[field] = value
+            updated_fields.append(field)
+            print(f"Updated feedback style: {value}")
+            
+        elif field in ["long_term_goals", "known_challenges"]:
+            if isinstance(value, list):
+                # For now, replace the entire list (could be enhanced to support add/remove)
+                current_prefs[field] = value
+                updated_fields.append(field)
+                print(f"Updated {field}: {value}")
+            elif isinstance(value, str):
+                # Add single item to list
+                if field not in current_prefs:
+                    current_prefs[field] = []
+                if value not in current_prefs[field]:
+                    current_prefs[field].append(value)
+                    updated_fields.append(field)
+                    print(f"Added to {field}: {value}")
+                    
+        elif field == "personal_glossary" and isinstance(value, dict):
+            if "personal_glossary" not in current_prefs:
+                current_prefs["personal_glossary"] = {}
+            current_prefs["personal_glossary"].update(value)
+            updated_fields.append(field)
+            print(f"Updated glossary: {value}")
+            
+        # Handle template requests
+        elif field == "template_info":
+            template = template_loader.get_user_template()
+            print(f"Current template: {template['name']}")
+            print(f"Sections: {len(template['sections'])}")
+            updated_fields.append("template_info_provided")
+            
+        elif field == "template_sections":
+            sections = template_loader.get_template_sections()
+            print(f"Available template sections: {list(sections.keys())}")
+            updated_fields.append("template_sections_listed")
+            
+        elif field == "template_reload":
+            template_loader.reload_template()
+            updated_fields.append("template_reloaded")
+            print("Template reloaded from file")
+            
+        elif field == "template_request":
+            print(f"TEMPLATE CHANGE REQUEST: {value}")
+            print(f"To implement: Edit /app/templates/user_template.py and restart server")
+            updated_fields.append("template_change_requested")
+    
+    # Update context
+    ctx.user_preferences = current_prefs
+    
+    # CRITICAL: Save preferences to database immediately to ensure persistence
+    # This is necessary because the agent service may not detect context changes
+    if updated_fields:
+        print(f"TOOL: About to save preferences to database")
+        print(f"TOOL: Updated fields: {updated_fields}")
+        print(f"TOOL: Current prefs to save: {current_prefs}")
+        try:
+            # Import here to avoid circular imports
+            from app.repositories.user import UserPreferencesRepository
+            from app.database import async_session_maker
+            
+            # Save preferences immediately using direct session
+            async with async_session_maker() as db:
+                prefs_repo = UserPreferencesRepository()
+                print(f"TOOL: Calling update_by_user_id with user_id={actual_user_id}")
+                result = await prefs_repo.update_by_user_id(db, actual_user_id, **current_prefs)
+                print(f"TOOL: Database update result: {result}")
+                print(f"TOOL: Preferences saved to database successfully")
+        except Exception as e:
+            print(f"TOOL: Failed to save preferences to database: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    return UpdatePreferencesResponse(
+        updated_fields=updated_fields,
+        status="success"
+    )
+
+
+async def _legacy_update_preferences(ctx: CassidyAgentDependencies, request: UpdatePreferencesRequest) -> UpdatePreferencesResponse:
+    """Legacy direct preference updates for API calls"""
     updated_fields = []
     current_prefs = ctx.user_preferences.copy()
     
     for field, value in request.preference_updates.items():
-        # Handle preference updates
         if field in ["purpose_statement", "preferred_feedback_style", "personal_glossary"]:
             current_prefs[field] = value
             updated_fields.append(field)
@@ -216,47 +443,28 @@ async def update_preferences_tool(
                 current_prefs[field] = value
                 updated_fields.append(field)
             elif isinstance(value, str):
-                # Add to existing list
                 if field not in current_prefs:
                     current_prefs[field] = []
                 if value not in current_prefs[field]:
                     current_prefs[field].append(value)
                     updated_fields.append(field)
-        
-        # Handle template modifications
-        elif field == "template_reload":
-            # Reload template from file
-            template_loader.reload_template()
-            updated_fields.append("template_reloaded")
-        
-        elif field.startswith("template_"):
-            # Template modification requests
-            if field == "template_sections":
-                # Request to view available sections
-                sections = template_loader.get_template_sections()
-                print(f"Available template sections: {list(sections.keys())}")
-                updated_fields.append("template_sections_listed")
-            
-            elif field == "template_info":
-                # Request for template information
-                template = template_loader.get_user_template()
-                print(f"Current template: {template['name']}")
-                print(f"Sections: {len(template['sections'])}")
-                updated_fields.append("template_info_provided")
-            
-            elif field == "template_request":
-                # User requesting template changes - log for manual implementation
-                print(f"TEMPLATE CHANGE REQUEST: {value}")
-                print(f"To implement: Edit /app/templates/user_template.py and restart server")
-                updated_fields.append("template_change_requested")
     
-    # Update context (this will be handled by the agent service)
     ctx.user_preferences = current_prefs
     
-    return UpdatePreferencesResponse(
-        updated_fields=updated_fields,
-        status="success"
-    )
+    # Save to database immediately (same fix as main function)
+    if updated_fields:
+        try:
+            from app.repositories.user import UserPreferencesRepository
+            from app.database import async_session_maker
+            
+            async with async_session_maker() as db:
+                prefs_repo = UserPreferencesRepository()
+                await prefs_repo.update_by_user_id(db, ctx.user_id, **current_prefs)
+                print(f"Legacy preferences saved to database successfully")
+        except Exception as e:
+            print(f"Failed to save legacy preferences to database: {e}")
+    
+    return UpdatePreferencesResponse(updated_fields=updated_fields, status="success")
 
 
 # Tool definitions for Pydantic-AI
@@ -272,7 +480,7 @@ SaveJournalTool = Tool(
 
 UpdatePreferencesTool = Tool(
     update_preferences_tool,
-    description="Update user preferences, settings, and template configuration. Can reload template, view template info, or request template changes."
+    description="Intelligently update user preferences from natural conversation. Call this when user mentions goals, challenges, feedback preferences, or purpose. Extracts preference changes from user text automatically using LLM analysis."
 )
 
 

@@ -38,8 +38,8 @@ async def agent_chat(
         current_user.id, session_id, session.conversation_type
     )
     
-    # Get agent for conversation type
-    agent = await AgentFactory.get_agent(session.conversation_type)
+    # Get agent for conversation type with user_id
+    agent = await AgentFactory.get_agent(session.conversation_type, current_user.id)
     
     # Load message history
     message_history = await agent_service.get_message_history(session_id)
@@ -49,12 +49,24 @@ async def agent_chat(
         # Run agent with context
         print(f"About to run agent with text: {request.text}")
         print(f"Context: {context}")
-        print(f"Agent tools: {[str(tool) for tool in agent.tools] if hasattr(agent, 'tools') else 'No tools attr'}")
+        # Check for tools in different ways since pydantic-ai might store them differently
+        agent_attrs = [attr for attr in dir(agent) if 'tool' in attr.lower()]
+        print(f"Agent tool-related attributes: {agent_attrs}")
+        
+        # Try accessing tools through _tools or other potential attributes
+        if hasattr(agent, '_tools'):
+            print(f"Agent _tools: {len(agent._tools) if agent._tools else 0} tools")
+        if hasattr(agent, 'tools'):
+            print(f"Agent tools: {len(agent.tools) if agent.tools else 0} tools")
+        else:
+            print("Agent tools attribute not found")
         print(f"Message history format: {message_history[:1] if message_history else 'Empty'}")
         
         # Run agent with message history
         try:
             print(f"Running agent with {len(message_history)} messages in history")
+            print(f"AGENT: About to call agent.run with deps: {context}")
+            print(f"AGENT: Context type: {type(context)}")
             result = await agent.run(
                 request.text,
                 deps=context,
