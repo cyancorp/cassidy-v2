@@ -307,7 +307,12 @@ class TestStructureJournalTool:
             current_journal_draft={}
         )
         
-        with patch('pydantic_ai.Agent') as mock_agent_class:
+        with patch('pydantic_ai.Agent') as mock_agent_class, \
+             patch('app.agents.tools.template_loader') as mock_template_loader:
+            
+            # Mock template loader to return empty template as well
+            mock_template_loader.get_user_template.return_value = {"sections": {}}
+            
             mock_agent = AsyncMock()
             mock_result = MagicMock()
             mock_result.output = '{"General Reflection": "Test content"}'
@@ -396,19 +401,34 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_update_string_fields(self, mock_context):
         """Test updating string preference fields"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "purpose_statement": "New purpose statement",
-                "preferred_feedback_style": "direct"
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
-        
-        assert result.status == "success"
-        assert set(result.updated_fields) == {"purpose_statement", "preferred_feedback_style"}
-        assert mock_context.user_preferences["purpose_statement"] == "New purpose statement"
-        assert mock_context.user_preferences["preferred_feedback_style"] == "direct"
+        with patch('pydantic_ai.Agent') as mock_agent_class, \
+             patch('app.database.async_session_maker') as mock_session_maker:
+            
+            # Mock the LLM response to return expected preference updates
+            mock_agent = AsyncMock()
+            mock_result = MagicMock()
+            mock_result.output = '{"purpose_statement": "New purpose statement", "preferred_feedback_style": "detailed"}'
+            mock_agent.run.return_value = mock_result
+            mock_agent_class.return_value = mock_agent
+            
+            # Mock database session
+            mock_db = AsyncMock()
+            mock_session_maker.return_value.__aenter__.return_value = mock_db
+            mock_session_maker.return_value.__aexit__.return_value = None
+            
+            request = UpdatePreferencesRequest(
+                preference_updates={
+                    "purpose_statement": "New purpose statement",
+                    "preferred_feedback_style": "detailed"
+                }
+            )
+            
+            result = await update_preferences_tool(mock_context, request)
+            
+            assert result.status == "success"
+            assert set(result.updated_fields) == {"purpose_statement", "preferred_feedback_style"}
+            assert mock_context.user_preferences["purpose_statement"] == "New purpose statement"
+            assert mock_context.user_preferences["preferred_feedback_style"] == "detailed"
     
     @pytest.mark.asyncio
     async def test_update_list_fields_replace(self, mock_context):
@@ -430,19 +450,34 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_update_list_fields_append_string(self, mock_context):
         """Test appending string to list fields"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "long_term_goals": "Goal 2",  # String instead of list
-                "known_challenges": "Challenge 2"
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
-        
-        assert result.status == "success"
-        assert set(result.updated_fields) == {"long_term_goals", "known_challenges"}
-        assert mock_context.user_preferences["long_term_goals"] == ["Goal 1", "Goal 2"]
-        assert mock_context.user_preferences["known_challenges"] == ["Challenge 1", "Challenge 2"]
+        with patch('pydantic_ai.Agent') as mock_agent_class, \
+             patch('app.database.async_session_maker') as mock_session_maker:
+            
+            # Mock the LLM response to return string updates that should append
+            mock_agent = AsyncMock()
+            mock_result = MagicMock()
+            mock_result.output = '{"long_term_goals": "Goal 2", "known_challenges": "Challenge 2"}'
+            mock_agent.run.return_value = mock_result
+            mock_agent_class.return_value = mock_agent
+            
+            # Mock database session
+            mock_db = AsyncMock()
+            mock_session_maker.return_value.__aenter__.return_value = mock_db
+            mock_session_maker.return_value.__aexit__.return_value = None
+            
+            request = UpdatePreferencesRequest(
+                preference_updates={
+                    "long_term_goals": "Goal 2",  # String instead of list
+                    "known_challenges": "Challenge 2"
+                }
+            )
+            
+            result = await update_preferences_tool(mock_context, request)
+            
+            assert result.status == "success"
+            assert set(result.updated_fields) == {"long_term_goals", "known_challenges"}
+            assert mock_context.user_preferences["long_term_goals"] == ["Goal 1", "Goal 2"]
+            assert mock_context.user_preferences["known_challenges"] == ["Challenge 1", "Challenge 2"]
     
     @pytest.mark.asyncio
     async def test_update_list_fields_append_duplicate(self, mock_context):
@@ -480,21 +515,36 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_update_invalid_fields_ignored(self, mock_context):
         """Test that invalid preference fields are ignored"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "purpose_statement": "Valid update",
-                "invalid_field": "Should be ignored",
-                "another_invalid": ["Also ignored"]
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
-        
-        assert result.status == "success"
-        assert result.updated_fields == ["purpose_statement"]
-        assert mock_context.user_preferences["purpose_statement"] == "Valid update"
-        assert "invalid_field" not in mock_context.user_preferences
-        assert "another_invalid" not in mock_context.user_preferences
+        with patch('pydantic_ai.Agent') as mock_agent_class, \
+             patch('app.database.async_session_maker') as mock_session_maker:
+            
+            # Mock the LLM response to only return valid fields
+            mock_agent = AsyncMock()
+            mock_result = MagicMock()
+            mock_result.output = '{"purpose_statement": "Valid update"}'
+            mock_agent.run.return_value = mock_result
+            mock_agent_class.return_value = mock_agent
+            
+            # Mock database session
+            mock_db = AsyncMock()
+            mock_session_maker.return_value.__aenter__.return_value = mock_db
+            mock_session_maker.return_value.__aexit__.return_value = None
+            
+            request = UpdatePreferencesRequest(
+                preference_updates={
+                    "purpose_statement": "Valid update",
+                    "invalid_field": "Should be ignored",
+                    "another_invalid": ["Also ignored"]
+                }
+            )
+            
+            result = await update_preferences_tool(mock_context, request)
+            
+            assert result.status == "success"
+            assert result.updated_fields == ["purpose_statement"]
+            assert mock_context.user_preferences["purpose_statement"] == "Valid update"
+            assert "invalid_field" not in mock_context.user_preferences
+            assert "another_invalid" not in mock_context.user_preferences
     
     @pytest.mark.asyncio
     async def test_empty_updates(self, mock_context):
