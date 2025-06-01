@@ -91,7 +91,7 @@ async def agent_chat(
             print(f"Result type: {type(result)}")
             print(f"Result attributes: {dir(result)}")
         
-        # Save user message
+        # Save user message BEFORE processing (so it's included in raw text)
         message_repo = ChatMessageRepository()
         print("About to save user message")
         await message_repo.create_message(
@@ -99,15 +99,15 @@ async def agent_chat(
             metadata=request.metadata or {}
         )
         
-        # Save assistant message
+        # Process agent response and handle tool calls (this will now include the current user message in raw text)
+        response_data = await agent_service.process_agent_response(context, result)
+        
+        # Save assistant message AFTER processing
         print("About to save assistant message")
         await message_repo.create_message(
             db, session_id=session_id, role="assistant", content=result.output,
             metadata={"tool_calls": len([part for msg in result.new_messages() for part in msg.parts if hasattr(part, 'tool_name')]) if hasattr(result, 'new_messages') else 0}
         )
-        
-        # Process agent response and handle tool calls
-        response_data = await agent_service.process_agent_response(context, result)
         
         return AgentChatResponse(
             text=result.output,
