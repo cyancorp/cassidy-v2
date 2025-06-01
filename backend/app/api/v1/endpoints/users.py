@@ -6,6 +6,7 @@ from app.models.api import UserPreferencesResponse, UserPreferencesUpdate, UserT
 from app.repositories.user import UserPreferencesRepository, UserTemplateRepository
 from app.core.deps import get_current_user
 from app.models.user import UserDB
+from app.templates.loader import template_loader
 
 router = APIRouter()
 
@@ -98,42 +99,25 @@ async def get_user_template(
     current_user: UserDB = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Get current user's active template"""
-    template_repo = UserTemplateRepository()
-    template = await template_repo.get_active_by_user_id(db, current_user.id)
+    """Get current user's template from file-based system"""
+    # Get template from file instead of database
+    template_data = template_loader.get_user_template(current_user.id)
     
-    if not template:
-        # Create default template if none exists
-        default_sections = {
-            "General Reflection": SectionDetailDef(
-                description="General thoughts, daily reflections, or free-form journaling content",
-                aliases=["Daily Notes", "Journal", "Reflection", "General"]
-            ),
-            "Daily Events": SectionDetailDef(
-                description="Significant events, activities, or experiences from the day",
-                aliases=["Events", "Activities", "What Happened"]
-            ),
-            "Thoughts & Feelings": SectionDetailDef(
-                description="Emotional state, mood, thoughts, and internal experiences",
-                aliases=["Emotions", "Mood", "Feelings", "Thoughts"]
-            )
-        }
-        
-        template = await template_repo.create(
-            db,
-            user_id=current_user.id,
-            name="Default Template",
-            sections={k: v.model_dump() for k, v in default_sections.items()},
-            is_active=True
+    # Convert to API response format
+    sections = {}
+    for section_name, section_def in template_data["sections"].items():
+        sections[section_name] = SectionDetailDef(
+            description=section_def["description"],
+            aliases=section_def["aliases"]
         )
     
     return UserTemplateResponse(
-        user_id=template.user_id,
-        name=template.name,
-        sections={k: SectionDetailDef(**v) for k, v in template.sections.items()},
-        is_active=template.is_active,
-        created_at=template.created_at,
-        updated_at=template.updated_at
+        user_id=current_user.id,
+        name=template_data["name"],
+        sections=sections,
+        is_active=True,
+        created_at=None,  # File-based templates don't have timestamps
+        updated_at=None
     )
 
 
@@ -172,3 +156,39 @@ async def update_user_template(
         created_at=template.created_at,
         updated_at=template.updated_at
     )
+
+
+@router.post("/reset")
+async def reset_user_preferences(
+    current_user: UserDB = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Reset user preferences to defaults and refresh template from file"""
+    prefs_repo = UserPreferencesRepository()
+    
+    # Delete existing preferences
+    existing_prefs = await prefs_repo.get_by_user_id(db, current_user.id)
+    if existing_prefs:
+        await prefs_repo.delete(db, existing_prefs.id)
+    
+    # Create fresh default preferences
+    new_prefs = await prefs_repo.create(
+        db,
+        user_id=current_user.id,
+        purpose_statement=None,
+        long_term_goals=[],
+        known_challenges=[],
+        preferred_feedback_style="supportive",
+        personal_glossary={}
+    )
+    
+    # Reload template from file
+    template_loader.reload_template()
+    
+    return {
+        "status": "success",
+        "message": "User preferences reset to defaults and template refreshed from file",
+        "user_id": current_user.id,
+        "preferences_reset": True,
+        "template_reloaded": True
+    }
