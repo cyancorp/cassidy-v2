@@ -139,10 +139,8 @@ class AgentService:
                         print(f"No content to save - draft is empty")
             
             elif call["name"] == "update_preferences_tool":
-                # Update user preferences in database
-                await self.user_prefs_repo.update_by_user_id(
-                    self.db, context.user_id, **context.user_preferences
-                )
+                # Skip processing - tool handles database updates directly to avoid overwriting
+                print(f"Skipping update_preferences_tool processing - tool handles database updates directly")
         
         # Add usage metadata if available
         if hasattr(agent_result, 'usage') and agent_result.usage:
