@@ -120,11 +120,14 @@ class JournalDraftRepository(BaseRepository[JournalDraftDB]):
         session_id: str,
         draft_data: Dict[str, Any]
     ) -> Optional[JournalDraftDB]:
-        """Update draft data"""
+        """Update draft data and raw text"""
+        # Get concatenated raw text from user messages in this session
+        raw_text = await self._get_session_raw_text(db, session_id)
+        
         await db.execute(
             update(JournalDraftDB)
             .where(JournalDraftDB.session_id == session_id)
-            .values(draft_data=draft_data, updated_at=datetime.utcnow())
+            .values(draft_data=draft_data, raw_text=raw_text, updated_at=datetime.utcnow())
         )
         await db.commit()
         return await self.get_by_session_id(db, session_id)
@@ -141,11 +144,15 @@ class JournalDraftRepository(BaseRepository[JournalDraftDB]):
         
         print(f"Found draft: {draft.draft_data}")
         
+        # Get raw text if not already in draft (for backwards compatibility)
+        raw_text = draft.raw_text if draft.raw_text else await self._get_session_raw_text(db, session_id)
+        
         # Create journal entry
         entry = JournalEntryDB(
             user_id=draft.user_id,
             session_id=draft.session_id,
             structured_data=draft.draft_data,
+            raw_text=raw_text,
             title=self._generate_title(draft.draft_data)
         )
         print(f"Created journal entry object: {entry.title}")
@@ -192,6 +199,19 @@ class JournalDraftRepository(BaseRepository[JournalDraftDB]):
                 return title
         
         return f"Journal Entry - {datetime.now().strftime('%Y-%m-%d')}"
+    
+    async def _get_session_raw_text(self, db: AsyncSession, session_id: str) -> str:
+        """Get concatenated raw text from all user messages in session"""
+        result = await db.execute(
+            select(ChatMessageDB.content)
+            .where(
+                ChatMessageDB.session_id == session_id,
+                ChatMessageDB.role == "user"
+            )
+            .order_by(ChatMessageDB.created_at)
+        )
+        user_messages = result.scalars().all()
+        return "\n\n".join(user_messages) if user_messages else ""
 
 
 class JournalEntryRepository(BaseRepository[JournalEntryDB]):

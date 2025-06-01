@@ -51,6 +51,7 @@ class JournalDraftDB(TimestampedModel):
     session_id = Column(String(36), ForeignKey("chat_sessions.id"), nullable=False, unique=True)
     user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
     draft_data = Column(JSON, default=dict, nullable=False)
+    raw_text = Column(Text, nullable=True)  # Concatenated raw user input across turns
     is_finalized = Column(Boolean, default=False, nullable=False)
     
     # Relationships
@@ -65,6 +66,7 @@ class JournalEntryDB(TimestampedModel):
     session_id = Column(String(36), ForeignKey("chat_sessions.id"), nullable=True)
     title = Column(String(255), nullable=True)
     structured_data = Column(JSON, nullable=False)
+    raw_text = Column(Text, nullable=True)  # Concatenated raw user input across turns
     entry_metadata = Column("metadata", JSON, default=dict, nullable=False)
     
     # Relationships
