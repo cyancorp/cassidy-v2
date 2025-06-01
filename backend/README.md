@@ -230,6 +230,114 @@ Default sections include:
 - `journal_drafts` - Work-in-progress entries
 - `journal_entries` - Finalized journal entries
 
+## Database Viewer
+
+Several tools are available to view and explore the SQLite database (`cassidy.db`):
+
+### 1. GUI Tool - DB Browser for SQLite (Recommended)
+
+**Install** (macOS with Homebrew):
+```bash
+brew install --cask db-browser-for-sqlite
+```
+
+**Open Database**:
+```bash
+# From backend directory
+open -a "DB Browser for SQLite" cassidy.db
+```
+
+**Features**:
+- Visual table browser
+- SQL query editor
+- Schema viewer
+- Data editing capabilities
+- Export functionality
+
+### 2. Command Line - sqlite3
+
+**Interactive Shell**:
+```bash
+# From backend directory
+sqlite3 cassidy.db
+
+# Useful commands in sqlite3:
+.tables                    # List all tables
+.schema users             # Show table schema
+.mode column              # Format output in columns
+.headers on               # Show column headers
+SELECT * FROM users;      # Query data
+.quit                     # Exit
+```
+
+**Quick Queries**:
+```bash
+# List all tables
+sqlite3 cassidy.db ".tables"
+
+# Show table schema
+sqlite3 cassidy.db ".schema users"
+
+# Count records
+sqlite3 cassidy.db "SELECT COUNT(*) FROM journal_entries;"
+
+# View recent journal entries
+sqlite3 cassidy.db "SELECT title, created_at FROM journal_entries ORDER BY created_at DESC LIMIT 5;"
+```
+
+### 3. Python Script - view_db.py
+
+**Run the Database Viewer**:
+```bash
+# From backend directory
+uv run --with pandas view_db.py
+```
+
+**Features**:
+- Shows all tables and record counts
+- Displays sample data from each table
+- Easy to modify for custom analysis
+- Useful for data exploration and debugging
+
+**Example Output**:
+```
+📊 Available tables:
+  • users
+  • auth_sessions
+  • user_preferences
+  • user_templates
+  • chat_sessions
+  • chat_messages
+  • journal_drafts
+  • journal_entries
+
+🔍 Sample data from 'users':
+   Total rows: 2
+   [sample data shown...]
+```
+
+### 4. Custom Analysis
+
+**Create custom scripts** for specific data analysis:
+```python
+import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect('cassidy.db')
+
+# Analyze journal entry patterns
+entries_df = pd.read_sql_query("""
+    SELECT 
+        DATE(created_at) as date,
+        COUNT(*) as entry_count
+    FROM journal_entries 
+    GROUP BY DATE(created_at)
+    ORDER BY date DESC
+""", conn)
+
+print(entries_df)
+```
+
 ## Development
 
 ### Project Structure
