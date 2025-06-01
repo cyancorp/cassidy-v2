@@ -136,7 +136,8 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
     
     # Merge structured content with existing draft
     for section_name, new_content in structured_content.items():
-        if section_name in template_sections:  # Validate section exists in template
+        # Validate section exists in template, or allow "General Reflection" as default fallback
+        if section_name in template_sections or (not template_sections and section_name == "General Reflection"):
             if section_name in current_draft:
                 # Merge with existing content
                 existing_content = current_draft[section_name]

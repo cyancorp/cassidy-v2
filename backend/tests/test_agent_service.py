@@ -57,8 +57,18 @@ class TestAgentService:
         )
         
         with patch.object(agent_service.user_prefs_repo, 'get_by_user_id', return_value=mock_prefs), \
-             patch.object(agent_service.user_template_repo, 'get_active_by_user_id', return_value=mock_template), \
+             patch('app.agents.service.template_loader.get_user_template') as mock_template_loader, \
              patch.object(agent_service.journal_draft_repo, 'get_by_session_id', return_value=mock_draft):
+            
+            mock_template_loader.return_value = {
+                "name": "Test Template",
+                "sections": {
+                    "General Reflection": {
+                        "description": "General thoughts",
+                        "aliases": ["Journal", "Reflection"]
+                    }
+                }
+            }
             
             context = await agent_service.create_agent_context("test_user", "test_session", "journaling")
             
@@ -84,10 +94,9 @@ class TestAgentService:
         """Test creating agent context when data doesn't exist (creates defaults)"""
         # Mock that no data exists
         with patch.object(agent_service.user_prefs_repo, 'get_by_user_id', return_value=None), \
-             patch.object(agent_service.user_template_repo, 'get_active_by_user_id', return_value=None), \
+             patch('app.agents.service.template_loader.get_user_template') as mock_template_loader, \
              patch.object(agent_service.journal_draft_repo, 'get_by_session_id', return_value=None), \
              patch.object(agent_service, '_create_default_preferences') as mock_create_prefs, \
-             patch.object(agent_service, '_create_default_template') as mock_create_template, \
              patch.object(agent_service.journal_draft_repo, 'create_draft') as mock_create_draft:
             
             # Setup mock returns for defaults
@@ -97,11 +106,10 @@ class TestAgentService:
                 preferred_feedback_style="supportive", personal_glossary={}
             )
             
-            mock_create_template.return_value = UserTemplateDB(
-                id="new_template", user_id="test_user", name="Default Template",
-                sections={"General Reflection": {"description": "General thoughts", "aliases": []}},
-                is_active=True
-            )
+            mock_template_loader.return_value = {
+                "name": "Default Template",
+                "sections": {"General Reflection": {"description": "General thoughts", "aliases": []}}
+            }
             
             mock_create_draft.return_value = JournalDraftDB(
                 id="new_draft", session_id="test_session", user_id="test_user",
@@ -112,7 +120,6 @@ class TestAgentService:
             
             # Verify defaults were created
             mock_create_prefs.assert_called_once_with("test_user")
-            mock_create_template.assert_called_once_with("test_user")
             mock_create_draft.assert_called_once()
             
             # Verify context has default values
@@ -235,18 +242,13 @@ class TestAgentService:
             "preferred_feedback_style": "direct"
         }
         
-        with patch.object(agent_service.user_prefs_repo, 'update_by_user_id') as mock_update:
-            
-            response = await agent_service.process_agent_response(context, mock_result)
-            
-            assert len(response["tool_calls"]) == 1
-            assert response["tool_calls"][0]["name"] == "update_preferences_tool"
-            mock_update.assert_called_once_with(
-                mock_db_session, 
-                "test_user",
-                purpose_statement="Updated purpose",
-                preferred_feedback_style="direct"
-            )
+        # Note: update_preferences_tool now handles database updates directly
+        # The agent service just skips processing to avoid overwriting
+        response = await agent_service.process_agent_response(context, mock_result)
+        
+        assert len(response["tool_calls"]) == 1
+        assert response["tool_calls"][0]["name"] == "update_preferences_tool"
+        # No database call expected since tool handles it directly
     
     @pytest.mark.asyncio
     async def test_process_agent_response_with_usage_metadata(self, agent_service, mock_db_session):
@@ -312,25 +314,7 @@ class TestAgentService:
                 personal_glossary={}
             )
     
-    @pytest.mark.asyncio
-    async def test_create_default_template(self, agent_service, mock_db_session):
-        """Test creation of default user template"""
-        with patch.object(agent_service.user_template_repo, 'create') as mock_create:
-            mock_create.return_value = MagicMock()
-            
-            await agent_service._create_default_template("test_user")
-            
-            mock_create.assert_called_once()
-            call_args = mock_create.call_args
-            
-            assert call_args[1]["user_id"] == "test_user"
-            assert call_args[1]["name"] == "Default Template"
-            assert call_args[1]["is_active"] == True
-            assert "General Reflection" in call_args[1]["sections"]
-            assert "Things Done" in call_args[1]["sections"]
-            assert "Events" in call_args[1]["sections"]
-            assert "Daily Events" in call_args[1]["sections"]
-            assert "Thoughts & Feelings" in call_args[1]["sections"]
+    # Note: _create_default_template method was removed when we switched to file-based templates
     
     @pytest.mark.asyncio
     async def test_process_agent_response_no_tool_calls(self, agent_service, mock_db_session):
