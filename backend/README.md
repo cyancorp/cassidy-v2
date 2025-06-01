@@ -111,24 +111,64 @@ CORS_ORIGINS=["http://localhost:3000", "http://localhost:5173"]
 
 ## Testing
 
-### Basic Setup Test
+### Run Complete Test Suite
 ```bash
+# Run all tests (recommended)
+uv run pytest
+
+# Run with verbose output
+uv run pytest -v
+
+# Run with coverage report
+uv run pytest --cov=app --cov-report=html
+
+# Quick test to verify setup
+uv run pytest tests/test_agents_tools.py::TestSaveJournalTool::test_save_with_confirmation_true -v
+```
+
+### Test Categories
+
+**Unit Tests**
+```bash
+# Test agent tools (LLM-based structuring, saving, preferences)
+uv run pytest tests/test_agents_tools.py -v
+
+# Test agent service functionality
+uv run pytest tests/test_agent_service.py -v
+```
+
+**Integration Tests**
+```bash
+# Test complete agent workflows
+uv run pytest tests/test_agent_integration.py -v
+
+# Test API endpoints with authentication
+uv run pytest tests/test_agent_api.py -v
+```
+
+**Manual Integration Tests**
+```bash
+# Basic setup verification
 uv run python test_basic.py
-```
 
-### Agent System Test
-```bash
+# Agent system test
 uv run python test_agent_simple.py
-```
 
-### API Integration Test
-```bash
-# Start the server first
+# Full workflow test (requires running server)
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-
-# Run the test
 uv run python test_agent_flow.py
 ```
+
+### Test Coverage
+
+The test suite covers:
+- **LLM-based content structuring** with various input types (strings, arrays, mixed)
+- **Content merging** across multiple conversation turns
+- **Error handling** for LLM failures, JSON parsing errors, database issues
+- **Message history** formatting and agent context preservation
+- **Authentication** and authorization flows
+- **Complete workflows** from journal creation to saving
+- **API endpoints** with proper mocking and error scenarios
 
 ## Example Usage
 
@@ -168,12 +208,15 @@ The AI agent automatically:
 
 Default sections include:
 - **General Reflection** - Daily thoughts and free-form content
-- **Trading Journal** - Specific trades, positions, P&L
-- **Market Thoughts** - Market analysis and outlook
-- **Emotional State** - Mood, feelings, stress levels
-- **Strategy Considerations** - High-level planning
-- **Goals for Next Week** - Objectives and plans
-- **Things I'm Grateful For** - Gratitude expressions
+- **Things Done** - Tasks completed, accomplishments, and work done
+- **Events** - Important events, meetings, appointments with specific dates/times
+- **Daily Events** - Significant activities and experiences from the day
+- **Thoughts & Feelings** - Emotional state, mood, and internal experiences
+- **Trading Journal** - Specific trades, positions, P&L (if using trading template)
+- **Market Thoughts** - Market analysis and outlook (if using trading template)
+- **Strategy Considerations** - High-level planning (if using trading template)
+- **Goals for Next Week** - Objectives and plans (if using trading template)
+- **Things I'm Grateful For** - Gratitude expressions (if using trading template)
 
 ## Database Schema
 

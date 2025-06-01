@@ -1,12 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Dict, Any, Optional, List
-from uuid import UUID
+from typing import Dict, Any, List
 
-from app.agents.factory import AgentFactory
 from app.agents.models import CassidyAgentDependencies
-from app.repositories.user import UserPreferencesRepository, UserTemplateRepository
+from app.repositories.user import UserPreferencesRepository
 from app.repositories.session import JournalDraftRepository, ChatMessageRepository
-from app.models.api import SectionDetailDef
+from app.templates.loader import template_loader
 
 
 class AgentService:
@@ -15,7 +13,6 @@ class AgentService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.user_prefs_repo = UserPreferencesRepository()
-        self.user_template_repo = UserTemplateRepository()
         self.journal_draft_repo = JournalDraftRepository()
         self.message_repo = ChatMessageRepository()
     
@@ -29,14 +26,14 @@ class AgentService:
         
         # Load user data
         user_prefs = await self.user_prefs_repo.get_by_user_id(self.db, user_id)
-        user_template = await self.user_template_repo.get_active_by_user_id(self.db, user_id)
         journal_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
+        
+        # Load template from file (instead of database)
+        user_template_dict = template_loader.get_user_template(user_id)
         
         # Create defaults if needed
         if not user_prefs:
             user_prefs = await self._create_default_preferences(user_id)
-        if not user_template:
-            user_template = await self._create_default_template(user_id)
         if not journal_draft:
             journal_draft = await self.journal_draft_repo.create_draft(
                 self.db, session_id=session_id, user_id=user_id
@@ -51,10 +48,8 @@ class AgentService:
             "personal_glossary": user_prefs.personal_glossary or {}
         }
         
-        template_dict = {
-            "name": user_template.name,
-            "sections": user_template.sections or {}
-        }
+        # Use file-based template instead of database template
+        template_dict = user_template_dict
         
         # Get the latest draft data from the database
         latest_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
@@ -183,27 +178,3 @@ class AgentService:
             personal_glossary={}
         )
     
-    async def _create_default_template(self, user_id: str):
-        """Create default template with basic sections"""
-        default_sections = {
-            "General Reflection": {
-                "description": "General thoughts, daily reflections, or free-form journaling content",
-                "aliases": ["Daily Notes", "Journal", "Reflection", "General"]
-            },
-            "Daily Events": {
-                "description": "Significant events, activities, or experiences from the day",
-                "aliases": ["Events", "Activities", "What Happened"]
-            },
-            "Thoughts & Feelings": {
-                "description": "Emotional state, mood, thoughts, and internal experiences",
-                "aliases": ["Emotions", "Mood", "Feelings", "Thoughts"]
-            }
-        }
-        
-        return await self.user_template_repo.create(
-            self.db,
-            user_id=user_id,
-            name="Default Template",
-            sections=default_sections,
-            is_active=True
-        )

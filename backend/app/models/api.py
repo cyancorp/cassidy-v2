@@ -70,8 +70,8 @@ class UserTemplateResponse(BaseModel):
     name: str = "Default Template"
     sections: Dict[str, SectionDetailDef] = Field(default_factory=dict)
     is_active: bool = True
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None  # File-based templates don't have timestamps
+    updated_at: Optional[datetime] = None
 
 
 class TemplateUpdate(BaseModel):

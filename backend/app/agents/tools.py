@@ -8,6 +8,7 @@ from app.agents.models import (
     SaveJournalRequest, SaveJournalResponse,
     UpdatePreferencesRequest, UpdatePreferencesResponse
 )
+from app.templates.loader import template_loader
 
 
 async def structure_journal_tool(
@@ -15,121 +16,141 @@ async def structure_journal_tool(
     request: StructureJournalRequest
 ) -> StructureJournalResponse:
     """
-    Tool to structure user input into journal template sections.
+    Tool to structure user input into journal template sections using LLM analysis.
     
-    This tool analyzes the user's text and maps it to appropriate sections
-    in their personal journal template based on content and section descriptions.
+    This tool uses an LLM to intelligently analyze the user's text and map it to 
+    appropriate sections in their personal journal template.
     """
     print(f"StructureJournalTool called with text: {request.user_text}")
     user_text = request.user_text.strip()
     if not user_text:
         return StructureJournalResponse(sections_updated=[], status="no_content")
     
-    # Get template sections from context
+    # Get template sections from context (should come from file-based template now)
     template_sections = ctx.user_template.get("sections", {})
     if not template_sections:
-        # Default sections if no template
-        template_sections = {
-            "General Reflection": {
-                "description": "General thoughts, daily reflections, or free-form journaling content",
-                "aliases": ["Daily Notes", "Journal", "Reflection", "General"]
-            }
-        }
+        # Fallback to file-based template if context doesn't have sections
+        fallback_template = template_loader.get_user_template()
+        template_sections = fallback_template.get("sections", {})
     
-    # Get current draft data
+    # Format template sections for LLM prompt with dynamic guidelines
+    sections_list = []
+    section_guidelines = []
+    
+    for section_name, section_def in template_sections.items():
+        description = section_def.get("description", "")
+        aliases = section_def.get("aliases", [])
+        aliases_str = f" (also known as: {', '.join(aliases)})" if aliases else ""
+        sections_list.append(f"- {section_name}: {description}{aliases_str}")
+        
+        # Create dynamic guideline based on section name and description
+        if aliases:
+            alias_examples = f" (keywords: {', '.join(aliases[:3])})"  # Show first 3 aliases as keywords
+        else:
+            alias_examples = ""
+        section_guidelines.append(f'- "{section_name}": {description}{alias_examples}')
+    
+    # Create LLM prompt for content analysis
+    analysis_prompt = f"""Analyze the following raw user input and structure it into a JSON object that maps content to the most appropriate template sections.
+
+CRITICAL INSTRUCTIONS:
+1. Read each template section description carefully
+2. Map content to the MOST SPECIFIC section that fits
+3. Use arrays for multiple items, strings for single content
+4. Only include sections that have relevant content
+5. Be selective with general categories - prefer specific sections when applicable
+
+DYNAMIC SECTION MAPPING (based on user's template):
+{chr(10).join(section_guidelines)}
+
+Template Sections Available:
+{chr(10).join(sections_list)}
+
+EXAMPLES (adapt to your template sections):
+Input: "I finished the report and need to buy groceries. Meeting tomorrow at 2pm. Feeling accomplished."
+Output: Use the most specific sections available for: completed work, future tasks, scheduled events, and emotions.
+
+Input: "Made some trades today and feeling optimistic about the market direction."
+Output: Use sections that best match: trading actions, market sentiment, and personal feelings.
+
+Raw User Input:
+---
+{user_text}
+---
+
+JSON Output (focus on capturing emotions, distinguishing completed vs future tasks):"""
+
+    # Use LLM to analyze and structure content
+    import json
+    import os
+    
+    try:
+        # Set up LLM for content analysis using existing imports
+        from pydantic_ai import Agent
+        from pydantic_ai.models.anthropic import AnthropicModel
+        from app.core.config import settings
+        
+        # Set API key from settings
+        os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        model = AnthropicModel("claude-sonnet-4-20250514")  # Use latest Sonnet 4 model for best content analysis
+        
+        # Create a simple agent for content structuring
+        analysis_agent = Agent(model=model)
+        
+        # Run the analysis
+        result = await analysis_agent.run(analysis_prompt)
+        analysis_output = result.output.strip()
+        
+        print(f"LLM analysis output: {analysis_output}")
+        
+        # Extract JSON from the response
+        if analysis_output.startswith("```json"):
+            analysis_output = analysis_output[7:]
+        if analysis_output.endswith("```"):
+            analysis_output = analysis_output[:-3]
+        analysis_output = analysis_output.strip()
+        
+        # Parse the structured content
+        try:
+            structured_content = json.loads(analysis_output)
+        except json.JSONDecodeError as e:
+            print(f"JSON parse error: {e}, falling back to general reflection")
+            # Fallback to general reflection if JSON parsing fails
+            structured_content = {"General Reflection": user_text}
+        
+    except Exception as e:
+        print(f"LLM analysis failed: {e}, falling back to general reflection")
+        # Fallback to general reflection if LLM call fails
+        structured_content = {"General Reflection": user_text}
+    
+    # Get current draft data and merge with new content
     current_draft = ctx.current_journal_draft.copy()
     sections_updated = []
     
-    # Simple content classification based on keywords and patterns
-    text_lower = user_text.lower()
-    
-    # Check for each section based on keywords and content
-    for section_name, section_def in template_sections.items():
-        section_desc = section_def.get("description", "").lower()
-        aliases = [alias.lower() for alias in section_def.get("aliases", [])]
-        
-        # Check if content matches this section
-        should_add_to_section = False
-        
-        # Trading journal specific patterns
-        if any(keyword in section_desc for keyword in ["trading", "trade", "position"]):
-            if any(word in text_lower for word in ["trade", "bought", "sold", "position", "profit", "loss", "entry", "exit", "$", "shares"]):
-                should_add_to_section = True
-        
-        # Market thoughts patterns
-        elif any(keyword in section_desc for keyword in ["market", "analysis", "trend"]):
-            if any(word in text_lower for word in ["market", "bullish", "bearish", "trend", "analysis", "outlook", "economic", "fed", "inflation"]):
-                should_add_to_section = True
-        
-        # Emotional state patterns
-        elif any(keyword in section_desc for keyword in ["mood", "emotion", "feeling", "well-being"]):
-            if any(word in text_lower for word in ["feel", "mood", "happy", "sad", "anxious", "excited", "stressed", "confident", "worried"]):
-                should_add_to_section = True
-        
-        # Strategy patterns
-        elif any(keyword in section_desc for keyword in ["strategy", "planning", "approach"]):
-            if any(word in text_lower for word in ["strategy", "plan", "approach", "thinking", "consider", "next step", "goal"]):
-                should_add_to_section = True
-        
-        # Goals patterns
-        elif any(keyword in section_desc for keyword in ["goal", "objective", "next week"]):
-            if any(word in text_lower for word in ["goal", "objective", "next week", "plan to", "want to", "will do", "tomorrow"]):
-                should_add_to_section = True
-        
-        # Gratitude patterns
-        elif any(keyword in section_desc for keyword in ["grateful", "gratitude"]):
-            if any(word in text_lower for word in ["grateful", "thankful", "appreciate", "blessed", "grateful for"]):
-                should_add_to_section = True
-        
-        # Weekly review patterns
-        elif any(keyword in section_desc for keyword in ["review", "accomplish", "progress"]):
-            if any(word in text_lower for word in ["accomplished", "completed", "finished", "did", "this week", "progress"]):
-                should_add_to_section = True
-        
-        # General reflection (fallback)
-        elif any(keyword in section_desc for keyword in ["general", "reflection", "daily"]):
-            # If no other section matched strongly, add to general
-            if not any(sections_updated):  # Only if no specific section was found
-                should_add_to_section = True
-        
-        # Add content to section if it matches
-        if should_add_to_section:
+    # Merge structured content with existing draft
+    for section_name, new_content in structured_content.items():
+        if section_name in template_sections:  # Validate section exists in template
             if section_name in current_draft:
-                # Append to existing content
+                # Merge with existing content
                 existing_content = current_draft[section_name]
-                if isinstance(existing_content, str):
-                    current_draft[section_name] = existing_content + "\n\n" + user_text
-                elif isinstance(existing_content, list):
-                    current_draft[section_name].append(user_text)
+                
+                if isinstance(new_content, list) and isinstance(existing_content, list):
+                    # Both are lists - extend
+                    current_draft[section_name] = existing_content + new_content
+                elif isinstance(new_content, list) and isinstance(existing_content, str):
+                    # New is list, existing is string - convert existing to list and extend
+                    current_draft[section_name] = [existing_content] + new_content
+                elif isinstance(new_content, str) and isinstance(existing_content, list):
+                    # New is string, existing is list - append string
+                    current_draft[section_name] = existing_content + [new_content]
                 else:
-                    current_draft[section_name] = user_text
+                    # Both are strings - concatenate
+                    current_draft[section_name] = existing_content + "\n\n" + new_content
             else:
-                # Create new content
-                current_draft[section_name] = user_text
+                # New section
+                current_draft[section_name] = new_content
             
             sections_updated.append(section_name)
-    
-    # If no specific section matched, add to general reflection
-    if not sections_updated:
-        general_section = None
-        for section_name, section_def in template_sections.items():
-            if any(keyword in section_def.get("description", "").lower() for keyword in ["general", "reflection", "open"]):
-                general_section = section_name
-                break
-        
-        if not general_section:
-            general_section = "General Reflection"
-        
-        if general_section in current_draft:
-            existing_content = current_draft[general_section]
-            if isinstance(existing_content, str):
-                current_draft[general_section] = existing_content + "\n\n" + user_text
-            else:
-                current_draft[general_section] = user_text
-        else:
-            current_draft[general_section] = user_text
-        
-        sections_updated.append(general_section)
     
     # Update the context (this will be handled by the agent service)
     ctx.current_journal_draft = current_draft
@@ -177,14 +198,16 @@ async def update_preferences_tool(
     request: UpdatePreferencesRequest
 ) -> UpdatePreferencesResponse:
     """
-    Tool to update user preferences based on conversation insights.
+    Tool to update user preferences and template settings.
     
-    This tool allows the agent to learn about user preferences and update them accordingly.
+    This tool allows users to modify their preferences and journal template sections.
+    Supports both preference updates and template modifications.
     """
     updated_fields = []
     current_prefs = ctx.user_preferences.copy()
     
     for field, value in request.preference_updates.items():
+        # Handle preference updates
         if field in ["purpose_statement", "preferred_feedback_style", "personal_glossary"]:
             current_prefs[field] = value
             updated_fields.append(field)
@@ -199,6 +222,33 @@ async def update_preferences_tool(
                 if value not in current_prefs[field]:
                     current_prefs[field].append(value)
                     updated_fields.append(field)
+        
+        # Handle template modifications
+        elif field == "template_reload":
+            # Reload template from file
+            template_loader.reload_template()
+            updated_fields.append("template_reloaded")
+        
+        elif field.startswith("template_"):
+            # Template modification requests
+            if field == "template_sections":
+                # Request to view available sections
+                sections = template_loader.get_template_sections()
+                print(f"Available template sections: {list(sections.keys())}")
+                updated_fields.append("template_sections_listed")
+            
+            elif field == "template_info":
+                # Request for template information
+                template = template_loader.get_user_template()
+                print(f"Current template: {template['name']}")
+                print(f"Sections: {len(template['sections'])}")
+                updated_fields.append("template_info_provided")
+            
+            elif field == "template_request":
+                # User requesting template changes - log for manual implementation
+                print(f"TEMPLATE CHANGE REQUEST: {value}")
+                print(f"To implement: Edit /app/templates/user_template.py and restart server")
+                updated_fields.append("template_change_requested")
     
     # Update context (this will be handled by the agent service)
     ctx.user_preferences = current_prefs
@@ -222,7 +272,7 @@ SaveJournalTool = Tool(
 
 UpdatePreferencesTool = Tool(
     update_preferences_tool,
-    description="Update user preferences based on insights from the conversation"
+    description="Update user preferences, settings, and template configuration. Can reload template, view template info, or request template changes."
 )
 
 

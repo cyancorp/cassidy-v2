@@ -1,36 +1,306 @@
 INFO:     Will watch for changes in these directories: ['/Users/cyan/code/cassidy-claudecode/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [6603] using StatReload
-INFO:     Started server process [6605]
+INFO:     Started reloader process [10281] using StatReload
+INFO:     Started server process [10283]
 INFO:     Waiting for application startup.
-2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
-2025-05-31 20:14:37,430 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("auth_sessions")
-2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_preferences")
-2025-05-31 20:14:37,431 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_templates")
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_sessions")
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_messages")
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_drafts")
-2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_entries")
-2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-05-31 20:14:37,433 INFO sqlalchemy.engine.Engine COMMIT
-2025-05-31 20:14:37,434 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-05-31 20:14:37,447 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+2025-05-31 23:54:30,297 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:30,297 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-05-31 23:54:30,297 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,298 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("auth_sessions")
+2025-05-31 23:54:30,298 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,298 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_preferences")
+2025-05-31 23:54:30,298 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_templates")
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_sessions")
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("chat_messages")
+2025-05-31 23:54:30,299 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,300 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_drafts")
+2025-05-31 23:54:30,300 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,300 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("journal_entries")
+2025-05-31 23:54:30,300 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-05-31 23:54:30,300 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:30,301 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:30,315 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
 FROM users 
 WHERE users.username = ? AND users.is_active = 1
-2025-05-31 20:14:37,447 INFO sqlalchemy.engine.Engine [generated in 0.00015s] ('user_123',)
+2025-05-31 23:54:30,315 INFO sqlalchemy.engine.Engine [generated in 0.00015s] ('user_123',)
 Sample user 'user_123' already exists
-2025-05-31 20:14:37,448 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-05-31 23:54:30,315 INFO sqlalchemy.engine.Engine ROLLBACK
 INFO:     Application startup complete.
+2025-05-31 23:54:32,746 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:32,747 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+FROM users 
+WHERE users.username = ? AND users.is_active = 1
+2025-05-31 23:54:32,747 INFO sqlalchemy.engine.Engine [cached since 2.432s ago] ('user_123',)
+2025-05-31 23:54:33,053 INFO sqlalchemy.engine.Engine INSERT INTO auth_sessions (user_id, token_hash, expires_at, is_revoked, user_agent, ip_address, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:33,053 INFO sqlalchemy.engine.Engine [generated in 0.00023s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', '5e7d2184263ca788a1ae2711644851f9522b99d8810d100bc84e3d6032cc869d', '2025-06-01 22:54:33.052417', 0, 'python-httpx/0.28.1', '127.0.0.1', '55dcd2fd-e124-4146-9a10-609c7ef777a4', '2025-05-31 22:54:33.053798', '2025-05-31 22:54:33.053801')
+2025-05-31 23:54:33,054 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:33,056 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:33,056 INFO sqlalchemy.engine.Engine SELECT auth_sessions.user_id, auth_sessions.token_hash, auth_sessions.expires_at, auth_sessions.is_revoked, auth_sessions.user_agent, auth_sessions.ip_address, auth_sessions.id, auth_sessions.created_at, auth_sessions.updated_at 
+FROM auth_sessions 
+WHERE auth_sessions.id = ?
+2025-05-31 23:54:33,056 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('55dcd2fd-e124-4146-9a10-609c7ef777a4',)
+2025-05-31 23:54:33,057 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62907 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+2025-05-31 23:54:33,059 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:33,060 INFO sqlalchemy.engine.Engine SELECT auth_sessions.user_id, auth_sessions.token_hash, auth_sessions.expires_at, auth_sessions.is_revoked, auth_sessions.user_agent, auth_sessions.ip_address, auth_sessions.id, auth_sessions.created_at, auth_sessions.updated_at 
+FROM auth_sessions 
+WHERE auth_sessions.token_hash = ? AND auth_sessions.expires_at > ? AND auth_sessions.is_revoked = 0
+2025-05-31 23:54:33,060 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('5e7d2184263ca788a1ae2711644851f9522b99d8810d100bc84e3d6032cc869d', '2025-05-31 22:54:33.059675')
+2025-05-31 23:54:33,061 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2025-05-31 23:54:33,061 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3',)
+2025-05-31 23:54:33,062 INFO sqlalchemy.engine.Engine INSERT INTO chat_sessions (user_id, conversation_type, is_active, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:33,062 INFO sqlalchemy.engine.Engine [generated in 0.00013s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', 'journaling', 1, '{}', 'b26ec74f-128d-422d-99dd-0fa6b7db1abb', '2025-05-31 22:54:33.062846', '2025-05-31 22:54:33.062848')
+2025-05-31 23:54:33,063 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:33,064 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:33,064 INFO sqlalchemy.engine.Engine SELECT chat_sessions.user_id, chat_sessions.conversation_type, chat_sessions.is_active, chat_sessions.metadata, chat_sessions.id, chat_sessions.created_at, chat_sessions.updated_at 
+FROM chat_sessions 
+WHERE chat_sessions.id = ?
+2025-05-31 23:54:33,064 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:33,065 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62907 - "POST /api/v1/sessions HTTP/1.1" 200 OK
+2025-05-31 23:54:33,066 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:33,066 INFO sqlalchemy.engine.Engine SELECT auth_sessions.user_id, auth_sessions.token_hash, auth_sessions.expires_at, auth_sessions.is_revoked, auth_sessions.user_agent, auth_sessions.ip_address, auth_sessions.id, auth_sessions.created_at, auth_sessions.updated_at 
+FROM auth_sessions 
+WHERE auth_sessions.token_hash = ? AND auth_sessions.expires_at > ? AND auth_sessions.is_revoked = 0
+2025-05-31 23:54:33,066 INFO sqlalchemy.engine.Engine [cached since 0.006817s ago] ('5e7d2184263ca788a1ae2711644851f9522b99d8810d100bc84e3d6032cc869d', '2025-05-31 22:54:33.066749')
+2025-05-31 23:54:33,067 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2025-05-31 23:54:33,067 INFO sqlalchemy.engine.Engine [cached since 0.006051s ago] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3',)
+Agent chat endpoint called with session_id: b26ec74f-128d-422d-99dd-0fa6b7db1abb, text: Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. 
+        
+        I have an important meeting with the CEO tomorrow at 2pm, and don't forget the team standup on Friday at 9am. 
+        
+        The product launch is scheduled for March 15th, and I need to prepare for the investor call next Tuesday.
+        
+        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.
+2025-05-31 23:54:33,068 INFO sqlalchemy.engine.Engine SELECT chat_sessions.user_id, chat_sessions.conversation_type, chat_sessions.is_active, chat_sessions.metadata, chat_sessions.id, chat_sessions.created_at, chat_sessions.updated_at 
+FROM chat_sessions 
+WHERE chat_sessions.id = ?
+2025-05-31 23:54:33,068 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:33,069 INFO sqlalchemy.engine.Engine SELECT user_preferences.user_id, user_preferences.purpose_statement, user_preferences.long_term_goals, user_preferences.known_challenges, user_preferences.preferred_feedback_style, user_preferences.personal_glossary, user_preferences.id, user_preferences.created_at, user_preferences.updated_at 
+FROM user_preferences 
+WHERE user_preferences.user_id = ?
+2025-05-31 23:54:33,069 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3',)
+2025-05-31 23:54:33,070 INFO sqlalchemy.engine.Engine SELECT user_templates.user_id, user_templates.name, user_templates.sections, user_templates.is_active, user_templates.id, user_templates.created_at, user_templates.updated_at 
+FROM user_templates 
+WHERE user_templates.user_id = ? AND user_templates.is_active = 1
+ LIMIT ? OFFSET ?
+2025-05-31 23:54:33,070 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', 1, 0)
+2025-05-31 23:54:33,071 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:33,071 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:33,072 INFO sqlalchemy.engine.Engine INSERT INTO journal_drafts (session_id, user_id, draft_data, is_finalized, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:33,072 INFO sqlalchemy.engine.Engine [generated in 0.00012s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb', '1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', '{}', 0, '36dbd80c-ab03-4f42-8956-4bae34b59f78', '2025-05-31 22:54:33.072372', '2025-05-31 22:54:33.072374')
+2025-05-31 23:54:33,073 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:33,073 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:33,074 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.id = ?
+2025-05-31 23:54:33,074 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('36dbd80c-ab03-4f42-8956-4bae34b59f78',)
+2025-05-31 23:54:33,074 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:33,074 INFO sqlalchemy.engine.Engine [cached since 0.003302s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Creating context with draft data: {}
+Created agent with 3 tools for conversation type: journaling
+Tools: ['structure_journal_tool', 'save_journal_tool', 'update_preferences_tool']
+Creating agent with system prompt: You are Cassidy, a journaling assistant. You MUST call tools for all journaling requests.
+
+MANDATORY...
+Tools being registered: ['structure_journal_tool', 'save_journal_tool', 'update_preferences_tool']
+Agent created successfully. Agent tools attribute: False
+2025-05-31 23:54:33,105 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.session_id = ? ORDER BY chat_messages.created_at
+2025-05-31 23:54:33,105 INFO sqlalchemy.engine.Engine [generated in 0.00014s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Retrieved 0 messages from database
+Returning 0 formatted messages
+Loaded 0 messages from history
+About to run agent with text: Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. 
+        
+        I have an important meeting with the CEO tomorrow at 2pm, and don't forget the team standup on Friday at 9am. 
+        
+        The product launch is scheduled for March 15th, and I need to prepare for the investor call next Tuesday.
+        
+        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.
+Context: user_id='1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3' session_id='b26ec74f-128d-422d-99dd-0fa6b7db1abb' conversation_type='journaling' user_template={'name': 'Default Template', 'sections': {'General Reflection': {'description': 'General thoughts, daily reflections, or free-form journaling content', 'aliases': ['Daily Notes', 'Journal', 'Reflection', 'General']}, 'Daily Events': {'description': 'Significant events, activities, or experiences from the day', 'aliases': ['Events', 'Activities', 'What Happened']}, 'Thoughts & Feelings': {'description': 'Emotional state, mood, thoughts, and internal experiences', 'aliases': ['Emotions', 'Mood', 'Feelings', 'Thoughts']}}} user_preferences={'purpose_statement': None, 'long_term_goals': [], 'known_challenges': [], 'preferred_feedback_style': 'supportive', 'personal_glossary': {}} current_journal_draft={}
+Agent tools: No tools attr
+Message history format: Empty
+Running agent with 0 messages in history
+StructureJournalTool called with text: Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. 
+        
+        I have an important meeting with the CEO tomorrow at 2pm, and don't forget the team standup on Friday at 9am. 
+        
+        The product launch is scheduled for March 15th, and I need to prepare for the investor call next Tuesday.
+        
+        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.
+LLM analysis output: {
+  "Things Done": [
+    "completed my quarterly review presentation",
+    "finished the client proposal for ABC Corp.",
+    "called mom for her birthday",
+    "helped my neighbor fix their computer"
+  ],
+  "Events": [
+    "important meeting with the CEO tomorrow at 2pm",
+    "team standup on Friday at 9am",
+    "product launch scheduled for March 15th",
+    "investor call next Tuesday"
+  ],
+  "General Reflection": "Feeling productive and grateful for a good day."
+}
+Agent run completed successfully
+Result has tool calls: False
+Result type: <class 'pydantic_ai.agent.AgentRunResult'>
+Result attributes: ['__annotations__', '__class__', '__class_getitem__', '__dataclass_fields__', '__dataclass_params__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__firstlineno__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__match_args__', '__module__', '__ne__', '__new__', '__orig_bases__', '__parameters__', '__reduce__', '__reduce_ex__', '__replace__', '__repr__', '__setattr__', '__sizeof__', '__static_attributes__', '__str__', '__subclasshook__', '__weakref__', '_new_message_index', '_output_tool_name', '_set_output_tool_return', '_state', '_traceparent', '_traceparent_value', 'all_messages', 'all_messages_json', 'data', 'new_messages', 'new_messages_json', 'output', 'usage']
+About to save user message
+2025-05-31 23:54:47,501 INFO sqlalchemy.engine.Engine INSERT INTO chat_messages (session_id, role, content, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:47,501 INFO sqlalchemy.engine.Engine [generated in 0.00035s] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb', 'user', "Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. \n        \n        I have an important meeting wit ... (200 characters truncated) ... day.\n        \n        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.", '{}', '7fbcf5bd-9ae0-4150-a1b0-ef0f22844eba', '2025-05-31 22:54:47.500948', '2025-05-31 22:54:47.500953')
+2025-05-31 23:54:47,502 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:47,503 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:47,504 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.id = ?
+2025-05-31 23:54:47,504 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('7fbcf5bd-9ae0-4150-a1b0-ef0f22844eba',)
+About to save assistant message
+2025-05-31 23:54:47,504 INFO sqlalchemy.engine.Engine INSERT INTO chat_messages (session_id, role, content, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:47,505 INFO sqlalchemy.engine.Engine [cached since 0.004193s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb', 'assistant', "I've organized your journal entry! Here's how I've structured your productive day:\n\n**Things Done:**\n- Completed your quarterly review presentatio ... (361 characters truncated) ... for a good day.\n\nWould you like to add anything else to your journal entry? Or if you're happy with it, just let me know and I can save it for you.", '{"tool_calls": 2}', '61ed6681-99a3-4117-bf2d-281d8553cb3f', '2025-05-31 22:54:47.504925', '2025-05-31 22:54:47.504927')
+2025-05-31 23:54:47,505 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:47,506 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:47,506 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.id = ?
+2025-05-31 23:54:47,506 INFO sqlalchemy.engine.Engine [cached since 0.002256s ago] ('61ed6681-99a3-4117-bf2d-281d8553cb3f',)
+Processing structure_journal_tool call
+Tool call output: sections_updated=['Things Done', 'Events', 'General Reflection'] updated_draft_data={'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'} status='success'
+Updated draft from tool: {'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'}
+2025-05-31 23:54:47,507 INFO sqlalchemy.engine.Engine UPDATE journal_drafts SET draft_data=?, updated_at=? WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:47,507 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('{"Things Done": ["completed my quarterly review presentation", "finished the client proposal for ABC Corp.", "called mom for her birthday", "helped m ... (124 characters truncated) ... ", "product launch scheduled for March 15th", "investor call next Tuesday"], "General Reflection": "Feeling productive and grateful for a good day."}', '2025-05-31 22:54:47.506735', 'b26ec74f-128d-422d-99dd-0fa6b7db1abb')
+2025-05-31 23:54:47,508 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:47,508 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:47,509 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:47,509 INFO sqlalchemy.engine.Engine [cached since 14.44s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:47,509 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62907 - "POST /api/v1/agent/chat/b26ec74f-128d-422d-99dd-0fa6b7db1abb HTTP/1.1" 200 OK
+2025-05-31 23:54:47,511 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:47,511 INFO sqlalchemy.engine.Engine SELECT auth_sessions.user_id, auth_sessions.token_hash, auth_sessions.expires_at, auth_sessions.is_revoked, auth_sessions.user_agent, auth_sessions.ip_address, auth_sessions.id, auth_sessions.created_at, auth_sessions.updated_at 
+FROM auth_sessions 
+WHERE auth_sessions.token_hash = ? AND auth_sessions.expires_at > ? AND auth_sessions.is_revoked = 0
+2025-05-31 23:54:47,511 INFO sqlalchemy.engine.Engine [cached since 14.45s ago] ('5e7d2184263ca788a1ae2711644851f9522b99d8810d100bc84e3d6032cc869d', '2025-05-31 22:54:47.511669')
+2025-05-31 23:54:47,512 INFO sqlalchemy.engine.Engine SELECT users.username, users.email, users.password_hash, users.is_verified, users.is_active, users.id, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2025-05-31 23:54:47,512 INFO sqlalchemy.engine.Engine [cached since 14.45s ago] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3',)
+Agent chat endpoint called with session_id: b26ec74f-128d-422d-99dd-0fa6b7db1abb, text: Please save this journal entry
+2025-05-31 23:54:47,513 INFO sqlalchemy.engine.Engine SELECT chat_sessions.user_id, chat_sessions.conversation_type, chat_sessions.is_active, chat_sessions.metadata, chat_sessions.id, chat_sessions.created_at, chat_sessions.updated_at 
+FROM chat_sessions 
+WHERE chat_sessions.id = ?
+2025-05-31 23:54:47,513 INFO sqlalchemy.engine.Engine [cached since 14.45s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:47,514 INFO sqlalchemy.engine.Engine SELECT user_preferences.user_id, user_preferences.purpose_statement, user_preferences.long_term_goals, user_preferences.known_challenges, user_preferences.preferred_feedback_style, user_preferences.personal_glossary, user_preferences.id, user_preferences.created_at, user_preferences.updated_at 
+FROM user_preferences 
+WHERE user_preferences.user_id = ?
+2025-05-31 23:54:47,514 INFO sqlalchemy.engine.Engine [cached since 14.44s ago] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3',)
+2025-05-31 23:54:47,514 INFO sqlalchemy.engine.Engine SELECT user_templates.user_id, user_templates.name, user_templates.sections, user_templates.is_active, user_templates.id, user_templates.created_at, user_templates.updated_at 
+FROM user_templates 
+WHERE user_templates.user_id = ? AND user_templates.is_active = 1
+ LIMIT ? OFFSET ?
+2025-05-31 23:54:47,514 INFO sqlalchemy.engine.Engine [cached since 14.44s ago] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', 1, 0)
+2025-05-31 23:54:47,515 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:47,515 INFO sqlalchemy.engine.Engine [cached since 14.44s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+2025-05-31 23:54:47,515 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:47,515 INFO sqlalchemy.engine.Engine [cached since 14.44s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Creating context with draft data: {'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'}
+Created agent with 3 tools for conversation type: journaling
+Tools: ['structure_journal_tool', 'save_journal_tool', 'update_preferences_tool']
+Creating agent with system prompt: You are Cassidy, a journaling assistant. You MUST call tools for all journaling requests.
+
+MANDATORY...
+Tools being registered: ['structure_journal_tool', 'save_journal_tool', 'update_preferences_tool']
+Agent created successfully. Agent tools attribute: False
+2025-05-31 23:54:47,516 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.session_id = ? ORDER BY chat_messages.created_at
+2025-05-31 23:54:47,516 INFO sqlalchemy.engine.Engine [cached since 14.41s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Retrieved 2 messages from database
+Formatted message: ModelRequest(parts=[UserPromptPart(content="Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. \n        \n        I have an important meeting with the CEO tomorrow at 2pm, and don't forget the team standup on Friday at 9am. \n        \n        The product launch is scheduled for March 15th, and I need to prepare for the investor call next Tuesday.\n        \n        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.", timestamp=datetime.datetime(2025, 5, 31, 22, 54, 47, 516787, tzinfo=datetime.timezone.utc))])
+Formatted message: ModelResponse(parts=[TextPart(content="I've organized your journal entry! Here's how I've structured your productive day:\n\n**Things Done:**\n- Completed your quarterly review presentation\n- Finished the client proposal for ABC Corp\n- Called mom for her birthday\n- Helped your neighbor fix their computer\n\n**Upcoming Events:**\n- Important meeting with the CEO tomorrow at 2pm\n- Team standup on Friday at 9am\n- Product launch scheduled for March 15th\n- Investor call next Tuesday\n\n**General Reflection:**\nFeeling productive and grateful for a good day.\n\nWould you like to add anything else to your journal entry? Or if you're happy with it, just let me know and I can save it for you.")], usage=Usage(), timestamp=datetime.datetime(2025, 5, 31, 22, 54, 47, 516828, tzinfo=datetime.timezone.utc))
+Returning 2 formatted messages
+Loaded 2 messages from history
+About to run agent with text: Please save this journal entry
+Context: user_id='1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3' session_id='b26ec74f-128d-422d-99dd-0fa6b7db1abb' conversation_type='journaling' user_template={'name': 'Default Template', 'sections': {'General Reflection': {'description': 'General thoughts, daily reflections, or free-form journaling content', 'aliases': ['Daily Notes', 'Journal', 'Reflection', 'General']}, 'Daily Events': {'description': 'Significant events, activities, or experiences from the day', 'aliases': ['Events', 'Activities', 'What Happened']}, 'Thoughts & Feelings': {'description': 'Emotional state, mood, thoughts, and internal experiences', 'aliases': ['Emotions', 'Mood', 'Feelings', 'Thoughts']}}} user_preferences={'purpose_statement': None, 'long_term_goals': [], 'known_challenges': [], 'preferred_feedback_style': 'supportive', 'personal_glossary': {}} current_journal_draft={'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'}
+Agent tools: No tools attr
+Message history format: [ModelRequest(parts=[UserPromptPart(content="Today I completed my quarterly review presentation and finished the client proposal for ABC Corp. \n        \n        I have an important meeting with the CEO tomorrow at 2pm, and don't forget the team standup on Friday at 9am. \n        \n        The product launch is scheduled for March 15th, and I need to prepare for the investor call next Tuesday.\n        \n        I also called mom for her birthday and helped my neighbor fix their computer. Feeling productive and grateful for a good day.", timestamp=datetime.datetime(2025, 5, 31, 22, 54, 47, 516787, tzinfo=datetime.timezone.utc))])]
+Running agent with 2 messages in history
+SaveJournalTool called with confirmation: True
+Current draft data from context: {}
+Agent run completed successfully
+Result has tool calls: False
+Result type: <class 'pydantic_ai.agent.AgentRunResult'>
+Result attributes: ['__annotations__', '__class__', '__class_getitem__', '__dataclass_fields__', '__dataclass_params__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__firstlineno__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__match_args__', '__module__', '__ne__', '__new__', '__orig_bases__', '__parameters__', '__reduce__', '__reduce_ex__', '__replace__', '__repr__', '__setattr__', '__sizeof__', '__static_attributes__', '__str__', '__subclasshook__', '__weakref__', '_new_message_index', '_output_tool_name', '_set_output_tool_return', '_state', '_traceparent', '_traceparent_value', 'all_messages', 'all_messages_json', 'data', 'new_messages', 'new_messages_json', 'output', 'usage']
+About to save user message
+2025-05-31 23:54:55,909 INFO sqlalchemy.engine.Engine INSERT INTO chat_messages (session_id, role, content, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:55,909 INFO sqlalchemy.engine.Engine [cached since 8.409s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb', 'user', 'Please save this journal entry', '{}', '90b110e5-e12e-4190-9dcd-e2a02baec2b8', '2025-05-31 22:54:55.909603', '2025-05-31 22:54:55.909605')
+2025-05-31 23:54:55,910 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:55,911 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:55,911 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.id = ?
+2025-05-31 23:54:55,911 INFO sqlalchemy.engine.Engine [cached since 8.408s ago] ('90b110e5-e12e-4190-9dcd-e2a02baec2b8',)
+About to save assistant message
+2025-05-31 23:54:55,912 INFO sqlalchemy.engine.Engine INSERT INTO chat_messages (session_id, role, content, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:55,912 INFO sqlalchemy.engine.Engine [cached since 8.411s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb', 'assistant', "Your journal entry has been successfully saved! Your productive day has been documented with all your accomplishments and upcoming events. Is there anything else you'd like to journal about or any other way I can assist you today?", '{"tool_calls": 2}', 'b2648b30-da4f-47c9-9243-2bf3e4a53094', '2025-05-31 22:54:55.912150', '2025-05-31 22:54:55.912151')
+2025-05-31 23:54:55,912 INFO sqlalchemy.engine.Engine COMMIT
+2025-05-31 23:54:55,913 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:55,913 INFO sqlalchemy.engine.Engine SELECT chat_messages.session_id, chat_messages.role, chat_messages.content, chat_messages.metadata, chat_messages.id, chat_messages.created_at, chat_messages.updated_at 
+FROM chat_messages 
+WHERE chat_messages.id = ?
+2025-05-31 23:54:55,913 INFO sqlalchemy.engine.Engine [cached since 8.41s ago] ('b2648b30-da4f-47c9-9243-2bf3e4a53094',)
+Processing save_journal_tool call
+Save tool output: journal_entry_id='095f30f8-bc5c-4ca1-9f17-b862a0b912d0' status='success'
+2025-05-31 23:54:55,914 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:55,914 INFO sqlalchemy.engine.Engine [cached since 22.84s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Latest draft from DB: {'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'}
+Starting finalize_draft for session: b26ec74f-128d-422d-99dd-0fa6b7db1abb
+2025-05-31 23:54:55,914 INFO sqlalchemy.engine.Engine SELECT journal_drafts.session_id, journal_drafts.user_id, journal_drafts.draft_data, journal_drafts.is_finalized, journal_drafts.id, journal_drafts.created_at, journal_drafts.updated_at 
+FROM journal_drafts 
+WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:55,914 INFO sqlalchemy.engine.Engine [cached since 22.84s ago] ('b26ec74f-128d-422d-99dd-0fa6b7db1abb',)
+Found draft: {'Things Done': ['completed my quarterly review presentation', 'finished the client proposal for ABC Corp.', 'called mom for her birthday', 'helped my neighbor fix their computer'], 'Events': ['important meeting with the CEO tomorrow at 2pm', 'team standup on Friday at 9am', 'product launch scheduled for March 15th', 'investor call next Tuesday'], 'General Reflection': 'Feeling productive and grateful for a good day.'}
+Created journal entry object: completed my quarterly review presentation
+Marking draft as finalized...
+2025-05-31 23:54:55,915 INFO sqlalchemy.engine.Engine INSERT INTO journal_entries (user_id, session_id, title, structured_data, metadata, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+2025-05-31 23:54:55,915 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ('1ad5ee8b-0ded-44ec-bc2c-8c918ff70fc3', 'b26ec74f-128d-422d-99dd-0fa6b7db1abb', 'completed my quarterly review presentation', '{"Things Done": ["completed my quarterly review presentation", "finished the client proposal for ABC Corp.", "called mom for her birthday", "helped m ... (124 characters truncated) ... ", "product launch scheduled for March 15th", "investor call next Tuesday"], "General Reflection": "Feeling productive and grateful for a good day."}', '{}', '29492236-14c8-4c8f-9ec9-9bab94c2b8a6', '2025-05-31 22:54:55.915874', '2025-05-31 22:54:55.915876')
+2025-05-31 23:54:55,916 INFO sqlalchemy.engine.Engine UPDATE journal_drafts SET is_finalized=?, updated_at=? WHERE journal_drafts.session_id = ?
+2025-05-31 23:54:55,916 INFO sqlalchemy.engine.Engine [generated in 0.00009s] (1, '2025-05-31 22:54:55.915212', 'b26ec74f-128d-422d-99dd-0fa6b7db1abb')
+Committing transaction...
+2025-05-31 23:54:55,917 INFO sqlalchemy.engine.Engine COMMIT
+Transaction committed successfully
+2025-05-31 23:54:55,918 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-05-31 23:54:55,918 INFO sqlalchemy.engine.Engine SELECT journal_entries.user_id, journal_entries.session_id, journal_entries.title, journal_entries.structured_data, journal_entries.metadata, journal_entries.id, journal_entries.created_at, journal_entries.updated_at 
+FROM journal_entries 
+WHERE journal_entries.id = ?
+2025-05-31 23:54:55,918 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('29492236-14c8-4c8f-9ec9-9bab94c2b8a6',)
+Entry refreshed, ID: 29492236-14c8-4c8f-9ec9-9bab94c2b8a6
+Journal entry created: 29492236-14c8-4c8f-9ec9-9bab94c2b8a6
+2025-05-31 23:54:55,919 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62907 - "POST /api/v1/agent/chat/b26ec74f-128d-422d-99dd-0fa6b7db1abb HTTP/1.1" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [6605]
-INFO:     Stopping reloader process [6603]
+INFO:     Finished server process [10283]
+INFO:     Stopping reloader process [10281]

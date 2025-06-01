@@ -1,0 +1,1 @@
+# Template system for customizable journal sections
