@@ -336,4 +336,35 @@ $RECYCLE.BIN/
 
 # Application specific
 server.log
-*.log 
+*.log
+
+# AWS CDK
+cdk.out/
+infrastructure/cdk.out/
+infrastructure/node_modules/
+infrastructure/venv/
+infrastructure/cdk.context.json
+
+# Lambda deployment artifacts
+backend/lambda_deploy_slim/
+backend/lambda_slim.zip
+
+# Docker
+backend/.dockerignore
+
+# Sessions and test data
+sessions/
+
+# AWS deployment artifacts
+*.zip
+
+# Infrastructure build outputs
+infrastructure/*/node_modules/
+
+# Scripts and docs generated during deployment
+scripts/
+docs/
+
+# Lambda function files (keep only the main one)
+backend/lambda_*.py
+!backend/lambda_function.py
