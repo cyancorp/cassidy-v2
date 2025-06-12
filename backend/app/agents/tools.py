@@ -13,7 +13,7 @@ from app.templates.loader import template_loader
 
 async def structure_journal_tool(
     ctx: CassidyAgentDependencies,
-    request: StructureJournalRequest
+    user_text: str
 ) -> StructureJournalResponse:
     """
     Tool to structure user input into journal template sections using LLM analysis.
@@ -21,8 +21,8 @@ async def structure_journal_tool(
     This tool uses an LLM to intelligently analyze the user's text and map it to 
     appropriate sections in their personal journal template.
     """
-    print(f"StructureJournalTool called with text: {request.user_text}")
-    user_text = request.user_text.strip()
+    print(f"StructureJournalTool called with text: {user_text}")
+    user_text = user_text.strip()
     if not user_text:
         return StructureJournalResponse(sections_updated=[], status="no_content")
     
@@ -134,31 +134,61 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
     current_draft = ctx.current_journal_draft.copy()
     sections_updated = []
     
+    # Normalize section names to match template (handle case variations)
+    def normalize_section_name(name: str, template_sections: dict) -> str:
+        """Normalize section name to match template format"""
+        # Direct match
+        if name in template_sections:
+            return name
+            
+        # Case-insensitive match
+        for template_name in template_sections:
+            if name.lower() == template_name.lower():
+                return template_name
+                
+        # Check aliases
+        for template_name, section_def in template_sections.items():
+            if name.lower() in [alias.lower() for alias in section_def.aliases]:
+                return template_name
+                
+        # Convert snake_case to proper case
+        if "_" in name:
+            words = name.split("_")
+            proper_case = " ".join(word.capitalize() for word in words)
+            for template_name in template_sections:
+                if proper_case == template_name:
+                    return template_name
+        
+        return name  # Return original if no match found
+    
     # Merge structured content with existing draft
     for section_name, new_content in structured_content.items():
+        # Normalize section name to match template
+        normalized_name = normalize_section_name(section_name, template_sections)
+        
         # Validate section exists in template, or allow "General Reflection" as default fallback
-        if section_name in template_sections or (not template_sections and section_name == "General Reflection"):
-            if section_name in current_draft:
+        if normalized_name in template_sections or (not template_sections and normalized_name == "General Reflection"):
+            if normalized_name in current_draft:
                 # Merge with existing content
-                existing_content = current_draft[section_name]
+                existing_content = current_draft[normalized_name]
                 
                 if isinstance(new_content, list) and isinstance(existing_content, list):
                     # Both are lists - extend
-                    current_draft[section_name] = existing_content + new_content
+                    current_draft[normalized_name] = existing_content + new_content
                 elif isinstance(new_content, list) and isinstance(existing_content, str):
                     # New is list, existing is string - convert existing to list and extend
-                    current_draft[section_name] = [existing_content] + new_content
+                    current_draft[normalized_name] = [existing_content] + new_content
                 elif isinstance(new_content, str) and isinstance(existing_content, list):
                     # New is string, existing is list - append string
-                    current_draft[section_name] = existing_content + [new_content]
+                    current_draft[normalized_name] = existing_content + [new_content]
                 else:
                     # Both are strings - concatenate
-                    current_draft[section_name] = existing_content + "\n\n" + new_content
+                    current_draft[normalized_name] = existing_content + "\n\n" + new_content
             else:
                 # New section
-                current_draft[section_name] = new_content
+                current_draft[normalized_name] = new_content
             
-            sections_updated.append(section_name)
+            sections_updated.append(normalized_name)
     
     # Update the context (this will be handled by the agent service)
     ctx.current_journal_draft = current_draft
@@ -172,38 +202,35 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
 
 async def save_journal_tool(
     ctx: CassidyAgentDependencies,
-    request: SaveJournalRequest
+    confirmation: bool = True
 ) -> SaveJournalResponse:
     """
     Tool to save/finalize the current journal draft into a permanent journal entry.
     
     This tool should only be called when the user explicitly requests to save their journal.
     """
-    print(f"SaveJournalTool called with confirmation: {request.confirmation}")
+    print(f"SaveJournalTool called with confirmation: {confirmation}")
     print(f"Current draft data from context: {ctx.current_journal_draft}")
     
-    if not request.confirmation:
+    if not confirmation:
         return SaveJournalResponse(journal_entry_id="", status="cancelled")
     
     # Note: We'll check the actual draft content in the agent service
     # since the context might not have the latest data from the database
     # For now, we'll assume there is content to save and let the service handle validation
     
-    # Generate a journal entry ID
-    import uuid
-    journal_entry_id = str(uuid.uuid4())
-    
     # The actual saving will be handled by the agent service
+    # Don't generate ID here - let the database handle it
     # Return success - the agent service will check if there's actually content to save
     return SaveJournalResponse(
-        journal_entry_id=journal_entry_id,
+        journal_entry_id="pending",  # Will be set after database save
         status="success"
     )
 
 
 async def update_preferences_tool(
     ctx: CassidyAgentDependencies,
-    request: UpdatePreferencesRequest
+    preference_updates: Dict[str, Any]
 ) -> UpdatePreferencesResponse:
     """
     Tool to intelligently update user preferences and template settings from natural language.
@@ -213,28 +240,27 @@ async def update_preferences_tool(
     """
     print(f"TOOL: update_preferences_tool called!")
     print(f"TOOL: Context user_id: '{ctx.user_id}'")
-    print(f"TOOL: Request received: {request}")
-    print(f"TOOL: preference_updates: {request.preference_updates}")
+    print(f"TOOL: preference_updates: {preference_updates}")
     
     # WORKAROUND: Get user_id from request if context is wrong
-    request_user_id = request.preference_updates.get("user_id", "")
+    request_user_id = preference_updates.get("user_id", "")
     actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.user_id
     print(f"TOOL: Using user_id: '{actual_user_id}' (context: '{ctx.user_id}', request: '{request_user_id}')")
     
     # Extract the user text that might contain preference updates  
     # The agent should pass the user's conversational text in preference_updates["user_text"]
-    user_text = request.preference_updates.get("user_text", "")
+    user_text = preference_updates.get("user_text", "")
     
     # If no user_text provided, try to extract from other string values
     if not user_text.strip():
-        text_values = [str(v) for v in request.preference_updates.values() if isinstance(v, str) and v.strip()]
+        text_values = [str(v) for v in preference_updates.values() if isinstance(v, str) and v.strip()]
         user_text = " ".join(text_values)
         print(f"TOOL: Extracted user_text from other values: '{user_text}'")
     
     if not user_text.strip():
         print(f"TOOL: No user_text found, falling back to legacy behavior")
         # Fallback to old behavior for direct API calls
-        return await _legacy_update_preferences(ctx, request)
+        return await _legacy_update_preferences(ctx, preference_updates)
     
     print(f"UpdatePreferencesTool analyzing: {user_text}")
     
@@ -430,12 +456,12 @@ JSON Output (only include fields that should be updated):"""
     )
 
 
-async def _legacy_update_preferences(ctx: CassidyAgentDependencies, request: UpdatePreferencesRequest) -> UpdatePreferencesResponse:
+async def _legacy_update_preferences(ctx: CassidyAgentDependencies, preference_updates: Dict[str, Any]) -> UpdatePreferencesResponse:
     """Legacy direct preference updates for API calls"""
     updated_fields = []
     current_prefs = ctx.user_preferences.copy()
     
-    for field, value in request.preference_updates.items():
+    for field, value in preference_updates.items():
         if field in ["purpose_statement", "preferred_feedback_style", "personal_glossary"]:
             current_prefs[field] = value
             updated_fields.append(field)

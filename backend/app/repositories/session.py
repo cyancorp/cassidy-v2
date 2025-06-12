@@ -136,11 +136,17 @@ class JournalDraftRepository(BaseRepository[JournalDraftDB]):
         """Finalize draft into journal entry"""
         print(f"Starting finalize_draft for session: {session_id}")
         
+        # Allow multiple journal entries per session - don't check for existing entries
+        # This enables creating multiple journal entries in the same chat session
+        
         # Get the draft
         draft = await self.get_by_session_id(db, session_id)
         if not draft or not draft.draft_data:
             print(f"No draft found or empty data: {draft}")
             return None
+        
+        # Create a new journal entry even if draft was previously finalized
+        # This allows multiple entries per session
         
         print(f"Found draft: {draft.draft_data}")
         
@@ -158,12 +164,16 @@ class JournalDraftRepository(BaseRepository[JournalDraftDB]):
         print(f"Created journal entry object: {entry.title}")
         db.add(entry)
         
-        # Mark draft as finalized
-        print("Marking draft as finalized...")
+        # Clear draft data to allow new entries in the same session
+        print("Clearing draft data for new entries...")
         await db.execute(
             update(JournalDraftDB)
             .where(JournalDraftDB.session_id == session_id)
-            .values(is_finalized=True, updated_at=datetime.utcnow())
+            .values(
+                draft_data={},  # Clear the draft content
+                is_finalized=False,  # Allow new content to be added
+                updated_at=datetime.utcnow()
+            )
         )
         
         print("Committing transaction...")
