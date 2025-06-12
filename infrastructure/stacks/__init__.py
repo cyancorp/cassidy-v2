@@ -1,1 +1,0 @@
-# CDK Stacks for Cassidy AI

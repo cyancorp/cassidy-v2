@@ -368,3 +368,29 @@ docs/
 # Lambda function files (keep only the main one)
 backend/lambda_*.py
 !backend/lambda_function.py
+
+# React Native / Mobile
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+
+# iOS
+mobile/ios/build/
+mobile/ios/Pods/
+mobile/ios/*.xcodeproj/xcuserdata
+mobile/ios/*.xcworkspace/xcuserdata
+
+# Android
+mobile/android/build/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/*.iml
+mobile/android/.idea/
+
+# Metro
+mobile/.metro-health-check*
+mobile/.metro-cache/
+
+# Mobile test coverage
+mobile/coverage/
