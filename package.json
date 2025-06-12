@@ -1,0 +1,28 @@
+{
+  "name": "cassidy-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cassidy AI Journaling Assistant - Monorepo",
+  "workspaces": [
+    "frontend",
+    "mobile"
+  ],
+  "scripts": {
+    "dev:backend": "cd backend && uvicorn app.main:app --reload",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:mobile": "cd mobile && npm start",
+    "test:backend": "cd backend && pytest",
+    "test:frontend": "cd frontend && npm test",
+    "test:mobile": "cd mobile && npm test",
+    "test:all": "npm run test:backend && npm run test:frontend && npm run test:mobile",
+    "deploy": "cd infrastructure && cdk deploy",
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && find . -name '__pycache__' -type d -prune -exec rm -rf '{}' +"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
