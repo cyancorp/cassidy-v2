@@ -135,6 +135,8 @@ class AgentService:
                         if journal_entry:
                             response_data["metadata"]["journal_entry_id"] = journal_entry.id
                             print(f"Journal entry created: {journal_entry.id}")
+                            # Clear the context to allow new journal entries
+                            context.current_journal_draft = {}
                     else:
                         print(f"No content to save - draft is empty")
             

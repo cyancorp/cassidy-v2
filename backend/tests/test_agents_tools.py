@@ -3,12 +3,7 @@ import pytest
 import json
 from unittest.mock import AsyncMock, patch, MagicMock
 from app.agents.tools import structure_journal_tool, save_journal_tool, update_preferences_tool
-from app.agents.models import (
-    CassidyAgentDependencies,
-    StructureJournalRequest, 
-    SaveJournalRequest,
-    UpdatePreferencesRequest
-)
+from app.agents.models import CassidyAgentDependencies
 
 
 class TestStructureJournalTool:
@@ -51,9 +46,7 @@ class TestStructureJournalTool:
     @pytest.mark.asyncio
     async def test_empty_text_input(self, mock_context):
         """Test handling of empty text input"""
-        request = StructureJournalRequest(user_text="")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "")
         
         assert result.status == "no_content"
         assert result.sections_updated == []
@@ -61,9 +54,7 @@ class TestStructureJournalTool:
     @pytest.mark.asyncio
     async def test_whitespace_only_input(self, mock_context):
         """Test handling of whitespace-only input"""
-        request = StructureJournalRequest(user_text="   \n\t  ")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "   \n\t  ")
         
         assert result.status == "no_content"
         assert result.sections_updated == []
@@ -79,9 +70,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Today was a good day with positive feelings.")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Today was a good day with positive feelings.")
         
         assert result.status == "success"
         assert result.sections_updated == ["General Reflection"]
@@ -107,9 +96,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Complex multi-section content")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Complex multi-section content")
         
         assert result.status == "success"
         assert set(result.sections_updated) == {"Daily Events", "Thoughts & Feelings"}
@@ -131,9 +118,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Test content")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Test content")
         
         assert result.status == "success"
         assert result.updated_draft_data == {"General Reflection": "Test content"}
@@ -154,9 +139,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="New content")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "New content")
         
         assert result.status == "success"
         assert result.updated_draft_data["General Reflection"] == "Existing content\n\nNew content"
@@ -177,9 +160,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="More events")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "More events")
         
         assert result.status == "success"
         assert result.updated_draft_data["Daily Events"] == ["Event 1", "Event 2", "Event 3", "Event 4"]
@@ -200,9 +181,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Multiple events")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Multiple events")
         
         assert result.status == "success"
         assert result.updated_draft_data["Daily Events"] == ["Single event", "Event 1", "Event 2"]
@@ -223,9 +202,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Single event")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Single event")
         
         assert result.status == "success"
         assert result.updated_draft_data["Daily Events"] == ["Event 1", "Event 2", "New single event"]
@@ -245,9 +222,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Test content")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Test content")
         
         assert result.status == "success"
         assert set(result.sections_updated) == {"General Reflection", "Daily Events"}
@@ -266,9 +241,7 @@ class TestStructureJournalTool:
         mock_agent.run.return_value = mock_result
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Test content that should fall back")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Test content that should fall back")
         
         assert result.status == "success"
         assert result.sections_updated == ["General Reflection"]
@@ -285,9 +258,7 @@ class TestStructureJournalTool:
         mock_agent.run.side_effect = Exception("LLM service unavailable")
         mock_agent_class.return_value = mock_agent
         
-        request = StructureJournalRequest(user_text="Test content with LLM failure")
-        
-        result = await structure_journal_tool(mock_context, request)
+        result = await structure_journal_tool(mock_context, "Test content with LLM failure")
         
         assert result.status == "success"
         assert result.sections_updated == ["General Reflection"]
@@ -319,8 +290,7 @@ class TestStructureJournalTool:
             mock_agent.run.return_value = mock_result
             mock_agent_class.return_value = mock_agent
             
-            request = StructureJournalRequest(user_text="Test content")
-            result = await structure_journal_tool(context, request)
+            result = await structure_journal_tool(context, "Test content")
             
             assert result.status == "success"
             assert result.sections_updated == ["General Reflection"]
@@ -346,9 +316,7 @@ class TestSaveJournalTool:
     @pytest.mark.asyncio
     async def test_save_with_confirmation_true(self, mock_context):
         """Test saving journal with confirmation=True"""
-        request = SaveJournalRequest(confirmation=True)
-        
-        result = await save_journal_tool(mock_context, request)
+        result = await save_journal_tool(mock_context, confirmation=True)
         
         assert result.status == "success"
         assert result.journal_entry_id is not None
@@ -357,9 +325,7 @@ class TestSaveJournalTool:
     @pytest.mark.asyncio
     async def test_save_with_confirmation_false(self, mock_context):
         """Test saving journal with confirmation=False"""
-        request = SaveJournalRequest(confirmation=False)
-        
-        result = await save_journal_tool(mock_context, request)
+        result = await save_journal_tool(mock_context, confirmation=False)
         
         assert result.status == "cancelled"
         assert result.journal_entry_id == ""
@@ -367,10 +333,8 @@ class TestSaveJournalTool:
     @pytest.mark.asyncio
     async def test_save_generates_unique_ids(self, mock_context):
         """Test that multiple saves generate unique IDs"""
-        request = SaveJournalRequest(confirmation=True)
-        
-        result1 = await save_journal_tool(mock_context, request)
-        result2 = await save_journal_tool(mock_context, request)
+        result1 = await save_journal_tool(mock_context, confirmation=True)
+        result2 = await save_journal_tool(mock_context, confirmation=True)
         
         assert result1.journal_entry_id != result2.journal_entry_id
         assert len(result1.journal_entry_id) > 0
@@ -416,14 +380,10 @@ class TestUpdatePreferencesTool:
             mock_session_maker.return_value.__aenter__.return_value = mock_db
             mock_session_maker.return_value.__aexit__.return_value = None
             
-            request = UpdatePreferencesRequest(
-                preference_updates={
-                    "purpose_statement": "New purpose statement",
-                    "preferred_feedback_style": "detailed"
-                }
-            )
-            
-            result = await update_preferences_tool(mock_context, request)
+            result = await update_preferences_tool(mock_context, {
+                "purpose_statement": "New purpose statement",
+                "preferred_feedback_style": "detailed"
+            })
             
             assert result.status == "success"
             assert set(result.updated_fields) == {"purpose_statement", "preferred_feedback_style"}
@@ -433,14 +393,10 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_update_list_fields_replace(self, mock_context):
         """Test updating list fields by replacement"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "long_term_goals": ["New Goal 1", "New Goal 2"],
-                "known_challenges": ["New Challenge"]
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
+        result = await update_preferences_tool(mock_context, {
+            "long_term_goals": ["New Goal 1", "New Goal 2"],
+            "known_challenges": ["New Challenge"]
+        })
         
         assert result.status == "success"
         assert set(result.updated_fields) == {"long_term_goals", "known_challenges"}
@@ -465,14 +421,10 @@ class TestUpdatePreferencesTool:
             mock_session_maker.return_value.__aenter__.return_value = mock_db
             mock_session_maker.return_value.__aexit__.return_value = None
             
-            request = UpdatePreferencesRequest(
-                preference_updates={
-                    "long_term_goals": "Goal 2",  # String instead of list
-                    "known_challenges": "Challenge 2"
-                }
-            )
-            
-            result = await update_preferences_tool(mock_context, request)
+            result = await update_preferences_tool(mock_context, {
+                "long_term_goals": "Goal 2",  # String instead of list
+                "known_challenges": "Challenge 2"
+            })
             
             assert result.status == "success"
             assert set(result.updated_fields) == {"long_term_goals", "known_challenges"}
@@ -482,13 +434,9 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_update_list_fields_append_duplicate(self, mock_context):
         """Test that duplicate values are not added to lists"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "long_term_goals": "Goal 1",  # Already exists
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
+        result = await update_preferences_tool(mock_context, {
+            "long_term_goals": "Goal 1",  # Already exists
+        })
         
         assert result.status == "success"
         assert result.updated_fields == []  # No changes made
@@ -500,13 +448,9 @@ class TestUpdatePreferencesTool:
         # Remove existing list field
         del mock_context.user_preferences["long_term_goals"]
         
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "long_term_goals": "First goal"
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
+        result = await update_preferences_tool(mock_context, {
+            "long_term_goals": "First goal"
+        })
         
         assert result.status == "success"
         assert result.updated_fields == ["long_term_goals"]
@@ -530,15 +474,11 @@ class TestUpdatePreferencesTool:
             mock_session_maker.return_value.__aenter__.return_value = mock_db
             mock_session_maker.return_value.__aexit__.return_value = None
             
-            request = UpdatePreferencesRequest(
-                preference_updates={
-                    "purpose_statement": "Valid update",
-                    "invalid_field": "Should be ignored",
-                    "another_invalid": ["Also ignored"]
-                }
-            )
-            
-            result = await update_preferences_tool(mock_context, request)
+            result = await update_preferences_tool(mock_context, {
+                "purpose_statement": "Valid update",
+                "invalid_field": "Should be ignored",
+                "another_invalid": ["Also ignored"]
+            })
             
             assert result.status == "success"
             assert result.updated_fields == ["purpose_statement"]
@@ -549,9 +489,7 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_empty_updates(self, mock_context):
         """Test handling of empty preference updates"""
-        request = UpdatePreferencesRequest(preference_updates={})
-        
-        result = await update_preferences_tool(mock_context, request)
+        result = await update_preferences_tool(mock_context, {})
         
         assert result.status == "success"
         assert result.updated_fields == []
@@ -559,13 +497,9 @@ class TestUpdatePreferencesTool:
     @pytest.mark.asyncio
     async def test_personal_glossary_update(self, mock_context):
         """Test updating personal glossary (dict field)"""
-        request = UpdatePreferencesRequest(
-            preference_updates={
-                "personal_glossary": {"new_term": "new_definition"}
-            }
-        )
-        
-        result = await update_preferences_tool(mock_context, request)
+        result = await update_preferences_tool(mock_context, {
+            "personal_glossary": {"new_term": "new_definition"}
+        })
         
         assert result.status == "success"
         assert result.updated_fields == ["personal_glossary"]

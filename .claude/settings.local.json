@@ -42,7 +42,12 @@
       "Bash(flutter create:*)",
       "Bash(brew install:*)",
       "Bash(flutter:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(python -m pytest tests/test_agents_tools.py -v)",
+      "Bash(source:*)",
+      "Bash(uvicorn:*)",
+      "Bash(npm run:*)",
+      "Bash(sqlite3:*)"
     ],
     "deny": []
   }
