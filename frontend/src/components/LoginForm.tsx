@@ -15,7 +15,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const API_BASE_URL = 'http://localhost:8000/api/v1';
+    // API URL configuration - same logic as App.tsx
+    const API_BASE_URL = (() => {
+      // For local development with Vite
+      if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL;
+      }
+      
+      // For deployed version with env-config.js
+      if (typeof window !== 'undefined' && (window as any).ENV?.REACT_APP_API_URL) {
+        return (window as any).ENV.REACT_APP_API_URL;
+      }
+      
+      // Default to localhost for local development
+      if (import.meta.env.DEV) {
+        return 'http://localhost:8000/api/v1';
+      }
+      
+      // Fallback for production
+      return 'https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/api/v1';
+    })();
     const endpoint = isRegistering ? '/auth/register' : '/auth/login';
     
     try {

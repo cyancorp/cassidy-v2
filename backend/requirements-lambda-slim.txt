@@ -12,8 +12,8 @@ pydantic-ai-slim[anthropic]==0.2.12
 pydantic==2.11.5
 pydantic-settings==2.9.1
 
-# Database - minimal
-aiosqlite==0.21.0
+# Database - PostgreSQL for production
+asyncpg==0.30.0
 sqlalchemy==2.0.41
 greenlet==3.2.2
 

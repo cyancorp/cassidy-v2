@@ -1,4 +1,5 @@
 import asyncio
+import os
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -12,22 +13,34 @@ async def init_db():
     """Initialize database connection and create tables"""
     global engine, async_session_maker
     
+    # Get database URL dynamically
+    from app.core.database_url import get_database_url
+    database_url = get_database_url()
+    
     # Create async engine
-    if settings.DATABASE_URL.startswith("sqlite"):
+    if database_url.startswith("sqlite"):
         # SQLite configuration for local development
         engine = create_async_engine(
-            settings.DATABASE_URL,
+            database_url,
             poolclass=StaticPool,
             connect_args={"check_same_thread": False},
             echo=settings.DEBUG
         )
     else:
         # PostgreSQL configuration for production
+        connect_args = {}
+        
+        # Add SSL for RDS connections in Lambda
+        if os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+            from app.core.database_url import create_ssl_context
+            connect_args["ssl"] = create_ssl_context()
+            
         engine = create_async_engine(
-            settings.DATABASE_URL,
+            database_url,
             pool_pre_ping=True,
             pool_recycle=300,  # 5 minutes
-            echo=settings.DEBUG
+            echo=settings.DEBUG,
+            connect_args=connect_args
         )
     
     async_session_maker = async_sessionmaker(
@@ -52,11 +65,27 @@ async def close_db():
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Dependency to get database session"""
-    async with async_session_maker() as session:
+    from fastapi import HTTPException
+    global engine, async_session_maker
+    
+    # If engine not initialized (e.g., due to startup failure), try to initialize now
+    if engine is None or async_session_maker is None:
         try:
-            yield session
-        finally:
-            await session.close()
+            await init_db()
+        except Exception as e:
+            print(f"Failed to initialize database in get_db: {e}")
+            # Raise HTTPException which FastAPI will handle with CORS headers
+            raise HTTPException(status_code=503, detail="Database connection unavailable")
+    
+    try:
+        async with async_session_maker() as session:
+            try:
+                yield session
+            finally:
+                await session.close()
+    except Exception as e:
+        print(f"Database session error: {e}")
+        raise HTTPException(status_code=503, detail="Database connection error")
 
 
 async def create_sample_user():

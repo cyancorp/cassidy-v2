@@ -48,15 +48,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('auth_username');
   };
 
-  const getAuthHeaders = () => {
-    if (!token) {
-      return { 'Content-Type': 'application/json' };
+  const getAuthHeaders = (): { [key: string]: string } => {
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
     
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    };
+    return headers;
   };
 
   const value: AuthContextType = {

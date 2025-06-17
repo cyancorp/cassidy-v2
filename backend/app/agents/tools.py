@@ -22,6 +22,11 @@ async def structure_journal_tool(
     appropriate sections in their personal journal template.
     """
     print(f"StructureJournalTool called with text: {user_text}")
+    print(f"Context user_id: {ctx.user_id}")
+    print(f"Context session_id: {ctx.session_id}")
+    print(f"Context template keys: {list(ctx.user_template.keys())}")
+    print(f"Context draft keys: {list(ctx.current_journal_draft.keys())}")
+    
     user_text = user_text.strip()
     if not user_text:
         return StructureJournalResponse(sections_updated=[], status="no_content")
@@ -94,11 +99,12 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         # Set up LLM for content analysis using existing imports
         from pydantic_ai import Agent
         from pydantic_ai.models.anthropic import AnthropicModel
-        from app.core.config import settings
+        from app.core.config import settings, get_anthropic_api_key
         
         # Set API key from settings
-        if settings.ANTHROPIC_API_KEY:
-            os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        api_key = get_anthropic_api_key()
+        if api_key:
+            os.environ["ANTHROPIC_API_KEY"] = api_key
         model = AnthropicModel(settings.ANTHROPIC_STRUCTURING_MODEL)
         
         # Create a simple agent for content structuring
@@ -108,7 +114,6 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         result = await analysis_agent.run(analysis_prompt)
         analysis_output = result.output.strip()
         
-        print(f"LLM analysis output: {analysis_output}")
         
         # Extract JSON from the response
         if analysis_output.startswith("```json"):
@@ -120,13 +125,11 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         # Parse the structured content
         try:
             structured_content = json.loads(analysis_output)
-        except json.JSONDecodeError as e:
-            print(f"JSON parse error: {e}, falling back to general reflection")
+        except json.JSONDecodeError:
             # Fallback to general reflection if JSON parsing fails
             structured_content = {"General Reflection": user_text}
         
-    except Exception as e:
-        print(f"LLM analysis failed: {e}, falling back to general reflection")
+    except Exception:
         # Fallback to general reflection if LLM call fails
         structured_content = {"General Reflection": user_text}
     
@@ -209,8 +212,6 @@ async def save_journal_tool(
     
     This tool should only be called when the user explicitly requests to save their journal.
     """
-    print(f"SaveJournalTool called with confirmation: {confirmation}")
-    print(f"Current draft data from context: {ctx.current_journal_draft}")
     
     if not confirmation:
         return SaveJournalResponse(journal_entry_id="", status="cancelled")
@@ -238,14 +239,9 @@ async def update_preferences_tool(
     Uses LLM analysis to extract preference changes from conversational context,
     making preference updates feel natural and fluid.
     """
-    print(f"TOOL: update_preferences_tool called!")
-    print(f"TOOL: Context user_id: '{ctx.user_id}'")
-    print(f"TOOL: preference_updates: {preference_updates}")
-    
     # WORKAROUND: Get user_id from request if context is wrong
     request_user_id = preference_updates.get("user_id", "")
     actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.user_id
-    print(f"TOOL: Using user_id: '{actual_user_id}' (context: '{ctx.user_id}', request: '{request_user_id}')")
     
     # Extract the user text that might contain preference updates  
     # The agent should pass the user's conversational text in preference_updates["user_text"]
@@ -255,14 +251,10 @@ async def update_preferences_tool(
     if not user_text.strip():
         text_values = [str(v) for v in preference_updates.values() if isinstance(v, str) and v.strip()]
         user_text = " ".join(text_values)
-        print(f"TOOL: Extracted user_text from other values: '{user_text}'")
     
     if not user_text.strip():
-        print(f"TOOL: No user_text found, falling back to legacy behavior")
         # Fallback to old behavior for direct API calls
         return await _legacy_update_preferences(ctx, preference_updates)
-    
-    print(f"UpdatePreferencesTool analyzing: {user_text}")
     
     # Get current preferences for context
     current_prefs = ctx.user_preferences.copy()
@@ -332,11 +324,12 @@ JSON Output (only include fields that should be updated):"""
         import os
         from pydantic_ai import Agent
         from pydantic_ai.models.anthropic import AnthropicModel
-        from app.core.config import settings
+        from app.core.config import settings, get_anthropic_api_key
         
         # Set API key from settings
-        if settings.ANTHROPIC_API_KEY:
-            os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        api_key = get_anthropic_api_key()
+        if api_key:
+            os.environ["ANTHROPIC_API_KEY"] = api_key
         model = AnthropicModel(settings.ANTHROPIC_STRUCTURING_MODEL)
         
         # Create agent for preference analysis
@@ -345,8 +338,6 @@ JSON Output (only include fields that should be updated):"""
         # Run the analysis
         result = await preferences_agent.run(preferences_prompt)
         analysis_output = result.output.strip()
-        
-        print(f"Preferences LLM analysis output: {analysis_output}")
         
         # Extract JSON from the response
         if analysis_output.startswith("```json"):
@@ -358,12 +349,10 @@ JSON Output (only include fields that should be updated):"""
         # Parse the preference updates
         try:
             preference_updates = json.loads(analysis_output)
-        except json.JSONDecodeError as e:
-            print(f"JSON parse error in preferences: {e}, no updates made")
+        except json.JSONDecodeError:
             preference_updates = {}
         
-    except Exception as e:
-        print(f"LLM analysis failed for preferences: {e}, no updates made")
+    except Exception:
         preference_updates = {}
     
     # Apply the extracted preference updates
@@ -373,19 +362,16 @@ JSON Output (only include fields that should be updated):"""
         if field == "purpose_statement":
             current_prefs[field] = value
             updated_fields.append(field)
-            print(f"Updated purpose statement: {value}")
             
         elif field == "preferred_feedback_style" and value in ["supportive", "detailed", "brief", "challenging"]:
             current_prefs[field] = value
             updated_fields.append(field)
-            print(f"Updated feedback style: {value}")
             
         elif field in ["long_term_goals", "known_challenges"]:
             if isinstance(value, list):
                 # For now, replace the entire list (could be enhanced to support add/remove)
                 current_prefs[field] = value
                 updated_fields.append(field)
-                print(f"Updated {field}: {value}")
             elif isinstance(value, str):
                 # Add single item to list
                 if field not in current_prefs:
@@ -393,46 +379,34 @@ JSON Output (only include fields that should be updated):"""
                 if value not in current_prefs[field]:
                     current_prefs[field].append(value)
                     updated_fields.append(field)
-                    print(f"Added to {field}: {value}")
                     
         elif field == "personal_glossary" and isinstance(value, dict):
             if "personal_glossary" not in current_prefs:
                 current_prefs["personal_glossary"] = {}
             current_prefs["personal_glossary"].update(value)
             updated_fields.append(field)
-            print(f"Updated glossary: {value}")
             
         # Handle template requests
         elif field == "template_info":
             template = template_loader.get_user_template()
-            print(f"Current template: {template['name']}")
-            print(f"Sections: {len(template['sections'])}")
             updated_fields.append("template_info_provided")
             
         elif field == "template_sections":
             sections = template_loader.get_template_sections()
-            print(f"Available template sections: {list(sections.keys())}")
             updated_fields.append("template_sections_listed")
             
         elif field == "template_reload":
             template_loader.reload_template()
             updated_fields.append("template_reloaded")
-            print("Template reloaded from file")
             
         elif field == "template_request":
-            print(f"TEMPLATE CHANGE REQUEST: {value}")
-            print(f"To implement: Edit /app/templates/user_template.py and restart server")
             updated_fields.append("template_change_requested")
     
     # Update context
     ctx.user_preferences = current_prefs
     
-    # CRITICAL: Save preferences to database immediately to ensure persistence
-    # This is necessary because the agent service may not detect context changes
+    # Save preferences to database immediately to ensure persistence
     if updated_fields:
-        print(f"TOOL: About to save preferences to database")
-        print(f"TOOL: Updated fields: {updated_fields}")
-        print(f"TOOL: Current prefs to save: {current_prefs}")
         try:
             # Import here to avoid circular imports
             from app.repositories.user import UserPreferencesRepository
@@ -441,14 +415,9 @@ JSON Output (only include fields that should be updated):"""
             # Save preferences immediately using direct session
             async with async_session_maker() as db:
                 prefs_repo = UserPreferencesRepository()
-                print(f"TOOL: Calling update_by_user_id with user_id={actual_user_id}")
-                result = await prefs_repo.update_by_user_id(db, actual_user_id, **current_prefs)
-                print(f"TOOL: Database update result: {result}")
-                print(f"TOOL: Preferences saved to database successfully")
+                await prefs_repo.update_by_user_id(db, actual_user_id, **current_prefs)
         except Exception as e:
-            print(f"TOOL: Failed to save preferences to database: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"Failed to save preferences to database: {e}")
     
     return UpdatePreferencesResponse(
         updated_fields=updated_fields,
@@ -487,7 +456,6 @@ async def _legacy_update_preferences(ctx: CassidyAgentDependencies, preference_u
             async with async_session_maker() as db:
                 prefs_repo = UserPreferencesRepository()
                 await prefs_repo.update_by_user_id(db, ctx.user_id, **current_prefs)
-                print(f"Legacy preferences saved to database successfully")
         except Exception as e:
             print(f"Failed to save legacy preferences to database: {e}")
     

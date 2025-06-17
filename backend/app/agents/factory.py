@@ -5,7 +5,7 @@ import os
 
 from app.agents.models import CassidyAgentDependencies
 from app.agents.tools import get_tools_for_conversation_type
-from app.core.config import settings
+from app.core.config import settings, get_anthropic_api_key
 
 
 class AgentFactory:
@@ -16,56 +16,37 @@ class AgentFactory:
     @classmethod
     async def get_agent(cls, conversation_type: str = "journaling", user_id: str = None) -> Agent:
         """Get or create agent for conversation type"""
-        # Temporarily disable caching to debug the issue
         return await cls._create_agent(conversation_type, user_id)
     
     @classmethod
     async def _create_agent(cls, conversation_type: str, user_id: str = None) -> Agent:
         """Create new agent instance"""
         # Set environment variable for Anthropic API key
-        if settings.ANTHROPIC_API_KEY:
-            os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+        api_key = get_anthropic_api_key()
+        if api_key:
+            os.environ["ANTHROPIC_API_KEY"] = api_key
         
         # Initialize Anthropic model
+        print(f"[DEBUG] Initializing AnthropicModel with {settings.ANTHROPIC_DEFAULT_MODEL}")
         model = AnthropicModel(settings.ANTHROPIC_DEFAULT_MODEL)
+        print("[DEBUG] AnthropicModel initialized successfully")
         
         # Get tools for this conversation type
         tools = get_tools_for_conversation_type(conversation_type)
         print(f"Created agent with {len(tools)} tools for conversation type: {conversation_type}")
         print(f"Tools: {[tool.function.__name__ if hasattr(tool, 'function') else str(tool) for tool in tools]}")
         
-        # Validate tools before passing to agent
-        for i, tool in enumerate(tools):
-            print(f"Tool {i}: {type(tool)}, function: {getattr(tool, 'function', None)}")
-            if hasattr(tool, 'function'):
-                print(f"  Function name: {tool.function.__name__}")
-            if hasattr(tool, 'description'):
-                print(f"  Description: {tool.description}")
-        
         # Get system prompt with user_id
         system_prompt = cls._get_system_prompt(conversation_type, user_id)
+        print(f"Creating agent with system prompt: {system_prompt[:200]}...")
         
         # Create agent
-        print(f"Creating agent with system prompt: {system_prompt[:100]}...")
-        print(f"Tools being registered: {[getattr(tool, 'function', tool).__name__ if hasattr(tool, 'function') else str(tool) for tool in tools]}")
-        
-        try:
-            agent = Agent(
-                model=model,
-                tools=tools,
-                system_prompt=system_prompt,
-                deps_type=CassidyAgentDependencies
-            )
-            print(f"Agent created successfully!")
-            
-            # Check agent attributes after creation
-            agent_attrs = [attr for attr in dir(agent) if not attr.startswith('__')]
-            print(f"Agent attributes: {agent_attrs[:10]}...")  # Show first 10 attrs
-            
-        except Exception as e:
-            print(f"Error creating agent: {e}")
-            print(f"Error type: {type(e)}")
-            raise
+        agent = Agent(
+            model=model,
+            tools=tools,
+            system_prompt=system_prompt,
+            deps_type=CassidyAgentDependencies
+        )
         
         return agent
     

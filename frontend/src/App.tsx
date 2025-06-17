@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ContextPanel from './components/ContextPanel';
 import ChatInterface from './components/ChatInterface';
 import LoginForm from './components/LoginForm';
@@ -6,7 +6,26 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Message, UserTemplate } from './types'; // <-- Import UserTemplate
 import { v4 as uuidv4 } from 'uuid';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1'; // Backend running on port 8000
+// API URL configuration - prioritize environment variables for local dev, then window.ENV for deployed version
+const API_BASE_URL = (() => {
+  // For local development with Vite
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // For deployed version with env-config.js
+  if (typeof window !== 'undefined' && (window as any).ENV?.REACT_APP_API_URL) {
+    return (window as any).ENV.REACT_APP_API_URL;
+  }
+  
+  // Default to localhost for local development
+  if (import.meta.env.DEV) {
+    return 'http://localhost:8000/api/v1';
+  }
+  
+  // Fallback for production
+  return 'https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/api/v1';
+})();
 
 // Define expected response structure for agent endpoint
 interface AgentApiResponse {
@@ -32,7 +51,7 @@ function MainApp() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [structuredContent, setStructuredContent] = useState<any>(null);
-  const [userTemplate, setUserTemplate] = useState<UserTemplate | null>(null); // <-- Add template state
+  const [, setUserTemplate] = useState<UserTemplate | null>(null); // <-- Add template state
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +68,7 @@ function MainApp() {
   };
 
   // Function to fetch preferences and set initial message
-  const initializeApp = useCallback(async (currentSessionId: string) => {
+  const initializeApp = useCallback(async (_currentSessionId: string) => {
       setError(null);
       setIsLoading(true);
       try {
