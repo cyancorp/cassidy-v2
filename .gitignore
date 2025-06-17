@@ -337,6 +337,12 @@ $RECYCLE.BIN/
 # Application specific
 server.log
 *.log
+backend.log
+cassidy.db*
+
+# Test and development artifacts
+test_slim/
+lambda_slim.zip
 
 # AWS CDK
 cdk.out/
