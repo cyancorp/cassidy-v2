@@ -195,7 +195,8 @@ class BackendStack(Stack):
                 "PYDANTIC_AI_SLIM": "true",
                 "DATABASE_URL": f"postgresql+asyncpg://cassidy@{self.database.instance_endpoint.hostname}:5432/cassidy",
                 "DB_SECRET_ARN": self.database.secret.secret_arn,
-                "ANTHROPIC_API_KEY": "[REDACTED-API-KEY]",
+                # Note: ANTHROPIC_API_KEY should be set via SSM parameter, not hardcoded here
+                # "ANTHROPIC_API_KEY": "[REMOVED-FOR-SECURITY]",
                 "ANTHROPIC_API_KEY_PARAM": f"/{self.app_name}/anthropic-api-key",
             },
             # NO VPC - Lambda runs in AWS managed VPC with full internet access
