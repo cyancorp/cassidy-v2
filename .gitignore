@@ -330,9 +330,11 @@ $RECYCLE.BIN/
 *.sqlite
 *.sqlite3
 
-# Claude AI project files (keep settings but ignore logs)
+# Claude AI project files (keep settings but ignore logs and local config)
 .claude/
 !.claude/settings.json
+# Never commit local settings which may contain secrets
+.claude/settings.local.json
 
 # Application specific
 server.log
