@@ -5,9 +5,10 @@ from uuid import UUID
 
 from app.database import get_db
 from app.models.api import CreateSessionRequest, CreateSessionResponse, ChatSessionResponse
-from app.repositories.session import ChatSessionRepository
+from app.repositories.session import ChatSessionRepository, JournalEntryRepository
 from app.core.deps import get_current_user
 from app.models.user import UserDB
+from app.models.session import JournalEntryDB
 
 router = APIRouter()
 
@@ -82,3 +83,51 @@ async def get_session(
         created_at=session.created_at,
         updated_at=session.updated_at
     )
+
+
+@router.get("/journal-entries", response_model=List[dict])
+async def list_journal_entries(
+    current_user: UserDB = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """List user's journal entries"""
+    journal_repo = JournalEntryRepository()
+    entries = await journal_repo.get_by_user_id(db, current_user.id)
+    
+    return [
+        {
+            "id": str(entry.id),
+            "session_id": str(entry.session_id) if entry.session_id else None,
+            "created_at": entry.created_at.isoformat(),
+            "raw_text": entry.raw_text or "",
+            "structured_data": entry.structured_data or {},
+            "metadata": entry.entry_metadata or {}
+        }
+        for entry in entries
+    ]
+
+
+@router.get("/journal-entries/{entry_id}", response_model=dict)
+async def get_journal_entry(
+    entry_id: UUID,
+    current_user: UserDB = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Get specific journal entry"""
+    journal_repo = JournalEntryRepository()
+    entry = await journal_repo.get_by_id(db, entry_id)
+    
+    if not entry or entry.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Journal entry not found"
+        )
+    
+    return {
+        "id": str(entry.id),
+        "session_id": str(entry.session_id) if entry.session_id else None,
+        "created_at": entry.created_at.isoformat(),
+        "raw_text": entry.raw_text or "",
+        "structured_data": entry.structured_data or {},
+        "metadata": entry.entry_metadata or {}
+    }

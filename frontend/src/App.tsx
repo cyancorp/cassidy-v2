@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import ContextPanel from './components/ContextPanel';
 import ChatInterface from './components/ChatInterface';
 import LoginForm from './components/LoginForm';
+import JournalEntries from './components/JournalEntries';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Message, UserTemplate } from './types'; // <-- Import UserTemplate
 import { v4 as uuidv4 } from 'uuid';
@@ -24,7 +25,7 @@ const API_BASE_URL = (() => {
   }
   
   // Fallback for production
-  return 'https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/api/v1';
+  return 'https://tq68ditf6b.execute-api.us-east-1.amazonaws.com/prod/api/v1';
 })();
 
 // Define expected response structure for agent endpoint
@@ -56,6 +57,7 @@ function MainApp() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUserPrefs, setCurrentUserPrefs] = useState<UserPreferences | null>(null); // State for full prefs object
+  const [showJournalEntries, setShowJournalEntries] = useState<boolean>(false);
 
   // Function to clear local state on reset
   const clearLocalState = () => {
@@ -313,40 +315,51 @@ function MainApp() {
   ) : null;
 
   return (
-    <div className="flex h-screen bg-gray-200">
-      <div className="flex-1 flex flex-col">
-        {generalErrorDisplay}
-        <ChatInterface 
-          messages={messages} 
-          onSendMessage={handleSendMessage} 
-          isLoading={isLoading && messages.length > 0} // Show loading only after initial messages
-        />
-      </div>
-      <div className="w-1/3 bg-white border-l border-gray-300 overflow-y-auto">
-        <ContextPanel 
-          structuredContent={structuredContent} 
-          debugInfo={debugInfo} 
-          userPreferences={currentUserPrefs}
-        />
-        <div className="p-4 space-y-2">
-          <div className="text-sm text-gray-600 mb-2">
-            Logged in as: <strong>{username}</strong>
+    <>
+      <div className="flex h-screen bg-gray-200">
+        <div className="flex-1 flex flex-col">
+          {generalErrorDisplay}
+          <ChatInterface 
+            messages={messages} 
+            onSendMessage={handleSendMessage} 
+            isLoading={isLoading && messages.length > 0} // Show loading only after initial messages
+          />
+        </div>
+        <div className="w-1/3 bg-white border-l border-gray-300 overflow-y-auto">
+          <ContextPanel 
+            structuredContent={structuredContent} 
+            debugInfo={debugInfo} 
+            userPreferences={currentUserPrefs}
+          />
+          <div className="p-4 space-y-2">
+            <div className="text-sm text-gray-600 mb-2">
+              Logged in as: <strong>{username}</strong>
+            </div>
+            <button 
+              onClick={() => setShowJournalEntries(true)} 
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              View Journal Entries
+            </button>
+            <button 
+              onClick={handleResetPreferences} 
+              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Reset Preferences & Onboarding
+            </button>
+            <button 
+              onClick={logout} 
+              className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Logout
+            </button>
           </div>
-          <button 
-            onClick={handleResetPreferences} 
-            className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Reset Preferences & Onboarding
-          </button>
-          <button 
-            onClick={logout} 
-            className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Logout
-          </button>
         </div>
       </div>
-    </div>
+      {showJournalEntries && (
+        <JournalEntries onClose={() => setShowJournalEntries(false)} />
+      )}
+    </>
   );
 }
 
