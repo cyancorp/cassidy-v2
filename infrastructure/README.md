@@ -26,7 +26,7 @@ This directory contains the AWS CDK infrastructure and deployment scripts for th
 4. **SSM Parameters created**:
    ```bash
    aws ssm put-parameter --name "/cassidy/jwt-secret-key" --value "your-jwt-secret" --type "SecureString"
-   aws ssm put-parameter --name "/cassidy/anthropic-api-key" --value "sk-ant-..." --type "SecureString"
+   aws ssm put-parameter --name "/cassidy/anthropic-api-key" --value "your-anthropic-api-key" --type "SecureString"
    ```
 
 ### Deployment Scripts
