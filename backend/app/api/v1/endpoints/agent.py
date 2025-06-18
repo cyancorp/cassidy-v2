@@ -45,18 +45,46 @@ async def agent_chat(
     
     try:
         # Run agent with message history
+        print(f"[DEBUG] About to call agent.run() with text: '{request.text[:100]}{'...' if len(request.text) > 100 else ''}'")
+        print(f"[DEBUG] Message history length: {len(message_history) if message_history else 0}")
+        print(f"[DEBUG] Context user_id: {context.user_id}, session_id: {context.session_id}")
+        
+        import time
+        start_time = time.time()
+        
         try:
+            # Test basic internet connectivity first
+            print(f"[DEBUG] Testing basic internet connectivity...")
+            import httpx
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                try:
+                    response = await client.get("https://httpbin.org/get")
+                    print(f"[DEBUG] Basic internet connectivity test: {response.status_code}")
+                except Exception as conn_e:
+                    print(f"[DEBUG] Basic internet connectivity FAILED: {conn_e}")
+                
+                try:
+                    response = await client.get("https://api.anthropic.com/")
+                    print(f"[DEBUG] Anthropic API connectivity test: {response.status_code}")
+                except Exception as conn_e:
+                    print(f"[DEBUG] Anthropic API connectivity FAILED: {conn_e}")
+            
+            print(f"[DEBUG] Calling agent.run() with message history...")
             result = await agent.run(
                 request.text,
                 deps=context,
                 message_history=message_history if message_history else None
             )
+            print(f"[DEBUG] agent.run() completed successfully in {time.time() - start_time:.2f}s")
         except Exception as e:
-            # Fallback to no message history
+            print(f"[DEBUG] agent.run() with history failed after {time.time() - start_time:.2f}s: {e}")
+            print(f"[DEBUG] Falling back to agent.run() without history...")
+            start_time = time.time()
             result = await agent.run(
                 request.text,
                 deps=context
             )
+            print(f"[DEBUG] agent.run() fallback completed in {time.time() - start_time:.2f}s")
         
         # Save user message BEFORE processing
         message_repo = ChatMessageRepository()

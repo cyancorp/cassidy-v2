@@ -25,11 +25,18 @@ class AgentFactory:
         api_key = get_anthropic_api_key()
         if api_key:
             os.environ["ANTHROPIC_API_KEY"] = api_key
+            print(f"[DEBUG] API key set, length: {len(api_key)}")
+        else:
+            print("[ERROR] No Anthropic API key found!")
         
         # Initialize Anthropic model
         print(f"[DEBUG] Initializing AnthropicModel with {settings.ANTHROPIC_DEFAULT_MODEL}")
-        model = AnthropicModel(settings.ANTHROPIC_DEFAULT_MODEL)
-        print("[DEBUG] AnthropicModel initialized successfully")
+        try:
+            model = AnthropicModel(settings.ANTHROPIC_DEFAULT_MODEL)
+            print("[DEBUG] AnthropicModel initialized successfully")
+        except Exception as e:
+            print(f"[ERROR] Failed to initialize AnthropicModel: {e}")
+            raise
         
         # Get tools for this conversation type
         tools = get_tools_for_conversation_type(conversation_type)

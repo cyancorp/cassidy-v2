@@ -97,91 +97,170 @@ flutter test
 
 ## Deployment
 
+### Quick Start Deployment
+
+The easiest way to deploy is using the unified deployment script:
+
+```bash
+# Deploy both frontend and backend
+cd infrastructure
+./deploy.sh
+
+# Deploy only backend
+./deploy.sh backend
+
+# Deploy only frontend  
+./deploy.sh frontend
+
+# Deploy with options
+./deploy.sh both --no-test     # Skip tests
+./deploy.sh backend --force     # Skip confirmation
+```
+
 ### Production URLs
 
-After deployment, the application will be available at these URLs:
+After deployment, the application will be available at:
 
-- **Backend API**: `https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod`
-- **Frontend Web App**: `https://donx85isqomd0.cloudfront.net` (CloudFront CDN with HTTPS)
+- **Backend API**: Dynamic URL (check deployment output)
+- **Frontend Web App**: Dynamic CloudFront URL (check deployment output)
 
-**URL Stability**: These URLs are stable and will not change unless you redeploy the infrastructure from scratch. Regular code deployments maintain the same URLs.
+**URL Stability**: URLs are stable within a deployment but will change if infrastructure is torn down and recreated.
 
 ### Prerequisites for Deployment
 
 1. **AWS CLI configured** with appropriate permissions
 2. **AWS CDK installed** (`npm install -g aws-cdk`)
-3. **Environment variables set** in AWS Systems Manager Parameter Store
+3. **Docker** installed (for Lambda container deployment)
+4. **Node.js 16+** and **Python 3.11+**
 
 ### Required AWS Parameters
 
-Before deploying, you must create these secure parameters in AWS Systems Manager:
+Before first deployment, create these secure parameters:
 
 ```bash
 # JWT secret key
-aws ssm put-parameter --name "/cassidy/jwt-secret-key" --value "your-secure-jwt-secret" --type "SecureString"
+aws ssm put-parameter \
+  --name "/cassidy/jwt-secret-key" \
+  --value "your-secure-jwt-secret" \
+  --type "SecureString"
 
 # Anthropic API key  
-aws ssm put-parameter --name "/cassidy/anthropic-api-key" --value "your-anthropic-api-key" --type "SecureString"
+aws ssm put-parameter \
+  --name "/cassidy/anthropic-api-key" \
+  --value "your-anthropic-api-key" \
+  --type "SecureString"
 ```
 
-### Deploy Both Stacks (Recommended)
+### Deployment Scripts
 
-To deploy both backend and frontend together:
+#### Main Deployment Script (`deploy.sh`)
 
 ```bash
-# 1. Navigate to infrastructure directory
-cd infrastructure
-npm install
+# Deploy everything (recommended for first deployment)
+./deploy.sh
 
-# 2. Build frontend first
-cd ../frontend && npm run build && cd ../infrastructure
+# Deploy specific components
+./deploy.sh backend    # Backend only
+./deploy.sh frontend   # Frontend only
+./deploy.sh both       # Both stacks (default)
 
-# 3. Deploy both stacks
-cdk deploy --all --require-approval never
+# Options
+--force       # Skip confirmation prompt
+--no-test     # Skip post-deployment tests
+--no-build    # Skip frontend build (frontend deployment only)
+--check-deps  # Check dependencies before deployment
 ```
 
-### Deploy Backend Only
+Features:
+- Automatic CORS configuration updates
+- Database migration support
+- Test user creation
+- Comprehensive testing
+- Automatic frontend configuration with backend URL
 
-To deploy backend code changes to AWS Lambda:
+#### Complete Reset (`reset_and_deploy.sh`)
+
+For a complete teardown and fresh deployment:
 
 ```bash
-# 1. Navigate to infrastructure directory
-cd infrastructure
-
-# 2. Deploy the backend stack
-cdk deploy CassidyLambdaStackFixed --require-approval never
-
-# 3. Verify deployment
-curl https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/health
+./reset_and_deploy.sh
 ```
 
-### Deploy Frontend Only
+⚠️ **Warning**: This will delete ALL resources including databases!
 
-To deploy frontend changes to S3 + CloudFront:
+#### Infrastructure Teardown (`teardown.sh`)
+
+To remove all AWS resources:
 
 ```bash
-# 1. Build the frontend
-cd frontend
-npm run build
-
-# 2. Deploy frontend stack
-cd ../infrastructure
-cdk deploy CassidyFrontendStack --require-approval never
+./teardown.sh
 ```
 
-**Note**: The deployment process automatically:
-- Bundles the backend code with dependencies
-- Updates the Lambda function 
-- Maintains the existing API Gateway and database
-- Preserves all data in the RDS PostgreSQL database
-- Frontend deployment updates S3 bucket and invalidates CloudFront cache
+This will delete:
+- CloudFormation stacks
+- RDS databases (with deletion protection disabled)
+- Lambda functions
+- S3 buckets and contents
+- API Gateway APIs
+- VPCs and networking resources
+- SSM parameters (except CDK bootstrap)
+
+### Database Schema Updates
+
+The deployment automatically handles database schema updates:
+
+1. **SQLAlchemy Auto-migration**: Tables are created/updated on Lambda startup
+2. **Alembic Support**: If `alembic.ini` exists, migrations run automatically
+3. **Zero-downtime**: Schema updates don't require downtime
 
 ### Architecture Overview
 
-- **Backend**: AWS Lambda + API Gateway + RDS PostgreSQL (CassidyLambdaStackFixed)
-- **Frontend**: S3 Static Website Hosting + CloudFront CDN (CassidyFrontendStack)
-- **Database**: AWS RDS PostgreSQL (persistent across deployments)
-- **Infrastructure**: Managed via AWS CDK with separate stacks for independent deployment
+- **Backend**: AWS Lambda (containerized) + API Gateway + RDS PostgreSQL
+- **Frontend**: React SPA on S3 + CloudFront CDN
+- **Database**: RDS PostgreSQL (publicly accessible, encrypted)
+- **Infrastructure**: AWS CDK with separate stacks for independent deployment
+
+### Stack Details
+
+1. **CassidyBackendStack**:
+   - Lambda function (no VPC for internet access)
+   - API Gateway REST API
+   - RDS PostgreSQL in minimal VPC
+   - Secrets Manager for DB credentials
+   - SSM Parameters for configuration
+
+2. **CassidyFrontendStack**:
+   - S3 bucket for static hosting
+   - CloudFront distribution
+   - Automatic API URL injection
+   - SPA routing support
+
+### Deployment Best Practices
+
+1. **Initial Deployment**: Use `./deploy.sh` to deploy both stacks
+2. **Code Updates**: Deploy only the changed component
+3. **CORS Updates**: Automatic when deploying frontend
+4. **Database Changes**: Handled automatically via SQLAlchemy
+5. **Testing**: Always included unless `--no-test` specified
+
+### Troubleshooting Deployment
+
+```bash
+# Check Lambda logs
+aws logs tail /aws/lambda/CassidyBackendStack-CassidyFunction
+
+# Check stack status
+aws cloudformation describe-stacks --stack-name CassidyBackendStack
+
+# Test API health
+curl $(aws cloudformation describe-stacks \
+  --stack-name CassidyBackendStack \
+  --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' \
+  --output text)/health
+
+# Create test user if needed
+python3 infrastructure/setup_test_user.py <API_URL>
+```
 
 ### Getting a Custom Domain
 
@@ -225,45 +304,13 @@ aws logs describe-log-groups --log-group-name-prefix /aws/lambda/cassidy-api
 4. Ensure all tests pass
 5. Submit a pull request
 
+### Test Credentials
+
+Default test user (created automatically during deployment):
+- **Username**: `user_123`
+- **Password**: `1234`
+
 ## License
 
 This project is private and proprietary.
 
-
-
-
-
-
-
-
-
-  🌐 Frontend URL for Testing
-
-  Primary Frontend URL (HTTPS with CloudFront CDN):
-  https://donx85isqomd0.cloudfront.net
-
-  Backup S3 Direct URL:
-  http://cassidy-frontend-538881967423.s3-website-us-east-1.amazonaws.com
-
-  🔑 Test Credentials
-
-  - Username: user_123
-  - Password: 1234
-
-  📊 API Endpoint Summary
-
-  - ✅ Root: https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/
-  - ✅ Health: https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/health
-  - ✅ Login: https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/api/v1/auth/login
-  - ✅ Documentation: https://tamep5ms5i.execute-api.us-east-1.amazonaws.com/prod/docs
-
-
-  # Quick test after deployment
-  cd infrastructure
-  ./test_api.sh
-
-  # More detailed testing
-  python3 test_api_simple.py
-
-  # One-line deploy and test
-  cdk deploy CassidyLambdaStackFixed --require-approval never && ./test_api.sh

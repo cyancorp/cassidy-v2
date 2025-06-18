@@ -58,10 +58,17 @@ Cassidy Backend V2 is a complete rebuild focused on:
 
 ### Sample User
 
-A sample user is automatically created for testing:
+A sample user is automatically created in development mode (`DEBUG=true`).
+For production, use the setup script:
+```bash
+cd infrastructure
+python3 setup_test_user.py <API_URL>
+```
+
+Default test credentials:
 - **Username:** `user_123`
 - **Password:** `1234`
-- **Email:** `user123@example.com`
+- **Email:** `user_123@example.com`
 
 ## Environment Configuration
 
@@ -384,26 +391,51 @@ DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/cassidy
 
 ### AWS Lambda (Production)
 
-The backend is designed for serverless deployment:
+The backend is containerized for AWS Lambda deployment:
 
-1. **Configure for Lambda**
-   ```python
-   # lambda_function.py
-   from mangum import Mangum
-   from app.main import app
-   
-   handler = Mangum(app, lifespan="off")
+1. **Container Deployment**
+   - Uses Docker container for Lambda (handles large dependencies)
+   - Dockerfile included for automated builds
+   - Mangum adapter for FastAPI → Lambda integration
+
+2. **Database Configuration**
+   - AWS RDS PostgreSQL (publicly accessible)
+   - Automatic schema creation via SQLAlchemy
+   - Database credentials in AWS Secrets Manager
+
+3. **Environment Variables**
+   ```bash
+   APP_ENV=production
+   DATABASE_URL=postgresql+asyncpg://...
+   DB_SECRET_ARN=arn:aws:secretsmanager:...
+   ANTHROPIC_API_KEY=sk-ant-...
    ```
 
-2. **Environment Variables**
-   - Use AWS Parameter Store for secrets
-   - Configure PostgreSQL RDS connection
-   - Set appropriate CORS origins
+4. **CORS Configuration**
+   - Automatically updated by deployment script
+   - Hardcoded in `main.py` due to Lambda environment constraints
 
-3. **Database**
-   - Use AWS RDS PostgreSQL
-   - Configure connection pooling
-   - Set up VPC security groups
+### Database Schema Updates
+
+Schema changes are handled automatically:
+
+1. **SQLAlchemy Migrations**: Tables created/modified on startup
+2. **Alembic Support**: If configured, migrations run during deployment
+3. **Zero Downtime**: Schema updates don't affect service availability
+
+### Deployment Process
+
+```bash
+cd infrastructure
+./deploy.sh backend    # Deploy backend only
+./deploy.sh           # Deploy everything
+```
+
+Features:
+- Automatic CORS updates
+- Database migration support
+- Container image building
+- Health check verification
 
 ## Troubleshooting
 

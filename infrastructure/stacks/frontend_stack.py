@@ -69,7 +69,6 @@ class FrontendStack(Stack):
 }};"""
         
         # Read the original index.html and add env-config.js script
-        import os
         index_html_path = os.path.join(frontend_path, "index.html")
         
         # Read the built index.html
@@ -127,6 +126,13 @@ class FrontendStack(Stack):
             "WebsiteURL",
             value=f"https://{distribution.distribution_domain_name}",
             description="CloudFront distribution URL",
+        )
+        
+        CfnOutput(
+            self,
+            "CloudFrontUrl",
+            value=f"https://{distribution.distribution_domain_name}",
+            description="CloudFront distribution URL for CORS",
         )
 
         CfnOutput(

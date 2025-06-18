@@ -1,26 +1,23 @@
-"""
-Fixed Lambda-based CDK Stack for Cassidy AI Journaling Assistant
-Serverless architecture with proper VPC networking for Lambda internet access
-"""
-import os
 from aws_cdk import (
     Stack,
     Duration,
     RemovalPolicy,
-    CfnOutput,
-    aws_ec2 as ec2,
     aws_lambda as lambda_,
     aws_apigateway as apigateway,
     aws_rds as rds,
-    aws_ssm as ssm,
+    aws_ec2 as ec2,
     aws_secretsmanager as secrets,
-    aws_iam as iam,
+    aws_ssm as ssm,
     aws_logs as logs,
+    aws_iam as iam,
+    CfnOutput,
 )
 from constructs import Construct
 
 
-class CassidyLambdaStackFixed(Stack):
+class BackendStack(Stack):
+    """Backend stack - NO VPC for Lambda, publicly accessible database"""
+
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -28,13 +25,7 @@ class CassidyLambdaStackFixed(Stack):
         self.app_name = "cassidy"
         self.app_environment = self.node.try_get_context("environment") or "prod"
         
-        # Create VPC with public subnets for Lambda and private subnets for database
-        self.vpc = self._create_vpc()
-        
-        # Create VPC endpoints for AWS services
-        self._create_vpc_endpoints()
-        
-        # Create RDS PostgreSQL database
+        # Create database (publicly accessible, no VPC needed for Lambda)
         self.database = self._create_database()
         
         # Create parameter store values for configuration
@@ -47,98 +38,42 @@ class CassidyLambdaStackFixed(Stack):
         # Create outputs
         self._create_outputs()
 
-    def _create_vpc(self) -> ec2.Vpc:
-        """Create VPC with public subnets for Lambda and private subnets for database"""
-        return ec2.Vpc(
+    def _create_database(self) -> rds.DatabaseInstance:
+        """Create publicly accessible RDS PostgreSQL database"""
+        
+        # Create minimal VPC just for database (required parameter)
+        database_vpc = ec2.Vpc(
             self,
-            "CassidyVpc",
-            vpc_name=f"{self.app_name}-vpc",
-            ip_addresses=ec2.IpAddresses.cidr("10.1.0.0/16"),  # Non-conflicting CIDR
-            max_azs=2,  # Minimize costs with 2 AZs
-            nat_gateways=0,  # No NAT gateway to save costs
+            "DatabaseVpc",
+            vpc_name=f"{self.app_name}-db-vpc", 
+            ip_addresses=ec2.IpAddresses.cidr("10.0.0.0/16"),
+            max_azs=2,
+            nat_gateways=0,  # No NAT gateway needed for publicly accessible DB
             subnet_configuration=[
                 ec2.SubnetConfiguration(
                     name="Public",
                     subnet_type=ec2.SubnetType.PUBLIC,
-                    cidr_mask=24,  # 10.1.0.0/24, 10.1.1.0/24
-                ),
-                ec2.SubnetConfiguration(
-                    name="Database",
-                    subnet_type=ec2.SubnetType.PRIVATE_ISOLATED,
-                    cidr_mask=24,  # 10.1.2.0/24, 10.1.3.0/24
+                    cidr_mask=24,
                 ),
             ],
-            enable_dns_hostnames=True,
-            enable_dns_support=True,
-        )
-
-    def _create_vpc_endpoints(self) -> None:
-        """Create VPC endpoints for AWS services access from private subnets"""
-        
-        # Security group for VPC endpoints
-        vpc_endpoint_sg = ec2.SecurityGroup(
-            self,
-            "VpcEndpointSecurityGroup",
-            vpc=self.vpc,
-            description="Security group for VPC endpoints",
-            allow_all_outbound=False,
         )
         
-        # Allow HTTPS traffic from Lambda subnets
-        vpc_endpoint_sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(self.vpc.vpc_cidr_block),
-            connection=ec2.Port.tcp(443),
-            description="Allow HTTPS from VPC"
-        )
-        
-        # Store the VPC endpoint security group for later use
-        self.vpc_endpoint_sg = vpc_endpoint_sg
-        
-        # Secrets Manager VPC endpoint
-        self.vpc.add_interface_endpoint(
-            "SecretsManagerEndpoint",
-            service=ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
-            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
-            security_groups=[vpc_endpoint_sg],
-        )
-
-    def _create_database(self) -> rds.DatabaseInstance:
-        """Create RDS PostgreSQL database with security best practices"""
-        
-        # Create security group for Lambda
-        lambda_security_group = ec2.SecurityGroup(
-            self,
-            "LambdaSecurityGroup",
-            vpc=self.vpc,
-            description="Security group for Cassidy Lambda function",
-            allow_all_outbound=True,  # Lambda needs outbound for API calls to Anthropic
-        )
-        
-        # Create security group for database
+        # Create security group for database - allow all access since publicly accessible
         db_security_group = ec2.SecurityGroup(
             self,
-            "DatabaseSecurityGroup",
-            vpc=self.vpc,
-            description="Security group for Cassidy database",
+            "DatabaseSecurityGroup", 
+            vpc=database_vpc,
+            description="Security group for publicly accessible database",
             allow_all_outbound=False,
         )
         
-        # Allow Lambda to access database
+        # Allow PostgreSQL access from anywhere (since database is publicly accessible)
         db_security_group.add_ingress_rule(
-            peer=lambda_security_group,
+            peer=ec2.Peer.any_ipv4(),
             connection=ec2.Port.tcp(5432),
-            description="Allow Lambda access to PostgreSQL"
+            description="Allow PostgreSQL access from internet"
         )
-
-        # Create database subnet group
-        db_subnet_group = rds.SubnetGroup(
-            self,
-            "DatabaseSubnetGroup",
-            description="Subnet group for Cassidy database",
-            vpc=self.vpc,
-            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
-        )
-
+        
         # Generate database password
         db_password = secrets.Secret(
             self,
@@ -147,12 +82,12 @@ class CassidyLambdaStackFixed(Stack):
             generate_secret_string=secrets.SecretStringGenerator(
                 secret_string_template='{"username": "cassidy"}',
                 generate_string_key="password",
-                exclude_characters=' %+~`#$&*()|[]{}:;<>?!\'/@"\\',
+                exclude_characters=' %+~`#$&*()|[]{}:;<>?!\'/@"\\\\',
                 password_length=32,
             ),
         )
 
-        # Create database instance
+        # Create database instance (publicly accessible, in default VPC)
         database = rds.DatabaseInstance(
             self,
             "Database",
@@ -167,22 +102,19 @@ class CassidyLambdaStackFixed(Stack):
             storage_type=rds.StorageType.GP2,
             database_name="cassidy",
             credentials=rds.Credentials.from_secret(db_password),
-            vpc=self.vpc,
-            subnet_group=db_subnet_group,
+            vpc=database_vpc,  # Required parameter - use minimal VPC
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
             security_groups=[db_security_group],
+            publicly_accessible=True,  # Allow access from internet
             backup_retention=Duration.days(7),
             deletion_protection=True,
             auto_minor_version_upgrade=True,
             multi_az=False,  # Single AZ for cost optimization
-            publicly_accessible=False,
             storage_encrypted=True,
             monitoring_interval=Duration.seconds(0),
             enable_performance_insights=False,
             removal_policy=RemovalPolicy.SNAPSHOT,
         )
-
-        # Store Lambda security group for reuse
-        self.lambda_security_group = lambda_security_group
 
         return database
 
@@ -206,7 +138,7 @@ class CassidyLambdaStackFixed(Stack):
             )
 
     def _create_lambda_function(self) -> lambda_.Function:
-        """Create Lambda function for the API"""
+        """Create Lambda function WITHOUT VPC for internet access"""
         
         # Create Lambda execution role
         lambda_role = iam.Role(
@@ -215,7 +147,7 @@ class CassidyLambdaStackFixed(Stack):
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"),
-                iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaVPCAccessExecutionRole"),
+                iam.ManagedPolicy.from_aws_managed_policy_name("AWSXRayDaemonWriteAccess"),
             ],
         )
 
@@ -246,7 +178,7 @@ class CassidyLambdaStackFixed(Stack):
             )
         )
 
-        # Create Lambda function with container deployment
+        # Create Lambda function with container deployment - NO VPC
         lambda_function = lambda_.Function(
             self,
             "CassidyFunction",
@@ -266,11 +198,7 @@ class CassidyLambdaStackFixed(Stack):
                 "ANTHROPIC_API_KEY": "[REDACTED-API-KEY]",
                 "ANTHROPIC_API_KEY_PARAM": f"/{self.app_name}/anthropic-api-key",
             },
-            # CRITICAL FIX: Lambda in public subnets for internet access
-            vpc=self.vpc,
-            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
-            security_groups=[self.lambda_security_group],
-            allow_public_subnet=True,  # Required for public subnet placement
+            # NO VPC - Lambda runs in AWS managed VPC with full internet access
             log_retention=logs.RetentionDays.ONE_WEEK,
             tracing=lambda_.Tracing.ACTIVE,
         )
@@ -303,7 +231,7 @@ class CassidyLambdaStackFixed(Stack):
             allow_test_invoke=False,
         )
 
-        # FIXED: Add root path handler first
+        # Add root path handler first
         api.root.add_method("ANY", lambda_integration)
         
         # Add proxy resource to catch all other paths

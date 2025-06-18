@@ -67,8 +67,9 @@ lib/
 
 The app integrates with the Cassidy backend API:
 
-- **Base URL**: `https://s7blicf22g.execute-api.us-east-1.amazonaws.com/prod/api/v1`
+- **Base URL**: `https://tq68ditf6b.execute-api.us-east-1.amazonaws.com/prod/api/v1`
 - **Authentication**: JWT Bearer tokens
+- **Default Credentials**: `user_123` / `1234`
 - **Endpoints**:
   - `POST /auth/login` - User authentication
   - `POST /auth/register` - User registration
