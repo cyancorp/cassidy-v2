@@ -13,6 +13,7 @@ from aws_cdk import (
     CfnOutput,
 )
 from constructs import Construct
+import os
 
 
 class BackendStack(Stack):
@@ -178,6 +179,30 @@ class BackendStack(Stack):
             )
         )
 
+        # Helper method for Lambda environment variables
+        def get_lambda_environment() -> dict:
+            """Get Lambda environment variables with proper API key handling"""
+            env_vars = {
+                "APP_ENV": "production",
+                "CASSIDY_APP_NAME": f"{self.app_name}-api",
+                "PYDANTIC_AI_SLIM": "true",
+                "DATABASE_URL": f"postgresql+asyncpg://cassidy@{self.database.instance_endpoint.hostname}:5432/cassidy",
+                "DB_SECRET_ARN": self.database.secret.secret_arn,
+                "ANTHROPIC_API_KEY_PARAM": f"/{self.app_name}/anthropic-api-key",
+            }
+            
+            # Try to get ANTHROPIC_API_KEY from environment variable during deployment
+            # This allows local development and CI/CD to pass the key securely
+            anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+            if anthropic_key:
+                env_vars["ANTHROPIC_API_KEY"] = anthropic_key
+                print("✓ Using ANTHROPIC_API_KEY from environment variable")
+            else:
+                # If no env var, the Lambda will fall back to SSM parameter
+                print("⚠ No ANTHROPIC_API_KEY environment variable found. Lambda will use SSM parameter fallback.")
+            
+            return env_vars
+
         # Create Lambda function with container deployment - NO VPC
         lambda_function = lambda_.Function(
             self,
@@ -189,16 +214,7 @@ class BackendStack(Stack):
             timeout=Duration.seconds(30),  # 30 seconds for AI operations
             memory_size=1024,  # Increased memory for pydantic-ai
             role=lambda_role,
-            environment={
-                "APP_ENV": "production",
-                "CASSIDY_APP_NAME": f"{self.app_name}-api",
-                "PYDANTIC_AI_SLIM": "true",
-                "DATABASE_URL": f"postgresql+asyncpg://cassidy@{self.database.instance_endpoint.hostname}:5432/cassidy",
-                "DB_SECRET_ARN": self.database.secret.secret_arn,
-                # Note: ANTHROPIC_API_KEY should be set via SSM parameter, not hardcoded here
-                # "ANTHROPIC_API_KEY": "[REMOVED-FOR-SECURITY]",
-                "ANTHROPIC_API_KEY_PARAM": f"/{self.app_name}/anthropic-api-key",
-            },
+            environment=get_lambda_environment(),
             # NO VPC - Lambda runs in AWS managed VPC with full internet access
             log_retention=logs.RetentionDays.ONE_WEEK,
             tracing=lambda_.Tracing.ACTIVE,

@@ -171,6 +171,15 @@ run_db_migrations() {
 deploy_backend() {
     log_step "Deploying backend stack..."
     
+    # Try to get ANTHROPIC_API_KEY from SSM for deployment
+    log_info "Getting ANTHROPIC_API_KEY from SSM for deployment..."
+    if aws ssm get-parameter --name "/cassidy/anthropic-api-key" --with-decryption &> /dev/null; then
+        export ANTHROPIC_API_KEY=$(aws ssm get-parameter --name "/cassidy/anthropic-api-key" --with-decryption --query 'Parameter.Value' --output text)
+        log_info "✓ ANTHROPIC_API_KEY loaded from SSM"
+    else
+        log_warn "⚠ ANTHROPIC_API_KEY not found in SSM. Lambda will use parameter store fallback."
+    fi
+    
     log_info "Deploying CassidyBackendStack..."
     cdk deploy CassidyBackendStack --require-approval never
     
