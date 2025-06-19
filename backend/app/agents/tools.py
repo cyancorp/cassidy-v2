@@ -9,6 +9,10 @@ from app.agents.models import (
     UpdatePreferencesRequest, UpdatePreferencesResponse
 )
 from app.templates.loader import template_loader
+from app.agents.task_tools import (
+    create_task_tool, list_tasks_tool, complete_task_tool, 
+    delete_task_tool, update_task_tool, extract_tasks_from_text
+)
 
 
 async def structure_journal_tool(
@@ -479,11 +483,59 @@ UpdatePreferencesTool = Tool(
 )
 
 
+# Task management tools
+async def create_task_agent_tool(ctx: CassidyAgentDependencies, title: str, description: str = None) -> Dict[str, Any]:
+    """Create a new task for the user"""
+    return await create_task_tool(ctx.user_id, title, description, source_session_id=ctx.session_id)
+
+async def list_tasks_agent_tool(ctx: CassidyAgentDependencies, include_completed: bool = False) -> Dict[str, Any]:
+    """List user's tasks"""
+    return await list_tasks_tool(ctx.user_id, include_completed)
+
+async def complete_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str) -> Dict[str, Any]:
+    """Mark a task as completed"""
+    return await complete_task_tool(ctx.user_id, task_id)
+
+async def delete_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str) -> Dict[str, Any]:
+    """Delete a task"""
+    return await delete_task_tool(ctx.user_id, task_id)
+
+async def update_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str, title: str = None, description: str = None) -> Dict[str, Any]:
+    """Update a task's title or description"""
+    return await update_task_tool(ctx.user_id, task_id, title, description)
+
+# Task tool definitions for Pydantic-AI
+CreateTaskTool = Tool(
+    create_task_agent_tool,
+    description="Create a new task for the user when they mention something they need to do, remember, or accomplish"
+)
+
+ListTasksTool = Tool(
+    list_tasks_agent_tool,
+    description="List the user's current tasks. Use include_completed=True to show completed tasks as well"
+)
+
+CompleteTaskTool = Tool(
+    complete_task_agent_tool,
+    description="Mark a task as completed when the user indicates they have finished it"
+)
+
+DeleteTaskTool = Tool(
+    delete_task_agent_tool,
+    description="Delete a task when the user no longer needs it or wants to remove it"
+)
+
+UpdateTaskTool = Tool(
+    update_task_agent_tool,
+    description="Update a task's title or description when the user wants to modify it"
+)
+
+
 def get_tools_for_conversation_type(conversation_type: str) -> List[Tool]:
     """Return appropriate tools for the given conversation type"""
     if conversation_type == "journaling":
-        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool]
+        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool, CreateTaskTool, ListTasksTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
     elif conversation_type == "general":
-        return []
+        return [CreateTaskTool, ListTasksTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
     else:
         return []

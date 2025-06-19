@@ -3,6 +3,7 @@ import ContextPanel from './components/ContextPanel';
 import ChatInterface from './components/ChatInterface';
 import LoginForm from './components/LoginForm';
 import JournalEntries from './components/JournalEntries';
+import TaskManagerSimple from './components/TaskManagerSimple';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Message, UserTemplate } from './types'; // <-- Import UserTemplate
 import { v4 as uuidv4 } from 'uuid';
@@ -58,6 +59,7 @@ function MainApp() {
   const [error, setError] = useState<string | null>(null);
   const [currentUserPrefs, setCurrentUserPrefs] = useState<UserPreferences | null>(null); // State for full prefs object
   const [showJournalEntries, setShowJournalEntries] = useState<boolean>(false);
+  const [currentView, setCurrentView] = useState<'chat' | 'journal' | 'tasks'>('chat');
 
   // Function to clear local state on reset
   const clearLocalState = () => {
@@ -317,48 +319,105 @@ function MainApp() {
   return (
     <>
       <div className="flex h-screen bg-gray-200">
-        <div className="flex-1 flex flex-col">
-          {generalErrorDisplay}
-          <ChatInterface 
-            messages={messages} 
-            onSendMessage={handleSendMessage} 
-            isLoading={isLoading && messages.length > 0} // Show loading only after initial messages
-          />
-        </div>
-        <div className="w-1/3 bg-white border-l border-gray-300 overflow-y-auto">
-          <ContextPanel 
-            structuredContent={structuredContent} 
-            debugInfo={debugInfo} 
-            userPreferences={currentUserPrefs}
-          />
-          <div className="p-4 space-y-2">
-            <div className="text-sm text-gray-600 mb-2">
+        {/* Navigation Sidebar */}
+        <div className="w-64 bg-gray-800 text-white flex flex-col">
+          <div className="p-4 border-b border-gray-700">
+            <h2 className="text-xl font-bold">Cassidy</h2>
+          </div>
+          <nav className="flex-1 p-4">
+            <ul className="space-y-2">
+              <li>
+                <button
+                  onClick={() => setCurrentView('chat')}
+                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                    currentView === 'chat' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  💬 Chat
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setCurrentView('journal')}
+                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                    currentView === 'journal' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  📖 Journal
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setCurrentView('tasks')}
+                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                    currentView === 'tasks' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  ✅ Tasks
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div className="p-4 border-t border-gray-700 space-y-2">
+            <div className="text-sm text-gray-400 mb-2">
               Logged in as: <strong>{username}</strong>
             </div>
             <button 
-              onClick={() => setShowJournalEntries(true)} 
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              View Journal Entries
-            </button>
-            <button 
               onClick={handleResetPreferences} 
-              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm focus:outline-none focus:shadow-outline"
             >
-              Reset Preferences & Onboarding
+              Reset Preferences
             </button>
             <button 
               onClick={logout} 
-              className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-sm focus:outline-none focus:shadow-outline"
             >
               Logout
             </button>
           </div>
         </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex">
+          {currentView === 'chat' && (
+            <>
+              <div className="flex-1 flex flex-col">
+                {generalErrorDisplay}
+                <ChatInterface 
+                  messages={messages} 
+                  onSendMessage={handleSendMessage} 
+                  isLoading={isLoading && messages.length > 0} // Show loading only after initial messages
+                />
+              </div>
+              <div className="w-1/3 bg-white border-l border-gray-300 overflow-y-auto">
+                <ContextPanel 
+                  structuredContent={structuredContent} 
+                  debugInfo={debugInfo} 
+                  userPreferences={currentUserPrefs}
+                />
+              </div>
+            </>
+          )}
+          
+          {currentView === 'journal' && (
+            <div className="flex-1 bg-white">
+              <JournalEntries onClose={() => setCurrentView('chat')} />
+            </div>
+          )}
+          
+          {currentView === 'tasks' && (
+            <div className="flex-1 bg-white">
+              <TaskManagerSimple onClose={() => setCurrentView('chat')} />
+            </div>
+          )}
+        </div>
       </div>
-      {showJournalEntries && (
-        <JournalEntries onClose={() => setShowJournalEntries(false)} />
-      )}
     </>
   );
 }

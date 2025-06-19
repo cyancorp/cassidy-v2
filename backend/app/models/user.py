@@ -24,6 +24,7 @@ class UserDB(TimestampedModel):
     chat_sessions = relationship("ChatSessionDB", back_populates="user")
     journal_entries = relationship("JournalEntryDB", back_populates="user")
     auth_sessions = relationship("AuthSessionDB", back_populates="user")
+    tasks = relationship("TaskDB", back_populates="user")
 
 
 class AuthSessionDB(TimestampedModel):

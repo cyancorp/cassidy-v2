@@ -20,6 +20,7 @@ class ChatSessionDB(TimestampedModel):
     messages = relationship("ChatMessageDB", back_populates="session", cascade="all, delete-orphan")
     journal_draft = relationship("JournalDraftDB", back_populates="session", uselist=False)
     journal_entries = relationship("JournalEntryDB", back_populates="session")
+    extracted_tasks = relationship("TaskDB", back_populates="source_session")
     
     # Indexes
     __table_args__ = (
