@@ -4,6 +4,7 @@ from typing import Dict, Any, List
 from app.agents.models import CassidyAgentDependencies
 from app.repositories.user import UserPreferencesRepository
 from app.repositories.session import JournalDraftRepository, ChatMessageRepository
+from app.repositories.task import TaskRepository
 from app.templates.loader import template_loader
 
 
@@ -15,6 +16,7 @@ class AgentService:
         self.user_prefs_repo = UserPreferencesRepository()
         self.journal_draft_repo = JournalDraftRepository()
         self.message_repo = ChatMessageRepository()
+        self.task_repo = TaskRepository()
     
     async def create_agent_context(
         self, 
@@ -27,6 +29,8 @@ class AgentService:
         # Load user data
         user_prefs = await self.user_prefs_repo.get_by_user_id(self.db, user_id)
         journal_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
+        current_tasks = await self.task_repo.get_pending_by_user_id(self.db, user_id)
+        print(f"[DEBUG] AgentService.create_agent_context: user_id={user_id}, found {len(current_tasks)} pending tasks")
         
         # Load template from file (instead of database)
         user_template_dict = template_loader.get_user_template(user_id)
@@ -54,7 +58,23 @@ class AgentService:
         # Get the latest draft data from the database
         latest_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
         draft_dict = latest_draft.draft_data if latest_draft else {}
+        
+        # Convert tasks to dictionaries for context
+        tasks_dict = []
+        for task in current_tasks:
+            task_dict = {
+                "id": str(task.id),
+                "title": task.title,
+                "description": task.description,
+                "priority": task.priority,
+                "due_date": task.due_date,
+                "created_at": task.created_at.isoformat()
+            }
+            tasks_dict.append(task_dict)
+        
         print(f"Creating context with draft data: {draft_dict}")
+        print(f"Current tasks: {len(tasks_dict)} pending")
+        print(f"Task details: {[{'id': t['id'], 'title': t['title']} for t in tasks_dict]}")
         
         return CassidyAgentDependencies(
             user_id=user_id,
@@ -62,7 +82,8 @@ class AgentService:
             conversation_type=conversation_type,
             user_template=template_dict,
             user_preferences=prefs_dict,
-            current_journal_draft=draft_dict
+            current_journal_draft=draft_dict,
+            current_tasks=tasks_dict
         )
     
     async def process_agent_response(

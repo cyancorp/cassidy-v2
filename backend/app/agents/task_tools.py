@@ -79,6 +79,7 @@ async def list_tasks_tool(user_id: str, include_completed: bool = False) -> Dict
         Dictionary with list of tasks or error information
     """
     try:
+        print(f"[DEBUG] list_tasks_tool called with user_id: {user_id}")
         # Ensure database is initialized
         if database.async_session_maker is None:
             await database.init_db()
@@ -90,6 +91,8 @@ async def list_tasks_tool(user_id: str, include_completed: bool = False) -> Dict
                 tasks = await task_repo.get_by_user_id(db, user_id)
             else:
                 tasks = await task_repo.get_pending_by_user_id(db, user_id)
+            
+            print(f"[DEBUG] Found {len(tasks)} tasks for user {user_id}")
             
             task_list = []
             for task in tasks:
@@ -130,6 +133,7 @@ async def complete_task_tool(user_id: str, task_id: str) -> Dict[str, Any]:
         Dictionary with result or error information
     """
     try:
+        print(f"[DEBUG] complete_task_tool called with user_id: {user_id}, task_id: {task_id}")
         # Ensure database is initialized
         if database.async_session_maker is None:
             await database.init_db()
@@ -139,6 +143,7 @@ async def complete_task_tool(user_id: str, task_id: str) -> Dict[str, Any]:
             
             # Verify task belongs to user
             task = await task_repo.get_by_id(db, task_id)
+            print(f"[DEBUG] Found task: {task.title if task else 'None'}, belongs to user: {task.user_id if task else 'None'}")
             if not task or task.user_id != user_id:
                 return {
                     "success": False,

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from app.models.api import SectionDetailDef
 
 
-@dataclass
+@dataclass  
 class CassidyAgentDependencies:
     """Dependencies provided to the Cassidy AI agent"""
     user_id: str
@@ -15,6 +15,7 @@ class CassidyAgentDependencies:
     user_template: Dict[str, Any]  # Will contain sections as dict
     user_preferences: Dict[str, Any]  # User preferences
     current_journal_draft: Dict[str, Any]  # Current draft data
+    current_tasks: List[Dict[str, Any]]  # Current pending tasks
 
 
 class StructureJournalRequest(BaseModel):

@@ -1,4 +1,4 @@
-from pydantic_ai import Tool
+from pydantic_ai import Tool, RunContext
 from typing import Dict, Any, List
 import re
 
@@ -11,12 +11,12 @@ from app.agents.models import (
 from app.templates.loader import template_loader
 from app.agents.task_tools import (
     create_task_tool, list_tasks_tool, complete_task_tool, 
-    delete_task_tool, update_task_tool, extract_tasks_from_text
+    delete_task_tool, update_task_tool
 )
 
 
 async def structure_journal_tool(
-    ctx: CassidyAgentDependencies,
+    ctx: RunContext[CassidyAgentDependencies],
     user_text: str
 ) -> StructureJournalResponse:
     """
@@ -25,18 +25,13 @@ async def structure_journal_tool(
     This tool uses an LLM to intelligently analyze the user's text and map it to 
     appropriate sections in their personal journal template.
     """
-    print(f"StructureJournalTool called with text: {user_text}")
-    print(f"Context user_id: {ctx.user_id}")
-    print(f"Context session_id: {ctx.session_id}")
-    print(f"Context template keys: {list(ctx.user_template.keys())}")
-    print(f"Context draft keys: {list(ctx.current_journal_draft.keys())}")
     
     user_text = user_text.strip()
     if not user_text:
         return StructureJournalResponse(sections_updated=[], status="no_content")
     
     # Get template sections from context (should come from file-based template now)
-    template_sections = ctx.user_template.get("sections", {})
+    template_sections = ctx.deps.user_template.get("sections", {})
     if not template_sections:
         # Fallback to file-based template if context doesn't have sections
         fallback_template = template_loader.get_user_template()
@@ -138,7 +133,7 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         structured_content = {"General Reflection": user_text}
     
     # Get current draft data and merge with new content
-    current_draft = ctx.current_journal_draft.copy()
+    current_draft = ctx.deps.current_journal_draft.copy()
     sections_updated = []
     
     # Normalize section names to match template (handle case variations)
@@ -168,31 +163,6 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         
         return name  # Return original if no match found
     
-    # Extract tasks from the structured content before merging
-    extracted_tasks = []
-    task_indicators = [
-        "need to", "have to", "should", "must", "remember to", "going to",
-        "task:", "todo:", "action item:", "follow up on", "deadline", "due"
-    ]
-    
-    # Look for tasks in the user text and structured content
-    full_text = user_text.lower()
-    for indicator in task_indicators:
-        if indicator in full_text:
-            # Try to extract tasks from the content
-            try:
-                from app.agents.task_tools import extract_tasks_from_text
-                extracted_tasks = await extract_tasks_from_text(
-                    user_text, 
-                    ctx.user_id, 
-                    ctx.session_id
-                )
-                if extracted_tasks:
-                    print(f"Extracted {len(extracted_tasks)} tasks from journal entry")
-                break
-            except Exception as e:
-                print(f"Error extracting tasks: {e}")
-
     # Merge structured content with existing draft
     for section_name, new_content in structured_content.items():
         # Normalize section name to match template
@@ -223,7 +193,7 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
             sections_updated.append(normalized_name)
     
     # Update the context (this will be handled by the agent service)
-    ctx.current_journal_draft = current_draft
+    ctx.deps.current_journal_draft = current_draft
     
     return StructureJournalResponse(
         sections_updated=sections_updated,
@@ -233,7 +203,7 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
 
 
 async def save_journal_tool(
-    ctx: CassidyAgentDependencies,
+    ctx: RunContext[CassidyAgentDependencies],
     confirmation: bool = True
 ) -> SaveJournalResponse:
     """
@@ -259,7 +229,7 @@ async def save_journal_tool(
 
 
 async def update_preferences_tool(
-    ctx: CassidyAgentDependencies,
+    ctx: RunContext[CassidyAgentDependencies],
     preference_updates: Dict[str, Any]
 ) -> UpdatePreferencesResponse:
     """
@@ -270,7 +240,7 @@ async def update_preferences_tool(
     """
     # WORKAROUND: Get user_id from request if context is wrong
     request_user_id = preference_updates.get("user_id", "")
-    actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.user_id
+    actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.deps.user_id
     
     # Extract the user text that might contain preference updates  
     # The agent should pass the user's conversational text in preference_updates["user_text"]
@@ -283,10 +253,10 @@ async def update_preferences_tool(
     
     if not user_text.strip():
         # Fallback to old behavior for direct API calls
-        return await _legacy_update_preferences(ctx, preference_updates)
+        return await _legacy_update_preferences(ctx.deps, preference_updates)
     
     # Get current preferences for context
-    current_prefs = ctx.user_preferences.copy()
+    current_prefs = ctx.deps.user_preferences.copy()
     
     # Create LLM prompt for preference analysis
     preferences_prompt = f"""Analyze the following user input to identify any preference updates or changes they want to make to their journaling system.
@@ -432,7 +402,7 @@ JSON Output (only include fields that should be updated):"""
             updated_fields.append("template_change_requested")
     
     # Update context
-    ctx.user_preferences = current_prefs
+    ctx.deps.user_preferences = current_prefs
     
     # Save preferences to database immediately to ensure persistence
     if updated_fields:
@@ -509,25 +479,38 @@ UpdatePreferencesTool = Tool(
 
 
 # Task management tools
-async def create_task_agent_tool(ctx: CassidyAgentDependencies, title: str, description: str = None, due_date: str = None) -> Dict[str, Any]:
+async def create_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], title: str, description: str = None, due_date: str = None) -> Dict[str, Any]:
     """Create a new task for the user"""
-    return await create_task_tool(ctx.user_id, title, description, due_date=due_date, source_session_id=ctx.session_id)
+    return await create_task_tool(ctx.deps.user_id, title, description, due_date=due_date, source_session_id=ctx.deps.session_id)
 
-async def list_tasks_agent_tool(ctx: CassidyAgentDependencies, include_completed: bool = False) -> Dict[str, Any]:
+async def list_tasks_agent_tool(ctx: RunContext[CassidyAgentDependencies], include_completed: bool = False) -> Dict[str, Any]:
     """List user's tasks"""
-    return await list_tasks_tool(ctx.user_id, include_completed)
+    return await list_tasks_tool(ctx.deps.user_id, include_completed)
 
-async def complete_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str) -> Dict[str, Any]:
-    """Mark a task as completed"""
-    return await complete_task_tool(ctx.user_id, task_id)
+async def complete_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str) -> Dict[str, Any]:
+    """Mark a task as completed. The task_id must be the exact ID from the current tasks list."""
+    return await complete_task_tool(ctx.deps.user_id, task_id)
 
-async def delete_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str) -> Dict[str, Any]:
+async def complete_task_by_title_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_title: str) -> Dict[str, Any]:
+    """Mark a task as completed by matching its title. Use when user says they completed something."""
+    
+    # Find the task in the current context by title
+    for task in ctx.deps.current_tasks:
+        if task_title.lower() in task['title'].lower() or task['title'].lower() in task_title.lower():
+            return await complete_task_tool(ctx.deps.user_id, task['id'])
+    
+    return {
+        "success": False,
+        "message": f"No task found matching '{task_title}'. Current tasks: {[t['title'] for t in ctx.deps.current_tasks]}"
+    }
+
+async def delete_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str) -> Dict[str, Any]:
     """Delete a task"""
-    return await delete_task_tool(ctx.user_id, task_id)
+    return await delete_task_tool(ctx.deps.user_id, task_id)
 
-async def update_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str, title: str = None, description: str = None) -> Dict[str, Any]:
+async def update_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str, title: str = None, description: str = None) -> Dict[str, Any]:
     """Update a task's title or description"""
-    return await update_task_tool(ctx.user_id, task_id, title, description)
+    return await update_task_tool(ctx.deps.user_id, task_id, title, description)
 
 # Task tool definitions for Pydantic-AI
 CreateTaskTool = Tool(
@@ -542,25 +525,30 @@ ListTasksTool = Tool(
 
 CompleteTaskTool = Tool(
     complete_task_agent_tool,
-    description="Mark a task as completed when the user indicates they have finished it"
+    description="Mark a task as completed when the user indicates they have finished it. Requires the task_id parameter - use the exact ID from the current tasks list"
+)
+
+CompleteTaskByTitleTool = Tool(
+    complete_task_by_title_agent_tool,
+    description="Mark a task as completed by matching the task title. Use this when user says 'I bought milk', 'I got the cat', etc. Pass the thing they completed as task_title."
 )
 
 DeleteTaskTool = Tool(
     delete_task_agent_tool,
-    description="Delete a task when the user no longer needs it or wants to remove it"
+    description="Delete a task when the user no longer needs it or wants to remove it. Requires the task_id parameter - use the exact ID from the current tasks list"
 )
 
 UpdateTaskTool = Tool(
     update_task_agent_tool,
-    description="Update a task's title or description when the user wants to modify it"
+    description="Update a task's title or description when the user wants to modify it. Requires task_id parameter and at least one of title or description to update"
 )
 
 
 def get_tools_for_conversation_type(conversation_type: str) -> List[Tool]:
     """Return appropriate tools for the given conversation type"""
     if conversation_type == "journaling":
-        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool, CreateTaskTool, ListTasksTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
+        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool, CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
     elif conversation_type == "general":
-        return [CreateTaskTool, ListTasksTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
+        return [CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
     else:
         return []

@@ -37,8 +37,8 @@ async def agent_chat(
         current_user.id, session_id, session.conversation_type
     )
     
-    # Get agent for conversation type with user_id
-    agent = await AgentFactory.get_agent(session.conversation_type, current_user.id)
+    # Get agent for conversation type with user_id and context
+    agent = await AgentFactory.get_agent(session.conversation_type, current_user.id, context)
     
     # Load message history
     message_history = await agent_service.get_message_history(session_id)
