@@ -19,12 +19,14 @@ class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
     priority: Optional[int] = None
+    due_date: Optional[str] = None
 
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     is_completed: Optional[bool] = None
+    due_date: Optional[str] = None
 
 
 class TaskReorder(BaseModel):
@@ -43,6 +45,7 @@ class TaskResponse(BaseModel):
     priority: int
     is_completed: bool
     completed_at: Optional[str]
+    due_date: Optional[str]
     created_at: str
     updated_at: str
     source_session_id: Optional[str]
@@ -70,6 +73,7 @@ async def list_tasks(
             priority=task.priority,
             is_completed=task.is_completed,
             completed_at=task.completed_at,
+            due_date=task.due_date,
             created_at=task.created_at.isoformat(),
             updated_at=task.updated_at.isoformat(),
             source_session_id=str(task.source_session_id) if task.source_session_id else None
@@ -92,7 +96,8 @@ async def create_task(
         user_id=current_user.id,
         title=task_data.title,
         description=task_data.description,
-        priority=task_data.priority
+        priority=task_data.priority,
+        due_date=task_data.due_date
     )
     
     return TaskResponse(
@@ -102,6 +107,7 @@ async def create_task(
         priority=task.priority,
         is_completed=task.is_completed,
         completed_at=task.completed_at,
+        due_date=task.due_date,
         created_at=task.created_at.isoformat(),
         updated_at=task.updated_at.isoformat(),
         source_session_id=str(task.source_session_id) if task.source_session_id else None
@@ -128,6 +134,7 @@ async def get_task(
         priority=task.priority,
         is_completed=task.is_completed,
         completed_at=task.completed_at,
+        due_date=task.due_date,
         created_at=task.created_at.isoformat(),
         updated_at=task.updated_at.isoformat(),
         source_session_id=str(task.source_session_id) if task.source_session_id else None
@@ -161,7 +168,8 @@ async def update_task(
         title=task_data.title,
         description=task_data.description,
         is_completed=task_data.is_completed,
-        completed_at=completed_at
+        completed_at=completed_at,
+        due_date=task_data.due_date
     )
     
     if not updated_task:

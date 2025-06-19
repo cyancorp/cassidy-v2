@@ -168,6 +168,31 @@ JSON Output (focus on capturing emotions, distinguishing completed vs future tas
         
         return name  # Return original if no match found
     
+    # Extract tasks from the structured content before merging
+    extracted_tasks = []
+    task_indicators = [
+        "need to", "have to", "should", "must", "remember to", "going to",
+        "task:", "todo:", "action item:", "follow up on", "deadline", "due"
+    ]
+    
+    # Look for tasks in the user text and structured content
+    full_text = user_text.lower()
+    for indicator in task_indicators:
+        if indicator in full_text:
+            # Try to extract tasks from the content
+            try:
+                from app.agents.task_tools import extract_tasks_from_text
+                extracted_tasks = await extract_tasks_from_text(
+                    user_text, 
+                    ctx.user_id, 
+                    ctx.session_id
+                )
+                if extracted_tasks:
+                    print(f"Extracted {len(extracted_tasks)} tasks from journal entry")
+                break
+            except Exception as e:
+                print(f"Error extracting tasks: {e}")
+
     # Merge structured content with existing draft
     for section_name, new_content in structured_content.items():
         # Normalize section name to match template
@@ -484,9 +509,9 @@ UpdatePreferencesTool = Tool(
 
 
 # Task management tools
-async def create_task_agent_tool(ctx: CassidyAgentDependencies, title: str, description: str = None) -> Dict[str, Any]:
+async def create_task_agent_tool(ctx: CassidyAgentDependencies, title: str, description: str = None, due_date: str = None) -> Dict[str, Any]:
     """Create a new task for the user"""
-    return await create_task_tool(ctx.user_id, title, description, source_session_id=ctx.session_id)
+    return await create_task_tool(ctx.user_id, title, description, due_date=due_date, source_session_id=ctx.session_id)
 
 async def list_tasks_agent_tool(ctx: CassidyAgentDependencies, include_completed: bool = False) -> Dict[str, Any]:
     """List user's tasks"""
@@ -507,7 +532,7 @@ async def update_task_agent_tool(ctx: CassidyAgentDependencies, task_id: str, ti
 # Task tool definitions for Pydantic-AI
 CreateTaskTool = Tool(
     create_task_agent_tool,
-    description="Create a new task for the user when they mention something they need to do, remember, or accomplish"
+    description="Create a new task for the user when they mention something they need to do, remember, or accomplish. Can include due dates if mentioned (use YYYY-MM-DD format)."
 )
 
 ListTasksTool = Tool(

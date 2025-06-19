@@ -14,6 +14,7 @@ class TaskDB(TimestampedModel):
     priority = Column(Integer, nullable=False)  # Priority for ordering (unique per user)
     is_completed = Column(Boolean, default=False, nullable=False)
     completed_at = Column(String(50), nullable=True)  # ISO format timestamp
+    due_date = Column(String(50), nullable=True)  # ISO format date
     source_session_id = Column(String(36), ForeignKey("chat_sessions.id"), nullable=True)  # Optional link to journal session
     
     # Relationships

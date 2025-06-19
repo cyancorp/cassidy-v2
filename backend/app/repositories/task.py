@@ -56,6 +56,7 @@ class TaskRepository(BaseRepository[TaskDB]):
         title: str, 
         description: Optional[str] = None,
         priority: Optional[int] = None,
+        due_date: Optional[str] = None,
         source_session_id: Optional[str] = None
     ) -> TaskDB:
         """Create a new task"""
@@ -67,6 +68,7 @@ class TaskRepository(BaseRepository[TaskDB]):
             title=title,
             description=description,
             priority=priority,
+            due_date=due_date,
             source_session_id=source_session_id
         )
         db.add(task)
@@ -81,7 +83,8 @@ class TaskRepository(BaseRepository[TaskDB]):
         title: Optional[str] = None,
         description: Optional[str] = None,
         is_completed: Optional[bool] = None,
-        completed_at: Optional[str] = None
+        completed_at: Optional[str] = None,
+        due_date: Optional[str] = None
     ) -> Optional[TaskDB]:
         """Update a task"""
         update_data = {}
@@ -93,6 +96,8 @@ class TaskRepository(BaseRepository[TaskDB]):
             update_data['is_completed'] = is_completed
         if completed_at is not None:
             update_data['completed_at'] = completed_at
+        if due_date is not None:
+            update_data['due_date'] = due_date
         
         if not update_data:
             return None

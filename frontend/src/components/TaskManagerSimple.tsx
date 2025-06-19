@@ -39,6 +39,7 @@ interface Task {
   priority: number;
   is_completed: boolean;
   completed_at?: string;
+  due_date?: string;
   created_at: string;
   updated_at: string;
   source_session_id?: string;
@@ -55,6 +56,7 @@ const TaskManagerSimple: React.FC<TaskManagerProps> = ({ onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
+  const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
 
@@ -108,6 +110,7 @@ const TaskManagerSimple: React.FC<TaskManagerProps> = ({ onClose }) => {
         body: JSON.stringify({
           title: newTaskTitle.trim(),
           description: newTaskDescription.trim() || undefined,
+          due_date: newTaskDueDate.trim() || undefined,
         }),
       });
 
@@ -119,6 +122,7 @@ const TaskManagerSimple: React.FC<TaskManagerProps> = ({ onClose }) => {
       setTasks(prev => [...prev, newTask]);
       setNewTaskTitle('');
       setNewTaskDescription('');
+      setNewTaskDueDate('');
       setShowAddForm(false);
     } catch (err: any) {
       console.error('Error creating task:', err);
@@ -308,6 +312,19 @@ const TaskManagerSimple: React.FC<TaskManagerProps> = ({ onClose }) => {
             />
           </div>
           
+          <div className="mb-4">
+            <label htmlFor="taskDueDate" className="block text-sm font-medium text-gray-700 mb-2">
+              Due Date (optional)
+            </label>
+            <input
+              id="taskDueDate"
+              type="date"
+              value={newTaskDueDate}
+              onChange={(e) => setNewTaskDueDate(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
           <div className="flex gap-2">
             <button
               type="submit"
@@ -435,6 +452,15 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({ task, onComplete, o
               <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
                 <span>Priority: {task.priority}</span>
                 <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
+                {task.due_date && (
+                  <span className={`px-2 py-1 rounded ${
+                    new Date(task.due_date) < new Date() 
+                      ? 'bg-red-100 text-red-800' 
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    Due: {new Date(task.due_date).toLocaleDateString()}
+                  </span>
+                )}
                 {task.is_completed && task.completed_at && (
                   <span>Completed: {new Date(task.completed_at).toLocaleDateString()}</span>
                 )}
