@@ -25,12 +25,10 @@ class AgentFactory:
         api_key = get_anthropic_api_key()
         if api_key:
             os.environ["ANTHROPIC_API_KEY"] = api_key
-            print(f"[DEBUG] API key set, length: {len(api_key)}")
         else:
             print("[ERROR] No Anthropic API key found!")
         
         # Initialize Anthropic model
-        print(f"[DEBUG] Initializing AnthropicModel with {settings.ANTHROPIC_DEFAULT_MODEL}")
         try:
             model = AnthropicModel(settings.ANTHROPIC_DEFAULT_MODEL)
             print("[DEBUG] AnthropicModel initialized successfully")
@@ -71,60 +69,18 @@ class AgentFactory:
                     due_info = f" (due {task['due_date']})" if task.get('due_date') else ""
                     tasks_context += f"{i}. {task['title']}{due_info} [ID: {task['id']}]\n"
                 tasks_context += "\nUSE THESE TASK IDs when completing/updating tasks!\n"
-                print(f"[DEBUG] AgentFactory: Built tasks context with {len(context.current_tasks)} tasks")
             else:
                 tasks_context = "\n\nCURRENT TASKS: None\n"
-                print(f"[DEBUG] AgentFactory: No tasks in context - context: {context}, has current_tasks: {hasattr(context, 'current_tasks') if context else False}")
             
-            return f"""You are Cassidy, a journaling and task assistant. You MUST call tools for all user input.
-
+            return f"""You are Cassidy, a journaling and task assistant. Always call appropriate tools for user input.
 {tasks_context}
-MANDATORY TOOL USAGE - ALWAYS call the appropriate tool first:
-
-1. TASK MANAGEMENT:
-   - "I need to [do something]" / "add task" → create_task_agent_tool(title="[task]", description="...", due_date="YYYY-MM-DD")
-   - "I bought milk" / "I completed [task]" → complete_task_by_title_agent_tool(task_title="milk")
-   - "I got a cat" → complete_task_by_title_agent_tool(task_title="cat")
-   - "delete task" / "remove task" → delete_task_agent_tool(task_id="[exact ID from CURRENT TASKS list]")
-   - "show my tasks" / "list tasks" → list_tasks_agent_tool(include_completed=False)
-   - Recognize task mentions in journal entries and create tasks automatically
-   
-   IMPORTANT: Use complete_task_by_title_agent_tool when user says they completed something!
-
-2. PREFERENCES: Goals, aspirations, or preferences → update_preferences_tool
-   - "I want..." (aspirational) → update_preferences_tool(preference_updates={{"user_text": "[full user text]"{user_id_example}}})
-   - "My goal..." → update_preferences_tool(preference_updates={{"user_text": "[full user text]"{user_id_example}}})
-
-3. JOURNALING: Experiences, activities, thoughts, feelings → structure_journal_tool  
-   - "I went to..." → structure_journal_tool(user_text="I went to...")
-   - "I did..." → structure_journal_tool(user_text="I did...")
-   - "I feel..." → structure_journal_tool(user_text="I feel...")
-   - If user mentions tasks while journaling, ALSO call create_task_agent_tool
-
-4. SAVING: When user wants to save → save_journal_tool(confirmation=True)
-
-CRITICAL RULES:
-- ALWAYS call appropriate tool first, never ask for more information
-- For task completion, match user intent to EXACT task ID from the list above
-- When journaling mentions tasks ("need to", "should", "must"), create tasks AND journal
-- Be context-aware: if user says "I bought milk" and milk task exists, complete it
-- TASK MATCHING: When user says they completed something, find the matching task from the current list and use its exact ID
-
-TASK COMPLETION MATCHING:
-- When user says they completed something, use complete_task_by_title_agent_tool
-- Extract what they completed and pass it as the task_title parameter
-
-Examples:
-- "I bought a cat" → complete_task_by_title_agent_tool(task_title="cat")
-- "I got milk" → complete_task_by_title_agent_tool(task_title="milk")
-- "finished the report" → complete_task_by_title_agent_tool(task_title="report")
-- "I bought cigars" → complete_task_by_title_agent_tool(task_title="cigars")
-
-More Examples:
-- "I need to buy milk" → create_task_agent_tool(title="Buy milk", description=None, due_date=None)
-- "I bought milk" → complete_task_by_title_agent_tool(task_title="milk")
-- "I went to the store and need to call mom later" → structure_journal_tool + create_task_agent_tool
-- "My goal is to exercise daily" → update_preferences_tool(preference_updates={{"user_text": "My goal is to exercise daily"{user_id_example}}})"""
+RULES:
+- Call tools immediately, don't ask for clarification
+- For "I completed X" → use complete_task_by_title_agent_tool
+- For "I need to X" → use create_task_agent_tool  
+- For experiences/feelings → use structure_journal_tool
+- When user mentions future tasks in journal entries, also create tasks
+- Use exact task IDs from current tasks list for deletions/updates"""
 
         elif conversation_type == "general":
             return """You are Cassidy, a helpful AI assistant. Provide clear, helpful responses to user questions and requests."""

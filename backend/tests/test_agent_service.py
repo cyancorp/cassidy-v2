@@ -58,7 +58,8 @@ class TestAgentService:
         
         with patch.object(agent_service.user_prefs_repo, 'get_by_user_id', return_value=mock_prefs), \
              patch('app.agents.service.template_loader.get_user_template') as mock_template_loader, \
-             patch.object(agent_service.journal_draft_repo, 'get_by_session_id', return_value=mock_draft):
+             patch.object(agent_service.journal_draft_repo, 'get_by_session_id', return_value=mock_draft), \
+             patch.object(agent_service.task_repo, 'get_pending_by_user_id', return_value=[]):
             
             mock_template_loader.return_value = {
                 "name": "Test Template",
@@ -97,7 +98,8 @@ class TestAgentService:
              patch('app.agents.service.template_loader.get_user_template') as mock_template_loader, \
              patch.object(agent_service.journal_draft_repo, 'get_by_session_id', return_value=None), \
              patch.object(agent_service, '_create_default_preferences') as mock_create_prefs, \
-             patch.object(agent_service.journal_draft_repo, 'create_draft') as mock_create_draft:
+             patch.object(agent_service.journal_draft_repo, 'create_draft') as mock_create_draft, \
+             patch.object(agent_service.task_repo, 'get_pending_by_user_id', return_value=[]):
             
             # Setup mock returns for defaults
             mock_create_prefs.return_value = UserPreferencesDB(

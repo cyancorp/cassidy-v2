@@ -30,7 +30,6 @@ class AgentService:
         user_prefs = await self.user_prefs_repo.get_by_user_id(self.db, user_id)
         journal_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
         current_tasks = await self.task_repo.get_pending_by_user_id(self.db, user_id)
-        print(f"[DEBUG] AgentService.create_agent_context: user_id={user_id}, found {len(current_tasks)} pending tasks")
         
         # Load template from file (instead of database)
         user_template_dict = template_loader.get_user_template(user_id)
@@ -107,10 +106,19 @@ class AgentService:
                     for part in message.parts:
                         # Check if this is a tool return part
                         if hasattr(part, 'tool_name') and hasattr(part, 'content'):
+                            # Serialize content if it's a Pydantic model
+                            content = part.content
+                            if hasattr(content, 'model_dump'):
+                                # Pydantic v2 model
+                                content = content.model_dump()
+                            elif hasattr(content, 'dict'):
+                                # Pydantic v1 model
+                                content = content.dict()
+                            
                             tool_calls.append({
                                 "name": part.tool_name,
                                 "input": getattr(part, 'input', {}),  # May not have input in return
-                                "output": part.content
+                                "output": content
                             })
         
         response_data["tool_calls"] = tool_calls
@@ -123,8 +131,8 @@ class AgentService:
                 
                 # Get the updated draft data from the tool response
                 output = call["output"]
-                if hasattr(output, 'updated_draft_data'):
-                    updated_draft = output.updated_draft_data
+                if isinstance(output, dict) and 'updated_draft_data' in output:
+                    updated_draft = output['updated_draft_data']
                     print(f"Updated draft from tool: {updated_draft}")
                     
                     # Update the draft in database
@@ -140,7 +148,7 @@ class AgentService:
                 print(f"Processing save_journal_tool call")
                 print(f"Save tool output: {output}")
                 
-                if hasattr(output, 'status') and output.status == "success":
+                if isinstance(output, dict) and output.get('status') == "success":
                     # Get the latest draft from database to check if there's content
                     latest_draft = await self.journal_draft_repo.get_by_session_id(
                         self.db, context.session_id

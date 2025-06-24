@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
+import json
+import asyncio
 
 from app.database import get_db
 from app.models.api import AgentChatRequest, AgentChatResponse
@@ -116,3 +119,120 @@ async def agent_chat(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Database connection error"
         )
+
+
+@router.post("/chat/{session_id}/stream")
+async def agent_chat_stream(
+    session_id: str,
+    request: AgentChatRequest,
+    current_user: UserDB = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Streaming agent chat endpoint using Server-Sent Events"""
+    
+    # Verify session belongs to user
+    session_repo = ChatSessionRepository()
+    session = await session_repo.get_by_id(db, session_id)
+    if not session or session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found"
+        )
+    
+    async def stream_generator():
+        try:
+            # Create agent service and context
+            agent_service = AgentService(db)
+            context = await agent_service.create_agent_context(
+                current_user.id, session_id, session.conversation_type
+            )
+            
+            # Get agent for conversation type with user_id and context
+            agent = await AgentFactory.get_agent(session.conversation_type, current_user.id, context)
+            
+            # Load message history
+            message_history = await agent_service.get_message_history(session_id)
+            
+            # Save user message BEFORE processing
+            message_repo = ChatMessageRepository()
+            await message_repo.create_message(
+                db, session_id=session_id, role="user", content=request.text,
+                metadata=request.metadata or {}
+            )
+            
+            # Stream the agent response
+            full_response = ""
+            previous_text = ""
+            result = None
+            
+            async with agent.run_stream(
+                request.text,
+                deps=context,
+                message_history=message_history if message_history else None
+            ) as response:
+                # Stream without delta=True to get accumulated text
+                async for text_chunk in response.stream_text():
+                    # Calculate the actual delta by comparing with previous text
+                    delta = text_chunk[len(previous_text):] if len(text_chunk) > len(previous_text) else ""
+                    
+                    if delta:
+                        # Send only the new delta as Server-Sent Event
+                        event_data = {
+                            "type": "text_delta",
+                            "content": delta,
+                            "session_id": session_id
+                        }
+                        yield f"data: {json.dumps(event_data)}\n\n"
+                    
+                    previous_text = text_chunk
+                    full_response = text_chunk  # Keep the final full response
+                
+                # Get the actual result after streaming
+                result = response
+            
+            # Process agent response for tool calls after streaming completes
+            response_data = await agent_service.process_agent_response(context, result)
+            
+            # Send tool calls if any
+            if response_data.get("tool_calls"):
+                tool_event = {
+                    "type": "tool_calls",
+                    "tool_calls": response_data["tool_calls"],
+                    "session_id": session_id
+                }
+                yield f"data: {json.dumps(tool_event)}\n\n"
+            
+            # Send completion event with metadata
+            completion_event = {
+                "type": "completion",
+                "session_id": session_id,
+                "updated_draft_data": response_data.get("updated_draft_data"),
+                "metadata": response_data.get("metadata", {}),
+                "full_text": full_response
+            }
+            yield f"data: {json.dumps(completion_event)}\n\n"
+            
+            # Save assistant message AFTER processing
+            await message_repo.create_message(
+                db, session_id=session_id, role="assistant", content=full_response,
+                metadata={"tool_calls": len(response_data.get("tool_calls", []))}
+            )
+            
+        except Exception as e:
+            # Send error event
+            error_event = {
+                "type": "error",
+                "error": str(e),
+                "session_id": session_id
+            }
+            yield f"data: {json.dumps(error_event)}\n\n"
+    
+    return StreamingResponse(
+        stream_generator(),
+        media_type="text/plain",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Content-Type": "text/event-stream"
+        }
+    )

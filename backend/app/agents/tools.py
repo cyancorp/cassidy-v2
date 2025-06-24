@@ -19,12 +19,7 @@ async def structure_journal_tool(
     ctx: RunContext[CassidyAgentDependencies],
     user_text: str
 ) -> StructureJournalResponse:
-    """
-    Tool to structure user input into journal template sections using LLM analysis.
-    
-    This tool uses an LLM to intelligently analyze the user's text and map it to 
-    appropriate sections in their personal journal template.
-    """
+    """Structure user experiences, thoughts, and feelings into organized journal sections. Use for personal reflections, daily events, emotions, or activities."""
     
     user_text = user_text.strip()
     if not user_text:
@@ -206,11 +201,7 @@ async def save_journal_tool(
     ctx: RunContext[CassidyAgentDependencies],
     confirmation: bool = True
 ) -> SaveJournalResponse:
-    """
-    Tool to save/finalize the current journal draft into a permanent journal entry.
-    
-    This tool should only be called when the user explicitly requests to save their journal.
-    """
+    """Save and finalize the current journal draft as a permanent entry. Only call when user explicitly asks to save."""
     
     if not confirmation:
         return SaveJournalResponse(journal_entry_id="", status="cancelled")
@@ -232,12 +223,7 @@ async def update_preferences_tool(
     ctx: RunContext[CassidyAgentDependencies],
     preference_updates: Dict[str, Any]
 ) -> UpdatePreferencesResponse:
-    """
-    Tool to intelligently update user preferences and template settings from natural language.
-    
-    Uses LLM analysis to extract preference changes from conversational context,
-    making preference updates feel natural and fluid.
-    """
+    """Update user goals, challenges, feedback preferences, or personal settings from natural conversation about aspirations and preferences."""
     # WORKAROUND: Get user_id from request if context is wrong
     request_user_id = preference_updates.get("user_id", "")
     actual_user_id = request_user_id if request_user_id and request_user_id != "{{user_id}}" else ctx.deps.user_id
@@ -461,38 +447,27 @@ async def _legacy_update_preferences(ctx: CassidyAgentDependencies, preference_u
     return UpdatePreferencesResponse(updated_fields=updated_fields, status="success")
 
 
-# Tool definitions for Pydantic-AI
-StructureJournalTool = Tool(
-    structure_journal_tool,
-    description="Structure user input into appropriate journal template sections based on content analysis"
-)
-
-SaveJournalTool = Tool(
-    save_journal_tool,
-    description="Save and finalize the current journal draft when user asks to save, finalize, or complete their journal entry"
-)
-
-UpdatePreferencesTool = Tool(
-    update_preferences_tool,
-    description="Intelligently update user preferences from natural conversation. Call this when user mentions goals, challenges, feedback preferences, or purpose. Extracts preference changes from user text automatically using LLM analysis."
-)
+# Tool definitions for Pydantic-AI (descriptions come from docstrings)
+StructureJournalTool = Tool(structure_journal_tool)
+SaveJournalTool = Tool(save_journal_tool)
+UpdatePreferencesTool = Tool(update_preferences_tool)
 
 
 # Task management tools
 async def create_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], title: str, description: str = None, due_date: str = None) -> Dict[str, Any]:
-    """Create a new task for the user"""
+    """Create a new task when user mentions something they need to do, buy, remember, or accomplish. Supports optional due dates (YYYY-MM-DD format)."""
     return await create_task_tool(ctx.deps.user_id, title, description, due_date=due_date, source_session_id=ctx.deps.session_id)
 
 async def list_tasks_agent_tool(ctx: RunContext[CassidyAgentDependencies], include_completed: bool = False) -> Dict[str, Any]:
-    """List user's tasks"""
+    """Show user's current tasks. Set include_completed=True to also show finished tasks."""
     return await list_tasks_tool(ctx.deps.user_id, include_completed)
 
 async def complete_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str) -> Dict[str, Any]:
-    """Mark a task as completed. The task_id must be the exact ID from the current tasks list."""
+    """Mark a task as completed using its exact task ID from the current tasks list."""
     return await complete_task_tool(ctx.deps.user_id, task_id)
 
 async def complete_task_by_title_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_title: str) -> Dict[str, Any]:
-    """Mark a task as completed by matching its title. Use when user says they completed something."""
+    """Mark a task as completed by fuzzy matching its title. Use when user says 'I bought milk', 'finished the report', etc."""
     
     # Find the task in the current context by title
     for task in ctx.deps.current_tasks:
@@ -505,43 +480,20 @@ async def complete_task_by_title_agent_tool(ctx: RunContext[CassidyAgentDependen
     }
 
 async def delete_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str) -> Dict[str, Any]:
-    """Delete a task"""
+    """Delete a task permanently using its exact task ID from the current tasks list."""
     return await delete_task_tool(ctx.deps.user_id, task_id)
 
 async def update_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], task_id: str, title: str = None, description: str = None) -> Dict[str, Any]:
-    """Update a task's title or description"""
+    """Update a task's title or description using its exact task ID from the current tasks list."""
     return await update_task_tool(ctx.deps.user_id, task_id, title, description)
 
-# Task tool definitions for Pydantic-AI
-CreateTaskTool = Tool(
-    create_task_agent_tool,
-    description="Create a new task for the user when they mention something they need to do, remember, or accomplish. Can include due dates if mentioned (use YYYY-MM-DD format)."
-)
-
-ListTasksTool = Tool(
-    list_tasks_agent_tool,
-    description="List the user's current tasks. Use include_completed=True to show completed tasks as well"
-)
-
-CompleteTaskTool = Tool(
-    complete_task_agent_tool,
-    description="Mark a task as completed when the user indicates they have finished it. Requires the task_id parameter - use the exact ID from the current tasks list"
-)
-
-CompleteTaskByTitleTool = Tool(
-    complete_task_by_title_agent_tool,
-    description="Mark a task as completed by matching the task title. Use this when user says 'I bought milk', 'I got the cat', etc. Pass the thing they completed as task_title."
-)
-
-DeleteTaskTool = Tool(
-    delete_task_agent_tool,
-    description="Delete a task when the user no longer needs it or wants to remove it. Requires the task_id parameter - use the exact ID from the current tasks list"
-)
-
-UpdateTaskTool = Tool(
-    update_task_agent_tool,
-    description="Update a task's title or description when the user wants to modify it. Requires task_id parameter and at least one of title or description to update"
-)
+# Task tool definitions for Pydantic-AI (descriptions come from docstrings)
+CreateTaskTool = Tool(create_task_agent_tool)
+ListTasksTool = Tool(list_tasks_agent_tool)
+CompleteTaskTool = Tool(complete_task_agent_tool)
+CompleteTaskByTitleTool = Tool(complete_task_by_title_agent_tool)
+DeleteTaskTool = Tool(delete_task_agent_tool)
+UpdateTaskTool = Tool(update_task_agent_tool)
 
 
 def get_tools_for_conversation_type(conversation_type: str) -> List[Tool]:
