@@ -1,0 +1,613 @@
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bad","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue pass","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hugh","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the contras","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and shot","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and shot shot might make"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and shot make certain make","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and shot make certain"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain element","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain element elements","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and shot make certain elements"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or fill","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or fill out"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or fill out of","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or fill out of place","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color pal","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the to"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should app"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the over","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color pal"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what the","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pal","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the palette for","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each","confidence":0}]}
+invokeFlutter textRecognition
+invokeFlutter notifyStatus
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"confidence":0,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual"}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and make certain elements or feel out of place on purpose before one frame of any movie shot there's fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the palette for each individual","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+FinishRecognition true
+Encoded JSON result: {"finalResult":true,"alternates":[{"confidence":0.753,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual"},{"confidence":0.753,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if the scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual"},{"confidence":0.748,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the palette for each individual"},{"confidence":0.747,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual Kim"},{"confidence":0.746,"recognizedWords":"That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual camp"}]}
+invokeFlutter textRecognition
+flutter: Final result: "That's why it's such a huge part of filmmaking in cinematography if a scene is meant to feel sad it might be bathed in blue passion you may see Hughes red if the moment is meant to stand out the color contrast and a shot might make certain elements or feel out of place on purpose before one frame of any movie shot there's a fine color palette that says the tone of the film you should approach your brand the same way what's the overall color palette and what's the pallet for each individual"
+flutter: Total accumulated length: 494
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+FinishSuccessfully
+invokeFlutter notifyStatus
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+invokeFlutter notifyStatus
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 494
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 494
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color pal","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color pallet"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palette","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palette from","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color pallets from"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color pallets from movies","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palette from movies","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+flutter: Final result: "Color palette from movies"
+flutter: Total accumulated length: 520
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palette from movies there"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's to","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatch","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from icon"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic film","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color to"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tool","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that like","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a do","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a Dom"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a domino","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant to"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can ex","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the"}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the support","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"confidence":0,"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors"}],"finalResult":false}
+invokeFlutter textRecognition
+invokeFlutter notifyStatus
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+invokeFlutter notifyStatus
+App is being debugged, do not track this hang
+Hang detected: 0.28s (debugger attached, not reporting)
+FinishRecognition true
+Encoded JSON result: {"alternates":[{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.809},{"recognizedWords":"Color pallets for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.803},{"recognizedWords":"Color palette for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.799},{"recognizedWords":"Color palettes from movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.81},{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that like you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.792},{"recognizedWords":"Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that let you pick a dominant tone like blue or green and then you can explore the supporting colors for","confidence":0.793}],"finalResult":true}
+invokeFlutter textRecognition
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Final result: "Color palettes for movies there's tons of sites that show swatches pulled from iconic films or you can use color tools that you pick a dominant tone like blue or green and then you can explore the supporting colors for"
+flutter: Total accumulated length: 739
+FinishSuccessfully
+invokeFlutter notifyStatus
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 739
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+FinishSuccessfully with error: Optional(Error Domain=kAFAssistantErrorDomain Code=1110 "No speech detected" UserInfo={NSLocalizedDescription=No speech detected})
+FinishSuccessfully
+invokeFlutter notifyStatus
+invokeFlutter notifyError
+invokeFlutter notifyStatus
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+invokeFlutter notifyStatus
+App is being debugged, do not track this hang
+Hang detected: 0.29s (debugger attached, not reporting)
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 739
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 739
+flutter: Speech status: listening
+flutter: Started new listening session - actually listening now
+flutter: Current accumulated text length: 739
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Mute","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+flutter: Final result: "Mute"
+flutter: Total accumulated length: 744
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Mute muted","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"I muted","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"Or muted a","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"Or muted a lot of","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of black","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"I muted a lot of blacks","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and gray","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"I muted a lot of blacks and grays","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then when","confidence":0}]}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then when color","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then when color show","confidence":0}],"finalResult":false}
+invokeFlutter textRecognition
+HypothesizeTranscription
+Encoded JSON result: {"finalResult":false,"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then when color showed","confidence":0}]}
+invokeFlutter textRecognition
+invokeFlutter notifyStatus
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+FinishRecognition true
+Encoded JSON result: {"alternates":[{"recognizedWords":"I muted a lot of blacks and grays but then when color showed","confidence":0.689},{"recognizedWords":"Are muted a lot of blacks and grays but then when color showed","confidence":0.676},{"recognizedWords":"Or muted a lot of blacks and grays but then when color showed","confidence":0.674},{"recognizedWords":"Muted a lot of blacks and grays but then when color showed","confidence":0.716},{"recognizedWords":"I muted a lot of blacks and grays but then when color show","confidence":0.689},{"recognizedWords":"I muted a lot of blacks and grays but then when color shows","confidence":0.664}],"finalResult":true}
+invokeFlutter textRecognition
+FinishSuccessfully
+invokeFlutter notifyStatus
+flutter: Speech status: done
+flutter: Speech status: done
+flutter: Status done - restarting immediately
+flutter: Restarting speech recognition...
+invokeFlutter notifyStatus
+App is being debugged, do not track this hang
+Hang detected: 0.41s (debugger attached, not reporting)
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Speech status: listening
+flutter: Started new listening session - actua
