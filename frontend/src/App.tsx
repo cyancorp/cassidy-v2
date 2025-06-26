@@ -58,7 +58,6 @@ function MainApp() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUserPrefs, setCurrentUserPrefs] = useState<UserPreferences | null>(null); // State for full prefs object
-  const [showJournalEntries, setShowJournalEntries] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<'chat' | 'journal' | 'tasks'>('chat');
 
   // Function to clear local state on reset

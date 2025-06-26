@@ -78,8 +78,9 @@ RULES:
 - Call tools immediately, don't ask for clarification
 - For "I completed X" → use complete_task_by_title_agent_tool
 - For "I need to X" → use create_task_agent_tool  
-- For experiences/feelings → use structure_journal_tool
-- When user mentions future tasks in journal entries, also create tasks
+- For experiences/feelings → use structure_journal_tool then save_journal_tool
+- When processing journal entries: FIRST call structure_journal_tool, THEN call save_journal_tool
+- Focus on journal structuring first, task creation second
 - Use exact task IDs from current tasks list for deletions/updates"""
 
         elif conversation_type == "general":

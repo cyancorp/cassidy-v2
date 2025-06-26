@@ -88,27 +88,6 @@ USER_TEMPLATE = JournalTemplate(
             ]
         ),
         
-        "Daily Events": SectionDefinition(
-            description="Significant events, activities, or experiences from the day",
-            aliases=["Activities", "What Happened", "Daily Activities", "Experiences"],
-            examples=[
-                "went to the gym",
-                "had lunch with Sarah", 
-                "attended conference call"
-            ]
-        ),
-        
-        "Market Events": SectionDefinition(
-            description="Important market events, news, earnings, announcements that affected or will affect markets",
-            aliases=["Market News", "Economic Events", "Earnings", "Announcements", "Financial News"],
-            examples=[
-                "Fed announcement tomorrow",
-                "Apple earnings after market close",
-                "ECB meeting next week",
-                "Bitcoin ETF approval news"
-            ]
-        ),
-        
         "Portfolio Review": SectionDefinition(
             description="Review of portfolio performance, risk assessment, allocation changes, profit/loss analysis",
             aliases=["Performance", "P&L", "Risk Review", "Allocation", "Portfolio Analysis"],
@@ -117,6 +96,29 @@ USER_TEMPLATE = JournalTemplate(
                 "need to rebalance crypto allocation", 
                 "reducing tech exposure",
                 "crypto profits covering losses in bonds"
+            ]
+        ),
+        
+        # GRATITUDE & REFLECTION
+        "Things I'm Grateful For": SectionDefinition(
+            description="Express gratitude for people, events, achievements, or circumstances in your life",
+            aliases=["Gratitude", "Grateful", "Thankful", "Appreciation", "Blessings"],
+            examples=[
+                "grateful for family support",
+                "thankful for good health",
+                "appreciating the sunny weather today",
+                "blessed to have supportive friends"
+            ]
+        ),
+        
+        # PERSONAL - OSCAR
+        "Oscar": SectionDefinition(
+            description="Memories, thoughts, feelings and plans relating to my son Oscar",
+            aliases=["Oscar"],
+            examples=[
+                "Quality time with Oscar, observing his developmental progress",
+                "Oscar doing well and his continued development",
+                "oscar is almost walking"
             ]
         ),
     }

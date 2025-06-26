@@ -454,9 +454,9 @@ UpdatePreferencesTool = Tool(update_preferences_tool)
 
 
 # Task management tools
-async def create_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], title: str, description: str = None, due_date: str = None) -> Dict[str, Any]:
+async def create_task_agent_tool(ctx: RunContext[CassidyAgentDependencies], title: str, description: str = None, priority: int = None, due_date: str = None) -> Dict[str, Any]:
     """Create a new task when user mentions something they need to do, buy, remember, or accomplish. Supports optional due dates (YYYY-MM-DD format)."""
-    return await create_task_tool(ctx.deps.user_id, title, description, due_date=due_date, source_session_id=ctx.deps.session_id)
+    return await create_task_tool(ctx.deps.user_id, title, description, priority=priority, due_date=due_date, source_session_id=ctx.deps.session_id)
 
 async def list_tasks_agent_tool(ctx: RunContext[CassidyAgentDependencies], include_completed: bool = False) -> Dict[str, Any]:
     """Show user's current tasks. Set include_completed=True to also show finished tasks."""
