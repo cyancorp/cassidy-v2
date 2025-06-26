@@ -51,6 +51,7 @@ class TaskResponse(BaseModel):
     source_session_id: Optional[str]
 
 
+@router.get("", response_model=List[TaskResponse])
 @router.get("/", response_model=List[TaskResponse])
 async def list_tasks(
     include_completed: bool = Query(False, description="Include completed tasks"),
@@ -82,6 +83,7 @@ async def list_tasks(
     ]
 
 
+@router.post("", response_model=TaskResponse)
 @router.post("/", response_model=TaskResponse)
 async def create_task(
     task_data: TaskCreate,
