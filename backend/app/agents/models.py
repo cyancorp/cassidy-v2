@@ -16,6 +16,8 @@ class CassidyAgentDependencies:
     user_preferences: Dict[str, Any]  # User preferences
     current_journal_draft: Dict[str, Any]  # Current draft data
     current_tasks: List[Dict[str, Any]]  # Current pending tasks
+    db: Any = None  # Database session
+    user: Any = None  # User object
 
 
 class StructureJournalRequest(BaseModel):

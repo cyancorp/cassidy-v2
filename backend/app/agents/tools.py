@@ -65,25 +65,12 @@ DYNAMIC SECTION MAPPING (based on user's template):
 Template Sections Available:
 {chr(10).join(sections_list)}
 
-EXAMPLES (adapt to your template sections):
-Input: "I finished the report and need to buy groceries. Meeting tomorrow at 2pm. Feeling accomplished."
-Output: Use the most specific sections available for: completed work, future tasks, scheduled events, and emotions.
-
-Input: "Made some trades today and feeling optimistic about the market direction."
-Output: Use sections that best match: trading actions, market sentiment, and personal feelings.
-
-Input: "My goal is to go to the moon"
-Output: {{"long_term_goals": ["go to the moon"]}}
-
-Input: "I want to travel to space"
-Output: {{"long_term_goals": ["travel to space"]}}
 
 Raw User Input:
 ---
 {user_text}
 ---
-
-JSON Output (focus on capturing emotions, distinguishing completed vs future tasks):"""
+:"""
 
     # Use LLM to analyze and structure content
     import json
@@ -495,12 +482,198 @@ CompleteTaskByTitleTool = Tool(complete_task_by_title_agent_tool)
 DeleteTaskTool = Tool(delete_task_agent_tool)
 UpdateTaskTool = Tool(update_task_agent_tool)
 
+# Insights tools
+async def generate_insights_agent_tool(ctx: RunContext[CassidyAgentDependencies], limit: int = 50) -> str:
+    """Generate insights from your recent journal entries. Analyzes patterns, moods, activities, and provides personalized recommendations. Default: last 50 entries."""
+    from sqlalchemy import select, and_
+    from datetime import datetime, timedelta
+    import json
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Get user_id from context
+        user_id = ctx.deps.user_id
+        
+        logger.info(f"Generating insights for user_id: {user_id}")
+        
+        if not user_id:
+            return "❌ Unable to generate insights: User not found"
+        
+        # Get database session
+        from ..database import get_db
+        from ..models.user import UserDB
+        
+        db_gen = get_db()
+        db = await db_gen.__anext__()
+        
+        try:
+            # Get user object
+            user_result = await db.execute(select(UserDB).where(UserDB.id == user_id))
+            user = user_result.scalar_one_or_none()
+            
+            if not user:
+                return "❌ Unable to generate insights: User not found"
+            
+            # Get most recent journal entries
+            today = datetime.utcnow()
+            
+            from ..models.session import JournalEntryDB
+            
+            query = select(JournalEntryDB).where(
+                JournalEntryDB.user_id == user.id
+            ).order_by(JournalEntryDB.created_at.desc()).limit(limit)
+            
+            result = await db.execute(query)
+            entries = result.scalars().all()
+            
+            logger.info(f"Found {len(entries)} journal entries for analysis")
+            
+            if not entries:
+                return f"📊 No journal entries found. Keep journaling to discover insights!"
+            
+            # Prepare entries for analysis (leveraging Claude's context window)
+            entries_text = []
+            for entry in entries:
+                entry_info = f"Date: {entry.created_at.strftime('%Y-%m-%d %H:%M')} ({(today - entry.created_at).days} days ago)\n"
+                if entry.title:
+                    entry_info += f"Title: {entry.title}\n"
+                if entry.raw_text:
+                    entry_info += f"Entry: {entry.raw_text}\n"
+                
+                # Include structured data for richer analysis
+                if entry.structured_data:
+                    try:
+                        structured = json.loads(entry.structured_data)
+                        if "mood" in structured:
+                            entry_info += f"Mood: {structured['mood'].get('current_mood', 'unknown')}, Energy: {structured['mood'].get('energy_level', 'N/A')}\n"
+                        if "activities" in structured:
+                            entry_info += f"Activities: {', '.join(structured['activities'])}\n"
+                        if "tags" in structured:
+                            entry_info += f"Tags: {', '.join(structured['tags'])}\n"
+                    except:
+                        pass
+                
+                entries_text.append(entry_info)
+            
+            # Create analysis prompt
+            journal_content = "\n---\n".join(entries_text)
+            
+            # Calculate date range for context
+            oldest_entry_date = entries[-1].created_at if entries else today
+            date_range_days = (today - oldest_entry_date).days
+            
+            analysis_prompt = f"""
+Today's date: {today.strftime('%Y-%m-%d')}
+
+Based on these {len(entries)} most recent journal entries (spanning {date_range_days} days), provide a comprehensive analysis:
+
+{journal_content}
+
+Please analyze and provide:
+
+# 📊 Journal Insights Report
+
+## 📈 Summary
+- Total entries analyzed and frequency
+- Overall emotional state and energy levels
+
+## 🔍 Key Patterns
+- Mood patterns and trends (with specific examples)
+- Common activities and their correlation with moods
+- Recurring themes or concerns
+- Time-based patterns (morning vs evening, weekdays vs weekends)
+
+## 💪 Strengths & Achievements
+- Positive patterns to celebrate
+- Growth areas identified
+- Successful coping strategies observed
+
+## 🎯 Areas for Attention
+- Potential stress triggers or patterns
+- Imbalances in activities or moods
+- Suggestions for improvement
+
+## 💡 Personalized Recommendations
+- 3-5 specific, actionable recommendations based on the patterns
+- Suggestions should be practical and tailored to what you observed
+
+## 📊 Mood Trend
+- Overall trajectory of emotional wellbeing
+- Notable shifts or changes
+
+Keep the analysis empathetic, constructive, and focused on actionable insights.
+"""
+            
+            # Return the formatted journal data for the agent to analyze
+            insights_data = {
+                "instruction": "Please analyze these journal entries and provide insights following the format below.",
+                "entries_count": len(entries),
+                "date_range_days": date_range_days,
+                "journal_entries": journal_content,
+                "analysis_format": """
+# 📊 Journal Insights Report
+
+## 📈 Summary
+- Total entries analyzed and frequency
+- Overall emotional state and energy levels
+
+## 🔍 Key Patterns
+- Mood patterns and trends (with specific examples)
+- Common activities and their correlation with moods
+- Recurring themes or concerns
+- Time-based patterns
+
+## 💪 Strengths & Achievements
+- Positive patterns to celebrate
+- Growth areas identified
+- Successful coping strategies observed
+
+## 🎯 Areas for Attention
+- Potential stress triggers or patterns
+- Imbalances in activities or moods
+- Suggestions for improvement
+
+## 💡 Personalized Recommendations
+- 3-5 specific, actionable recommendations based on the patterns
+- Suggestions should be practical and tailored to what you observed
+
+## 📊 Mood Trend
+- Overall trajectory of emotional wellbeing
+- Notable shifts or changes
+"""
+            }
+            
+            # Format as a clear request for analysis
+            return f"""Today is {today.strftime('%A, %B %d, %Y')}.
+
+I've collected your {len(entries)} most recent journal entries (spanning {date_range_days} days from {oldest_entry_date.strftime('%B %d')} to {entries[0].created_at.strftime('%B %d')}). Here they are:
+
+{journal_content}
+
+Please analyze these entries and provide comprehensive insights following this format:
+
+{insights_data['analysis_format']}
+
+Keep the analysis empathetic, constructive, and focused on actionable insights."""
+            
+        finally:
+            # Clean up database session
+            await db_gen.aclose()
+        
+    except Exception as e:
+        logger.error(f"Error generating insights: {e}", exc_info=True)
+        return f"❌ Error generating insights: {str(e)}"
+
+GenerateInsightsTool = Tool(generate_insights_agent_tool)
+
 
 def get_tools_for_conversation_type(conversation_type: str) -> List[Tool]:
     """Return appropriate tools for the given conversation type"""
     if conversation_type == "journaling":
-        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool, CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
+        return [StructureJournalTool, SaveJournalTool, UpdatePreferencesTool, CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool, GenerateInsightsTool]
     elif conversation_type == "general":
-        return [CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool]
+        return [CreateTaskTool, ListTasksTool, CompleteTaskByTitleTool, CompleteTaskTool, DeleteTaskTool, UpdateTaskTool, GenerateInsightsTool]
     else:
         return []
