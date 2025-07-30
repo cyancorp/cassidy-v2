@@ -184,6 +184,7 @@ async def update_task(
         priority=updated_task.priority,
         is_completed=updated_task.is_completed,
         completed_at=updated_task.completed_at,
+        due_date=updated_task.due_date,
         created_at=updated_task.created_at.isoformat(),
         updated_at=updated_task.updated_at.isoformat(),
         source_session_id=str(updated_task.source_session_id) if updated_task.source_session_id else None
@@ -259,6 +260,7 @@ async def complete_task(
         priority=updated_task.priority,
         is_completed=updated_task.is_completed,
         completed_at=updated_task.completed_at,
+        due_date=updated_task.due_date,
         created_at=updated_task.created_at.isoformat(),
         updated_at=updated_task.updated_at.isoformat(),
         source_session_id=str(updated_task.source_session_id) if updated_task.source_session_id else None

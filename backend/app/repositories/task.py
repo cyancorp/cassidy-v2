@@ -137,6 +137,9 @@ class TaskRepository(BaseRepository[TaskDB]):
                     .values(priority=temp_priority)
                 )
             
+            # Flush to ensure temporary values are written to database
+            await db.flush()
+            
             # Step 2: Update all tasks to their final priority values
             for task_id, new_priority in task_priorities:
                 await db.execute(
