@@ -313,18 +313,6 @@ ehthumbs_vista.db
 # Folder config file
 [Dd]esktop.ini
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
 
 # Database files
 *.db
@@ -370,13 +358,7 @@ sessions/
 # Infrastructure build outputs
 infrastructure/*/node_modules/
 
-# Scripts and docs generated during deployment
-scripts/
-docs/
 
-# Lambda function files (keep only the main one)
-backend/lambda_*.py
-!backend/lambda_function.py
 
 # React Native / Mobile
 mobile/node_modules/
@@ -396,10 +378,3 @@ mobile/android/.gradle/
 mobile/android/local.properties
 mobile/android/*.iml
 mobile/android/.idea/
-
-# Metro
-mobile/.metro-health-check*
-mobile/.metro-cache/
-
-# Mobile test coverage
-mobile/coverage/
