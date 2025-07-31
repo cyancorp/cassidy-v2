@@ -1,0 +1,42 @@
+{
+  "user_id": "df6f0fb0-3039-4e73-8852-8ced8e1d88b1",
+  "username": "jg2950",
+  "analysis_date": "2025-07-30T21:12:31.990311",
+  "date_range_days": 100,
+  "summary": {
+    "total_tasks": 66,
+    "completed_tasks": 0,
+    "total_journals": 4,
+    "analyzed_journals": 4,
+    "negative_state_journals": 2
+  },
+  "emotional_distribution": {
+    "1": 0,
+    "2": 2,
+    "3": 2,
+    "4": 0,
+    "5": 0
+  },
+  "analyzed_journals": [
+    {
+      "date": "2025-05-20",
+      "emotional_rating": 2,
+      "text_preview": "# Journal Entry - May 20, 2025\n\n## Open Reflection\n\nI spent the weekend in Malta for Niels' stag weekend, which was great fun. Met some interesting people and enjoyed good parties. Got some sun, thoug"
+    },
+    {
+      "date": "2025-05-15",
+      "emotional_rating": 3,
+      "text_preview": "# Journal Entry - May 15, 2025\n\n## Open Reflection\n\nIt's been almost two weeks since my last entry. During this time, I've made significant progress on completing the studio, including hanging the clo"
+    },
+    {
+      "date": "2025-05-01",
+      "emotional_rating": 3,
+      "text_preview": "### Journal Entry - May 1, 2025\n\n#### Open Reflection\nThis week's journal entry is somewhat abbreviated as I've been ill for the past few days, having caught a virus from Oscar who also has had conjun"
+    },
+    {
+      "date": "2025-04-22",
+      "emotional_rating": 2,
+      "text_preview": "### Journal Entry - April 22, 2025\n\n#### Open Reflection\nThe past couple of weeks have felt rather unproductive. This past weekend was spent in Bristol seeing extended family at Bob's, which was a ple"
+    }
+  ]
+}
