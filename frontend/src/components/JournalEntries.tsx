@@ -180,7 +180,8 @@ export default function JournalEntries({ onClose }: JournalEntriesProps) {
                       </div>
                     )}
                     <div className="text-sm text-gray-500 mt-1 line-clamp-2">
-                      {entry.raw_text ? entry.raw_text.substring(0, 100) + (entry.raw_text.length > 100 ? '...' : '') : 'No raw text'}
+                      {entry.structured_data?.Summary || 
+                       (entry.raw_text ? entry.raw_text.substring(0, 100) + (entry.raw_text.length > 100 ? '...' : '') : 'No content available')}
                     </div>
                   </div>
                 ))}

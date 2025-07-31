@@ -19,11 +19,16 @@ async def init_db():
     
     # Create async engine
     if database_url.startswith("sqlite"):
-        # SQLite configuration for local development
+        # SQLite configuration for local development with improved locking
         engine = create_async_engine(
             database_url,
             poolclass=StaticPool,
-            connect_args={"check_same_thread": False},
+            connect_args={
+                "check_same_thread": False,
+                "timeout": 30,  # 30 second timeout for lock acquisition
+                "isolation_level": None  # Autocommit mode to reduce lock time
+            },
+            pool_recycle=-1,  # Don't recycle connections
             echo=settings.DEBUG
         )
     else:
@@ -78,15 +83,24 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             # Raise HTTPException which FastAPI will handle with CORS headers
             raise HTTPException(status_code=503, detail="Database connection unavailable")
     
+    session = None
     try:
-        async with async_session_maker() as session:
-            try:
-                yield session
-            finally:
-                await session.close()
+        session = async_session_maker()
+        yield session
     except Exception as e:
         print(f"Database session error: {e}")
+        if session:
+            try:
+                await session.rollback()
+            except:
+                pass  # Ignore rollback errors
         raise HTTPException(status_code=503, detail="Database connection error")
+    finally:
+        if session:
+            try:
+                await session.close()
+            except Exception as e:
+                print(f"Error closing session: {e}")
 
 
 async def create_sample_user():

@@ -58,6 +58,10 @@ CRITICAL INSTRUCTIONS:
 3. Use arrays for multiple items, strings for single content
 4. Only include sections that have relevant content
 5. Be selective with general categories - prefer specific sections when applicable
+6. ALWAYS include a "Summary" field - this is mandatory for all entries
+
+MANDATORY SUMMARY FIELD:
+- "Summary": A pithy, engaging 1-sentence summary (max 120 characters) that captures the essence of the entry for UI listing. Make it compelling and informative.
 
 DYNAMIC SECTION MAPPING (based on user's template):
 {chr(10).join(section_guidelines)}
@@ -70,7 +74,8 @@ Raw User Input:
 ---
 {user_text}
 ---
-:"""
+
+IMPORTANT: Your JSON response MUST include a "Summary" field with a concise, engaging 1-sentence description (max 120 chars)."""
 
     # Use LLM to analyze and structure content
     import json
@@ -130,9 +135,10 @@ Raw User Input:
             if name.lower() == template_name.lower():
                 return template_name
                 
-        # Check aliases
+        # Check aliases - fixed dict access
         for template_name, section_def in template_sections.items():
-            if name.lower() in [alias.lower() for alias in section_def.aliases]:
+            aliases = section_def.get("aliases", []) if isinstance(section_def, dict) else []
+            if name.lower() in [alias.lower() for alias in aliases]:
                 return template_name
                 
         # Convert snake_case to proper case
@@ -491,7 +497,7 @@ async def search_journal_entries_agent_tool(
     limit: int = 10
 ) -> str:
     """Search historical journal entries by text content, date range, or keywords. Use when user asks about past entries, goals, or specific topics they've written about."""
-    from sqlalchemy import select, and_, or_
+    from sqlalchemy import select, and_, or_, cast, String
     from datetime import datetime
     import json
     import logging
@@ -509,137 +515,158 @@ async def search_journal_entries_agent_tool(
         from ..database import get_db
         from ..models.session import JournalEntryDB
         
-        db_gen = get_db()
-        db = await db_gen.__anext__()
-        
-        try:
-            # Build search conditions
-            conditions = [JournalEntryDB.user_id == user_id]
-            
-            # Add text search across multiple fields
-            if query and query.strip():
-                query_term = f"%{query.strip()}%"
-                text_conditions = or_(
-                    JournalEntryDB.raw_text.ilike(query_term),
-                    JournalEntryDB.title.ilike(query_term),
-                    JournalEntryDB.structured_data.astext.ilike(query_term)
-                )
-                conditions.append(text_conditions)
-            
-            # Add date filtering
-            if date_from:
-                try:
-                    from_date = datetime.fromisoformat(date_from.replace('Z', '+00:00'))
-                    conditions.append(JournalEntryDB.created_at >= from_date)
-                except ValueError:
-                    return f"❌ Invalid date format for date_from: {date_from}. Use YYYY-MM-DD or ISO format."
-            
-            if date_to:
-                try:
-                    to_date = datetime.fromisoformat(date_to.replace('Z', '+00:00'))
-                    conditions.append(JournalEntryDB.created_at <= to_date)
-                except ValueError:
-                    return f"❌ Invalid date format for date_to: {date_to}. Use YYYY-MM-DD or ISO format."
-            
-            # Execute search query
-            search_query = select(JournalEntryDB).where(
-                and_(*conditions)
-            ).order_by(JournalEntryDB.created_at.desc()).limit(limit)
-            
-            result = await db.execute(search_query)
-            entries = result.scalars().all()
-            
-            logger.info(f"Found {len(entries)} matching journal entries")
-            
-            if not entries:
-                search_info = []
-                if query:
-                    search_info.append(f"text matching '{query}'")
-                if date_from:
-                    search_info.append(f"from {date_from}")
-                if date_to:
-                    search_info.append(f"to {date_to}")
+        async for db in get_db():
+            try:
+                # Build search conditions
+                conditions = [JournalEntryDB.user_id == user_id]
                 
-                search_criteria = " ".join(search_info) if search_info else "your criteria"
-                return f"📝 No journal entries found matching {search_criteria}. Try different search terms or date ranges."
-            
-            # Format results for the agent to work with
-            formatted_entries = []
-            for entry in entries:
-                entry_info = {
-                    "date": entry.created_at.strftime('%Y-%m-%d %H:%M'),
-                    "days_ago": (datetime.utcnow() - entry.created_at).days,
-                    "title": entry.title or "Untitled Entry",
-                    "content": entry.raw_text or "",
-                }
-                
-                # Include structured data if available
-                if entry.structured_data:
+                # Add text search across multiple fields
+                if query and query.strip():
+                    query_term = f"%{query.strip()}%"
+                    text_conditions = [
+                        JournalEntryDB.raw_text.ilike(query_term),
+                        JournalEntryDB.title.ilike(query_term)
+                    ]
+                    
+                    # For SQLite, use LIKE on the JSON string representation
+                    # For PostgreSQL, we'd use .astext but SQLite doesn't support it
                     try:
-                        structured = json.loads(entry.structured_data) if isinstance(entry.structured_data, str) else entry.structured_data
-                        entry_info["structured_sections"] = list(structured.keys()) if structured else []
-                        
-                        # Extract key structured content for better context
-                        key_sections = {}
-                        for section_name, section_content in structured.items():
-                            if section_content and section_name.lower() in ['goals', 'objectives', 'plans', 'tasks', 'mood', 'reflection', 'insights']:
-                                key_sections[section_name] = section_content
-                        
-                        if key_sections:
-                            entry_info["key_sections"] = key_sections
-                    except:
-                        pass
+                        # Try PostgreSQL syntax first
+                        text_conditions.append(JournalEntryDB.structured_data.astext.ilike(query_term))
+                    except AttributeError:
+                        # Fall back to SQLite - cast to string
+                        text_conditions.append(cast(JournalEntryDB.structured_data, String).ilike(query_term))
+                    
+                    conditions.append(or_(*text_conditions))
                 
-                formatted_entries.append(entry_info)
-            
-            # Create a comprehensive response for the agent
-            search_summary = []
-            if query:
-                search_summary.append(f"containing '{query}'")
-            if date_from or date_to:
-                date_range = []
+                # Add date filtering
                 if date_from:
-                    date_range.append(f"from {date_from}")
+                    try:
+                        from_date = datetime.fromisoformat(date_from.replace('Z', '+00:00'))
+                        conditions.append(JournalEntryDB.created_at >= from_date)
+                    except ValueError:
+                        return f"❌ Invalid date format for date_from: {date_from}. Use YYYY-MM-DD or ISO format."
+                
                 if date_to:
-                    date_range.append(f"to {date_to}")
-                search_summary.append(" ".join(date_range))
-            
-            search_criteria = " ".join(search_summary) if search_summary else "all entries"
-            
-            # Format entries for agent context
-            entries_text = []
-            for entry in formatted_entries:
-                entry_text = f"📅 **{entry['date']}** ({entry['days_ago']} days ago)\n"
-                entry_text += f"**Title:** {entry['title']}\n"
-                entry_text += f"**Content:** {entry['content'][:300]}{'...' if len(entry['content']) > 300 else ''}\n"
+                    try:
+                        to_date = datetime.fromisoformat(date_to.replace('Z', '+00:00'))
+                        conditions.append(JournalEntryDB.created_at <= to_date)
+                    except ValueError:
+                        return f"❌ Invalid date format for date_to: {date_to}. Use YYYY-MM-DD or ISO format."
                 
-                if entry.get('key_sections'):
-                    entry_text += "**Key Sections:**\n"
-                    for section, content in entry['key_sections'].items():
-                        if isinstance(content, list):
-                            content_str = ', '.join(str(item) for item in content[:3])
-                            if len(content) > 3:
-                                content_str += f" (and {len(content) - 3} more)"
-                        else:
-                            content_str = str(content)[:100]
-                            if len(str(content)) > 100:
-                                content_str += "..."
-                        entry_text += f"  - {section}: {content_str}\n"
+                # Execute search query
+                search_query = select(JournalEntryDB).where(
+                    and_(*conditions)
+                ).order_by(JournalEntryDB.created_at.desc()).limit(limit)
                 
-                entries_text.append(entry_text)
-            
-            result_text = "\n---\n".join(entries_text)
-            
-            return f"""📝 **Journal Search Results**
+                result = await db.execute(search_query)
+                entries = result.scalars().all()
+                
+                logger.info(f"Found {len(entries)} matching journal entries")
+                
+                if not entries:
+                    search_info = []
+                    if query:
+                        search_info.append(f"text matching '{query}'")
+                    if date_from:
+                        search_info.append(f"from {date_from}")
+                    if date_to:
+                        search_info.append(f"to {date_to}")
+                    
+                    search_criteria = " ".join(search_info) if search_info else "your criteria"
+                    return f"📝 No journal entries found matching {search_criteria}. Try different search terms or date ranges."
+                
+                # Format results for the agent to work with
+                formatted_entries = []
+                for entry in entries:
+                    entry_info = {
+                        "date": entry.created_at.strftime('%Y-%m-%d %H:%M'),
+                        "days_ago": (datetime.utcnow() - entry.created_at).days,
+                        "title": entry.title or "Untitled Entry",
+                        "raw_text": entry.raw_text or "",
+                    }
+                    
+                    # Include structured data if available - this should be the primary content
+                    if entry.structured_data:
+                        try:
+                            structured = json.loads(entry.structured_data) if isinstance(entry.structured_data, str) else entry.structured_data
+                            entry_info["structured_data"] = structured
+                            entry_info["structured_sections"] = list(structured.keys()) if structured else []
+                            
+                            # For backward compatibility, create a summary from structured data
+                            if structured and not entry.raw_text:
+                                # Build content from structured data
+                                content_parts = []
+                                for section, content in structured.items():
+                                    if content:
+                                        if isinstance(content, list):
+                                            content_parts.append(f"{section}: {', '.join(str(item) for item in content)}")
+                                        else:
+                                            content_parts.append(f"{section}: {content}")
+                                entry_info["content"] = " | ".join(content_parts)
+                            else:
+                                entry_info["content"] = entry.raw_text or ""
+                        except Exception as e:
+                            logger.warning(f"Error parsing structured data: {e}")
+                            entry_info["content"] = entry.raw_text or ""
+                    else:
+                        entry_info["content"] = entry.raw_text or ""
+                    
+                    formatted_entries.append(entry_info)
+                
+                # Create a comprehensive response for the agent
+                search_summary = []
+                if query:
+                    search_summary.append(f"containing '{query}'")
+                if date_from or date_to:
+                    date_range = []
+                    if date_from:
+                        date_range.append(f"from {date_from}")
+                    if date_to:
+                        date_range.append(f"to {date_to}")
+                    search_summary.append(" ".join(date_range))
+                
+                search_criteria = " ".join(search_summary) if search_summary else "all entries"
+                
+                # Format entries for agent context
+                entries_text = []
+                for entry in formatted_entries:
+                    entry_text = f"📅 **{entry['date']}** ({entry['days_ago']} days ago)\n"
+                    entry_text += f"**Title:** {entry['title']}\n"
+                    
+                    # Show structured data if available
+                    if entry.get('structured_data'):
+                        entry_text += "**Structured Content:**\n"
+                        for section, content in entry['structured_data'].items():
+                            if content:
+                                if isinstance(content, list):
+                                    content_str = ', '.join(str(item) for item in content[:3])
+                                    if len(content) > 3:
+                                        content_str += f" (and {len(content) - 3} more)"
+                                else:
+                                    content_str = str(content)[:200]
+                                    if len(str(content)) > 200:
+                                        content_str += "..."
+                                entry_text += f"  - {section}: {content_str}\n"
+                    elif entry.get('raw_text'):
+                        # Fall back to raw text if no structured data
+                        entry_text += f"**Content:** {entry['raw_text'][:300]}{'...' if len(entry['raw_text']) > 300 else ''}\n"
+                    
+                    entries_text.append(entry_text)
+                
+                result_text = "\n---\n".join(entries_text)
+                
+                return f"""📝 **Journal Search Results**
 Found {len(entries)} entries {search_criteria}:
 
 {result_text}
 
 💡 **What would you like to know about these entries?** I can help you analyze patterns, extract specific information, or answer questions about your past thoughts and experiences."""
-            
-        finally:
-            await db_gen.aclose()
-        
+                
+            except Exception as e:
+                logger.error(f"Error searching journal entries: {e}", exc_info=True)
+                return f"❌ Error searching journal entries: {str(e)}"
+    
     except Exception as e:
         logger.error(f"Error searching journal entries: {e}", exc_info=True)
         return f"❌ Error searching journal entries: {str(e)}"
