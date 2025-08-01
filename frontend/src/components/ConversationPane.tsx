@@ -21,7 +21,7 @@ const ConversationPane: React.FC<ConversationPaneProps> = ({ messages, isLoading
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-100">
+    <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-neutral-50">
       {messages.map((msg) => (
         msg.role === 'user' ? (
           <UserMessage key={msg.id} message={msg} />
@@ -30,8 +30,15 @@ const ConversationPane: React.FC<ConversationPaneProps> = ({ messages, isLoading
         )
       ))}
       {isLoading && (
-        <div className="flex justify-center py-2">
-            <div className="text-gray-500 italic">AI is thinking...</div>
+        <div className="flex justify-center py-4">
+          <div className="flex items-center space-x-2 text-neutral-500">
+            <div className="animate-pulse-slow">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="3" />
+              </svg>
+            </div>
+            <span className="text-sm italic">AI is thinking...</span>
+          </div>
         </div>
       )}
       {/* Empty div to target for scrolling */}

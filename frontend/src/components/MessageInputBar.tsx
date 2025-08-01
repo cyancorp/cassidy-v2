@@ -173,10 +173,10 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({ onSendMessage, isLoad
   const micDisabled = !browserSupportsSpeechRecognition || isLoading;
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 bg-white shadow-inner">
+    <form onSubmit={handleSubmit} className="p-4 border-t border-neutral-200 bg-white">
       <div className="flex items-center space-x-3">
         <textarea
-          className="flex-1 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm"
+          className="flex-1 p-3 border border-neutral-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-soft text-sm bg-neutral-50 placeholder-neutral-400"
           rows={1}
           placeholder="Type or click the mic to speak..."
           value={inputText}
@@ -190,7 +190,7 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({ onSendMessage, isLoad
           type="button"
           onClick={handleMicClick}
           disabled={micDisabled}
-          className={`p-2.5 rounded-lg transition-colors duration-150 ${micDisabled ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'} ${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''}`}
+          className={`p-2.5 rounded-xl transition-all duration-150 ${micDisabled ? 'text-neutral-400 bg-neutral-100 cursor-not-allowed' : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700'} ${isListening ? 'bg-error/10 text-error hover:bg-error/20 animate-pulse' : ''}`}
           title={isListening ? "Stop listening" : "Start listening"}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} className="w-5 h-5">
@@ -199,14 +199,14 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({ onSendMessage, isLoad
         </button>
         <button
           type="submit"
-          className={`px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors duration-150 ${isLoading || isListening ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+          className={`px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-150 shadow-soft ${isLoading || isListening ? 'bg-neutral-400 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700 hover:shadow-medium'}`}
           disabled={isLoading || isListening}
         >
           Send
         </button>
       </div>
       {!browserSupportsSpeechRecognition && (
-          <p className="text-xs text-red-500 mt-1">Speech recognition not supported by your browser.</p>
+          <p className="text-xs text-error mt-1">Speech recognition not supported by your browser.</p>
       )}
     </form>
   );

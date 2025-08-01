@@ -8,8 +8,8 @@ interface UserMessageProps {
 const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
   return (
     <div className="flex justify-end">
-      <div className="bg-blue-600 text-white p-3 rounded-xl shadow-md max-w-md lg:max-w-lg">
-        <p className="text-sm">{message.content}</p>
+      <div className="bg-gradient-primary text-white p-4 rounded-2xl shadow-soft max-w-md lg:max-w-lg animate-slide-up">
+        <p className="text-sm leading-relaxed">{message.content}</p>
         {/* Optional: Add timestamp here */}
       </div>
     </div>

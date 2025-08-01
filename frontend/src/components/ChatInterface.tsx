@@ -11,7 +11,7 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, isLoading }) => {
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-white">
       <ConversationPane messages={messages} isLoading={isLoading} />
       <MessageInputBar onSendMessage={onSendMessage} isLoading={isLoading} />
     </div>

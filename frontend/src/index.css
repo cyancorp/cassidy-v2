@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,13 +14,42 @@
   }
 }
 
-body {
-  margin: 0;
-  font-family: sans-serif; /* Let Tailwind handle fonts mostly */
-  min-height: 100vh;
-  /* Optional: Add base background/text colors if needed */
-  /* background-color: #f0f0f0; */ 
-  /* color: #333; */
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400;
+  }
+
+  /* Focus styles */
+  *:focus {
+    outline: none;
+  }
+
+  input:focus,
+  textarea:focus,
+  button:focus {
+    @apply ring-2 ring-primary-500 ring-offset-2;
+  }
 }
 
 /* Remove all other default Vite styles (like :root, a, h1, button, @media etc.) */

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Logo from './Logo';
 
 interface LoginFormProps {
   onLogin: (token: string, username: string) => void;
@@ -71,25 +72,28 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-accent-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-large animate-fade-in">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {isRegistering ? 'Create your account' : 'Sign in to Cassidy'}
+          <div className="flex justify-center mb-4">
+            <Logo className="h-12 w-auto text-primary-700" />
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-display font-bold text-neutral-900">
+            {isRegistering ? 'Create your account' : 'Welcome to Prism'}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            AI-powered journaling assistant
+          <p className="mt-2 text-center text-sm text-neutral-600">
+            Your AI-powered productivity companion
           </p>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-error/10 border border-error/20 text-error px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
           
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="space-y-4">
             <div>
               <label htmlFor="username" className="sr-only">Username</label>
               <input
@@ -97,7 +101,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
                 name="username"
                 type="text"
                 required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="block w-full px-4 py-3 border border-neutral-300 placeholder-neutral-400 text-neutral-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -111,7 +115,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
                   id="email"
                   name="email"
                   type="email"
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="block w-full px-4 py-3 border border-neutral-300 placeholder-neutral-400 text-neutral-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                   placeholder="Email (optional)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -126,7 +130,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
                 name="password"
                 type="password"
                 required
-                className={`relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 ${isRegistering ? '' : 'rounded-b-md'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                className="block w-full px-4 py-3 border border-neutral-300 placeholder-neutral-400 text-neutral-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -138,7 +142,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-primary hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? 'Processing...' : (isRegistering ? 'Create Account' : 'Sign In')}
             </button>
@@ -148,16 +152,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading, error }) => {
             <button
               type="button"
               onClick={() => setIsRegistering(!isRegistering)}
-              className="text-indigo-600 hover:text-indigo-500 text-sm"
+              className="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors"
             >
               {isRegistering ? 'Already have an account? Sign in' : 'Need an account? Register'}
             </button>
           </div>
 
           {!isRegistering && (
-            <div className="text-center text-sm text-gray-500">
-              <p>Demo credentials:</p>
-              <p>Username: <strong>user_123</strong> | Password: <strong>1234</strong></p>
+            <div className="text-center text-sm text-neutral-500 bg-neutral-50 rounded-lg p-3">
+              <p className="font-medium mb-1">Demo credentials:</p>
+              <p>Username: <strong className="text-neutral-700">user_123</strong> | Password: <strong className="text-neutral-700">1234</strong></p>
             </div>
           )}
         </form>

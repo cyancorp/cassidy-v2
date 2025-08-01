@@ -10,8 +10,8 @@ interface AIMessageProps {
 const AIMessage: React.FC<AIMessageProps> = ({ message }) => {
   return (
     <div className="flex justify-start">
-      <div className="bg-white text-gray-800 p-3 rounded-xl shadow-md max-w-md lg:max-w-lg">
-        <div className="text-sm markdown-content">
+      <div className="bg-white text-neutral-800 p-4 rounded-2xl shadow-soft border border-neutral-200 max-w-md lg:max-w-lg animate-slide-up">
+        <div className="text-sm markdown-content leading-relaxed">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {message.content}
           </ReactMarkdown>

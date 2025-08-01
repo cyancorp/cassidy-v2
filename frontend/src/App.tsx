@@ -4,6 +4,7 @@ import ChatInterface from './components/ChatInterface';
 import LoginForm from './components/LoginForm';
 import JournalEntries from './components/JournalEntries';
 import TaskManagerSimple from './components/TaskManagerSimple';
+import Header from './components/Header';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Message, UserTemplate } from './types'; // <-- Import UserTemplate
 import { v4 as uuidv4 } from 'uuid';
@@ -246,6 +247,14 @@ function MainApp() {
     }
   };
 
+  // --- New Chat Handler ---
+  const handleNewChat = async () => {
+    clearLocalState();
+    setSessionId(null);
+    // Trigger re-initialization with new session
+    await initializeApp('');
+  };
+
   // --- Reset Preferences Handler ---
   const handleResetPreferences = async () => {
       if (!confirm("Are you sure you want to reset all preferences and restart the onboarding conversation?")) {
@@ -294,99 +303,52 @@ function MainApp() {
   // --- Conditional Rendering Logic (Simplified) ---
   // Show loading only during initial session start
   if (isLoading && !sessionId) {
-       return <div className="flex items-center justify-center h-screen"><div>Starting session...</div></div>;
+       return (
+         <div className="flex items-center justify-center h-screen bg-neutral-50">
+           <div className="text-neutral-600 font-medium">Starting session...</div>
+         </div>
+       );
   }
   // Show fatal error only if session start failed
   if (error && !sessionId) {
-      return <div className="flex items-center justify-center h-screen text-red-500">Error: {error}</div>;
+      return (
+        <div className="flex items-center justify-center h-screen bg-neutral-50">
+          <div className="text-error font-medium">Error: {error}</div>
+        </div>
+      );
   }
   // Show login form if not authenticated
   if (!isAuthenticated) {
-    return <div>Please log in to continue...</div>;
+    return <div className="bg-neutral-50 min-h-screen">Please log in to continue...</div>;
   }
 
   // Always render main UI once session ID exists, initial message handles onboarding state
 
   const generalErrorDisplay = error ? (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
-          <strong className="font-bold">Error:</strong>
-          <span className="block sm:inline"> {error}</span>
-          <button onClick={() => setError(null)} className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-500">&times;</button>
+      <div className="bg-error/10 border border-error/20 text-error px-4 py-3 rounded-lg relative m-4 shadow-soft" role="alert">
+          <strong className="font-semibold">Error:</strong>
+          <span className="block sm:inline ml-1">{error}</span>
+          <button onClick={() => setError(null)} className="absolute top-2 right-2 text-error hover:text-error/80 p-1">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
       </div>
   ) : null;
 
   return (
-    <>
-      <div className="flex h-screen bg-gray-200">
-        {/* Navigation Sidebar */}
-        <div className="w-64 bg-gray-800 text-white flex flex-col">
-          <div className="p-4 border-b border-gray-700">
-            <h2 className="text-xl font-bold">Cassidy</h2>
-          </div>
-          <nav className="flex-1 p-4">
-            <ul className="space-y-2">
-              <li>
-                <button
-                  onClick={() => setCurrentView('chat')}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    currentView === 'chat' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  💬 Chat
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setCurrentView('journal')}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    currentView === 'journal' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  📖 Journal
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setCurrentView('tasks')}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    currentView === 'tasks' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  ✅ Tasks
-                </button>
-              </li>
-            </ul>
-          </nav>
-          <div className="p-4 border-t border-gray-700 space-y-2">
-            <div className="text-sm text-gray-400 mb-2">
-              Logged in as: <strong>{username}</strong>
-            </div>
-            <button 
-              onClick={handleResetPreferences} 
-              className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm focus:outline-none focus:shadow-outline"
-            >
-              Reset Preferences
-            </button>
-            <button 
-              onClick={logout} 
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-sm focus:outline-none focus:shadow-outline"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex">
+    <div className="flex flex-col h-screen bg-neutral-50">
+      <Header 
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        onNewChat={handleNewChat}
+      />
+      
+      {/* Main Content Area */}
+      <div className="flex-1 flex overflow-hidden">
           {currentView === 'chat' && (
             <>
-              <div className="flex-1 flex flex-col">
+              <div className="flex-1 flex flex-col bg-white">
                 {generalErrorDisplay}
                 <ChatInterface 
                   messages={messages} 
@@ -394,7 +356,7 @@ function MainApp() {
                   isLoading={isLoading && messages.length > 0} // Show loading only after initial messages
                 />
               </div>
-              <div className="w-1/3 bg-white border-l border-gray-300 overflow-y-auto">
+              <div className="w-96 bg-neutral-50 border-l border-neutral-200 overflow-y-auto">
                 <ContextPanel 
                   structuredContent={structuredContent} 
                   debugInfo={debugInfo} 
@@ -415,9 +377,8 @@ function MainApp() {
               <TaskManagerSimple onClose={() => setCurrentView('chat')} />
             </div>
           )}
-        </div>
       </div>
-    </>
+    </div>
   );
 }
 
