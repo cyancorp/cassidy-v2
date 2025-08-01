@@ -72,7 +72,7 @@ class AgentFactory:
             else:
                 tasks_context = "\n\nCURRENT TASKS: None\n"
             
-            return f"""You are Cassidy, a journaling and task assistant. Always call appropriate tools for user input.
+            return f"""You are Prism, a journaling and task assistant. Always call appropriate tools for user input.
 {tasks_context}
 RULES:
 - Call tools immediately, don't ask for clarification
@@ -84,7 +84,7 @@ RULES:
 - Use exact task IDs from current tasks list for deletions/updates"""
 
         elif conversation_type == "general":
-            return """You are Cassidy, a helpful AI assistant. Provide clear, helpful responses to user questions and requests."""
+            return """You are Prism, a helpful AI assistant. Provide clear, helpful responses to user questions and requests."""
         
         else:
-            return """You are Cassidy, a helpful AI assistant."""
+            return """You are Prism, a helpful AI assistant."""
