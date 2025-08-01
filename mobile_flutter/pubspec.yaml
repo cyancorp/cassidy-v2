@@ -1,5 +1,5 @@
 name: mobile_flutter
-description: "Cassidy AI Journaling Assistant - Flutter Mobile App"
+description: "Prism - AI-powered productivity companion - Flutter Mobile App"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -51,9 +51,10 @@ dependencies:
   
   # Chat UI
   dash_chat_2: ^0.0.18
+  flutter_markdown: ^0.7.7
   
   # Utils
-  intl: ^0.19.0
+  intl: ^0.18.1
   uuid: ^4.1.0
   
   # Speech recognition
