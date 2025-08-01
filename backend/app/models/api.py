@@ -46,6 +46,7 @@ class UserPreferencesResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     user_id: UUID
+    name: Optional[str] = None
     purpose_statement: Optional[str] = None
     long_term_goals: List[str] = Field(default_factory=list)
     known_challenges: List[str] = Field(default_factory=list)
@@ -56,6 +57,7 @@ class UserPreferencesResponse(BaseModel):
 
 
 class UserPreferencesUpdate(BaseModel):
+    name: Optional[str] = None
     purpose_statement: Optional[str] = None
     long_term_goals: Optional[List[str]] = None
     known_challenges: Optional[List[str]] = None

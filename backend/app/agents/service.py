@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Dict, Any, List
 
 from app.agents.models import CassidyAgentDependencies
-from app.repositories.user import UserPreferencesRepository
+from app.repositories.user import UserRepository
 from app.repositories.session import JournalDraftRepository, ChatMessageRepository
 from app.repositories.task import TaskRepository
 from app.templates.loader import template_loader
@@ -13,7 +13,7 @@ class AgentService:
     
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.user_prefs_repo = UserPreferencesRepository()
+        self.user_repo = UserRepository()
         self.journal_draft_repo = JournalDraftRepository()
         self.message_repo = ChatMessageRepository()
         self.task_repo = TaskRepository()
@@ -27,7 +27,7 @@ class AgentService:
         """Create agent context with user data"""
         
         # Load user data
-        user_prefs = await self.user_prefs_repo.get_by_user_id(self.db, user_id)
+        user_prefs = await self.user_repo.get_user_preferences(self.db, user_id)
         journal_draft = await self.journal_draft_repo.get_by_session_id(self.db, session_id)
         current_tasks = await self.task_repo.get_pending_by_user_id(self.db, user_id)
         
@@ -42,14 +42,8 @@ class AgentService:
                 self.db, session_id=session_id, user_id=user_id
             )
         
-        # Convert to dictionaries for the agent context
-        prefs_dict = {
-            "purpose_statement": user_prefs.purpose_statement,
-            "long_term_goals": user_prefs.long_term_goals or [],
-            "known_challenges": user_prefs.known_challenges or [],
-            "preferred_feedback_style": user_prefs.preferred_feedback_style,
-            "personal_glossary": user_prefs.personal_glossary or {}
-        }
+        # User preferences are already a dictionary
+        prefs_dict = user_prefs
         
         # Use file-based template instead of database template
         template_dict = user_template_dict
@@ -164,6 +158,15 @@ class AgentService:
                         if journal_entry:
                             response_data["metadata"]["journal_entry_id"] = journal_entry.id
                             print(f"Journal entry created: {journal_entry.id}")
+                            
+                            # Analyze journal content for preference updates (non-blocking)
+                            try:
+                                await self._analyze_and_update_preferences(
+                                    context, journal_entry.raw_text, journal_entry.structured_data
+                                )
+                            except Exception as e:
+                                print(f"Warning: Preference analysis failed: {e}")
+                            
                             # Clear the context to allow new journal entries
                             context.current_journal_draft = {}
                     else:
@@ -197,13 +200,168 @@ class AgentService:
     
     async def _create_default_preferences(self, user_id: str):
         """Create default preferences for new user"""
-        return await self.user_prefs_repo.create(
-            self.db,
-            user_id=user_id,
-            purpose_statement=None,
-            long_term_goals=[],
-            known_challenges=[],
-            preferred_feedback_style="supportive",
-            personal_glossary={}
-        )
+        default_prefs = {
+            "name": None,
+            "purpose_statement": None,
+            "long_term_goals": [],
+            "known_challenges": [],
+            "preferred_feedback_style": "supportive",
+            "personal_glossary": {}
+        }
+        await self.user_repo.update_user_preferences(self.db, user_id, default_prefs)
+        return default_prefs
+    
+    async def _analyze_and_update_preferences(
+        self, 
+        context: CassidyAgentDependencies, 
+        raw_text: str, 
+        structured_data: Dict[str, Any]
+    ) -> None:
+        """Analyze journal content and update user preferences if insights are found"""
+        
+        if not raw_text and not structured_data:
+            return
+            
+        # Combine all text content for analysis
+        analysis_text = raw_text or ""
+        if structured_data:
+            # Add structured content for more comprehensive analysis
+            for section, content in structured_data.items():
+                if isinstance(content, str) and content.strip():
+                    analysis_text += f"\n{section}: {content}"
+                elif isinstance(content, list):
+                    analysis_text += f"\n{section}: {', '.join(str(item) for item in content)}"
+        
+        if not analysis_text.strip():
+            return
+            
+        # Skip analysis if content is too short to be meaningful
+        if len(analysis_text.strip()) < 50:
+            return
+            
+        current_prefs = context.user_preferences
+        
+        # Create analysis prompt
+        analysis_prompt = f"""Analyze this journal entry for insights about the user's preferences. Only suggest updates if there are clear, meaningful insights that would improve the user experience.
+
+CURRENT USER PREFERENCES:
+- Name: {current_prefs.get('name', 'Not provided')}
+- Purpose: {current_prefs.get('purpose_statement', 'None set')}
+- Goals: {current_prefs.get('long_term_goals', [])}
+- Challenges: {current_prefs.get('known_challenges', [])}
+- Feedback Style: {current_prefs.get('preferred_feedback_style', 'supportive')}
+- Personal Terms: {len(current_prefs.get('personal_glossary', {}))} defined
+
+JOURNAL CONTENT:
+{analysis_text}
+
+INSTRUCTIONS:
+1. Look for NEW insights not already captured in current preferences
+2. Identify clear goals, challenges, or purpose statements the user expresses
+3. Note any terms they use with specific personal meaning
+4. Only suggest updates for significant insights, not minor mentions
+5. Return JSON with only fields that should be updated, or empty object if no updates needed
+
+VALID UPDATES:
+- name: String with user's preferred name if they mention it (e.g., "I'm Alex", "call me Sarah")
+- purpose_statement: String describing why they journal/their main focus
+- long_term_goals: Array of strings for new goals to ADD (don't replace existing)
+- known_challenges: Array of strings for new challenges to ADD (don't replace existing)  
+- personal_glossary: Object with new terms/definitions to ADD
+- preferred_feedback_style: "supportive", "detailed", "brief", or "challenging"
+
+JSON Output:"""
+
+        try:
+            # Import here to avoid circular dependencies
+            import json
+            import os
+            from pydantic_ai import Agent
+            from pydantic_ai.models.anthropic import AnthropicModel
+            from app.core.config import settings, get_anthropic_api_key
+            
+            # Set up LLM
+            api_key = get_anthropic_api_key()
+            if not api_key:
+                return
+                
+            os.environ["ANTHROPIC_API_KEY"] = api_key
+            model = AnthropicModel(settings.ANTHROPIC_STRUCTURING_MODEL)
+            analysis_agent = Agent(model=model)
+            
+            # Run analysis
+            result = await analysis_agent.run(analysis_prompt)
+            analysis_output = result.output.strip()
+            
+            # Parse JSON response
+            if analysis_output.startswith("```json"):
+                analysis_output = analysis_output[7:]
+            if analysis_output.endswith("```"):
+                analysis_output = analysis_output[:-3]
+            analysis_output = analysis_output.strip()
+            
+            try:
+                updates = json.loads(analysis_output)
+            except json.JSONDecodeError:
+                print(f"Failed to parse preference analysis JSON: {analysis_output}")
+                return
+                
+            if not updates or not isinstance(updates, dict):
+                return
+                
+            # Apply updates (add to existing rather than replace)
+            updated_prefs = current_prefs.copy()
+            changes_made = []
+            
+            # Update name if provided and different
+            if updates.get('name') and updates['name'] != current_prefs.get('name'):
+                updated_prefs['name'] = updates['name']
+                changes_made.append('name')
+            
+            # Update purpose if provided and different
+            if updates.get('purpose_statement') and updates['purpose_statement'] != current_prefs.get('purpose_statement'):
+                updated_prefs['purpose_statement'] = updates['purpose_statement']
+                changes_made.append('purpose_statement')
+            
+            # Add new goals (don't replace existing)
+            if updates.get('long_term_goals') and isinstance(updates['long_term_goals'], list):
+                existing_goals = set(current_prefs.get('long_term_goals', []))
+                new_goals = [goal for goal in updates['long_term_goals'] if goal not in existing_goals]
+                if new_goals:
+                    updated_prefs['long_term_goals'] = list(existing_goals) + new_goals
+                    changes_made.append('long_term_goals')
+            
+            # Add new challenges (don't replace existing)
+            if updates.get('known_challenges') and isinstance(updates['known_challenges'], list):
+                existing_challenges = set(current_prefs.get('known_challenges', []))
+                new_challenges = [challenge for challenge in updates['known_challenges'] if challenge not in existing_challenges]
+                if new_challenges:
+                    updated_prefs['known_challenges'] = list(existing_challenges) + new_challenges
+                    changes_made.append('known_challenges')
+            
+            # Update feedback style if provided and valid
+            valid_styles = ["supportive", "detailed", "brief", "challenging"]
+            if updates.get('preferred_feedback_style') in valid_styles:
+                if updates['preferred_feedback_style'] != current_prefs.get('preferred_feedback_style'):
+                    updated_prefs['preferred_feedback_style'] = updates['preferred_feedback_style']
+                    changes_made.append('preferred_feedback_style')
+            
+            # Add new glossary terms (don't replace existing)
+            if updates.get('personal_glossary') and isinstance(updates['personal_glossary'], dict):
+                existing_glossary = current_prefs.get('personal_glossary', {})
+                new_terms = {k: v for k, v in updates['personal_glossary'].items() if k not in existing_glossary}
+                if new_terms:
+                    updated_prefs['personal_glossary'] = {**existing_glossary, **new_terms}
+                    changes_made.append('personal_glossary')
+            
+            # Save to database if changes were made
+            if changes_made:
+                await self.user_repo.update_user_preferences(self.db, context.user_id, updated_prefs)
+                # Update context for immediate use
+                context.user_preferences = updated_prefs
+                print(f"✅ Updated user preferences: {', '.join(changes_made)}")
+            
+        except Exception as e:
+            print(f"Error in preference analysis: {e}")
+            # Don't raise - this is non-critical functionality
     

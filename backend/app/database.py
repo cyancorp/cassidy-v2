@@ -54,7 +54,7 @@ async def init_db():
     
     # Create all tables
     from app.models.base import Base
-    from app.models.user import UserDB, AuthSessionDB, UserPreferencesDB, UserTemplateDB
+    from app.models.user import UserDB, AuthSessionDB, UserTemplateDB
     from app.models.session import ChatSessionDB, ChatMessageDB, JournalDraftDB, JournalEntryDB
     from app.models.task import TaskDB
     

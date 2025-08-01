@@ -3,10 +3,40 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.sqlite import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy import TypeDecorator
 from datetime import datetime
 import uuid
+import json
 
 from .base import Base, TimestampedModel
+
+
+class JSONField(TypeDecorator):
+    """Cross-database JSON field that uses JSONB for PostgreSQL and JSON for SQLite"""
+    impl = Text
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'postgresql':
+            return dialect.type_descriptor(JSONB())
+        else:
+            return dialect.type_descriptor(JSON())
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return None
+        if dialect.name == 'postgresql':
+            return value
+        else:
+            return json.dumps(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        if dialect.name == 'postgresql':
+            return value
+        else:
+            return json.loads(value) if isinstance(value, str) else value
 
 
 class UserDB(TimestampedModel):
@@ -18,8 +48,10 @@ class UserDB(TimestampedModel):
     is_verified = Column(Boolean, default=False, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     
+    # User preferences stored as JSON
+    preferences = Column(JSONField, nullable=False, default=dict)
+    
     # Relationships
-    preferences = relationship("UserPreferencesDB", back_populates="user", uselist=False)
     templates = relationship("UserTemplateDB", back_populates="user")
     chat_sessions = relationship("ChatSessionDB", back_populates="user")
     journal_entries = relationship("JournalEntryDB", back_populates="user")
@@ -45,20 +77,6 @@ class AuthSessionDB(TimestampedModel):
         Index("idx_auth_sessions_token_hash", "token_hash"),
         Index("idx_auth_sessions_user_expires", "user_id", "expires_at"),
     )
-
-
-class UserPreferencesDB(TimestampedModel):
-    __tablename__ = "user_preferences"
-    
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False, unique=True)
-    purpose_statement = Column(Text, nullable=True)
-    long_term_goals = Column(JSON, default=list, nullable=False)
-    known_challenges = Column(JSON, default=list, nullable=False)
-    preferred_feedback_style = Column(String(50), default="supportive", nullable=False)
-    personal_glossary = Column(JSON, default=dict, nullable=False)
-    
-    # Relationships
-    user = relationship("UserDB", back_populates="preferences")
 
 
 class UserTemplateDB(TimestampedModel):

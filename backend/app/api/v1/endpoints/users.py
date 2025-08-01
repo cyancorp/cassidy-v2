@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.api import UserPreferencesResponse, UserPreferencesUpdate, UserTemplateResponse, TemplateUpdate, SectionDetailDef
-from app.repositories.user import UserPreferencesRepository, UserTemplateRepository
+from app.repositories.user import UserRepository, UserTemplateRepository
 from app.core.deps import get_current_user
 from app.models.user import UserDB
 from app.templates.loader import template_loader
@@ -17,30 +17,31 @@ async def get_user_preferences(
     db: AsyncSession = Depends(get_db)
 ):
     """Get current user's preferences"""
-    prefs_repo = UserPreferencesRepository()
-    prefs = await prefs_repo.get_by_user_id(db, current_user.id)
+    user_repo = UserRepository()
+    prefs = await user_repo.get_user_preferences(db, current_user.id)
     
     if not prefs:
         # Create default preferences if none exist
-        prefs = await prefs_repo.create(
-            db,
-            user_id=current_user.id,
-            purpose_statement=None,
-            long_term_goals=[],
-            known_challenges=[],
-            preferred_feedback_style="supportive",
-            personal_glossary={}
-        )
+        prefs = {
+            "name": None,
+            "purpose_statement": None,
+            "long_term_goals": [],
+            "known_challenges": [],
+            "preferred_feedback_style": "supportive",
+            "personal_glossary": {}
+        }
+        await user_repo.update_user_preferences(db, current_user.id, prefs)
     
     return UserPreferencesResponse(
-        user_id=prefs.user_id,
-        purpose_statement=prefs.purpose_statement,
-        long_term_goals=prefs.long_term_goals,
-        known_challenges=prefs.known_challenges,
-        preferred_feedback_style=prefs.preferred_feedback_style,
-        personal_glossary=prefs.personal_glossary,
-        created_at=prefs.created_at,
-        updated_at=prefs.updated_at
+        user_id=current_user.id,
+        name=prefs.get("name"),
+        purpose_statement=prefs.get("purpose_statement"),
+        long_term_goals=prefs.get("long_term_goals", []),
+        known_challenges=prefs.get("known_challenges", []),
+        preferred_feedback_style=prefs.get("preferred_feedback_style", "supportive"),
+        personal_glossary=prefs.get("personal_glossary", {}),
+        created_at=current_user.created_at,
+        updated_at=current_user.updated_at
     )
 
 
@@ -51,46 +52,47 @@ async def update_user_preferences(
     db: AsyncSession = Depends(get_db)
 ):
     """Update current user's preferences"""
-    prefs_repo = UserPreferencesRepository()
+    user_repo = UserRepository()
     
-    # Get current preferences or create if don't exist
-    prefs = await prefs_repo.get_by_user_id(db, current_user.id)
+    # Get current preferences or create defaults if don't exist
+    prefs = await user_repo.get_user_preferences(db, current_user.id)
     if not prefs:
-        prefs = await prefs_repo.create(
-            db,
-            user_id=current_user.id,
-            purpose_statement=None,
-            long_term_goals=[],
-            known_challenges=[],
-            preferred_feedback_style="supportive",
-            personal_glossary={}
-        )
+        prefs = {
+            "name": None,
+            "purpose_statement": None,
+            "long_term_goals": [],
+            "known_challenges": [],
+            "preferred_feedback_style": "supportive",
+            "personal_glossary": {}
+        }
     
     # Update with provided values
-    update_data = {}
+    if request.name is not None:
+        prefs["name"] = request.name
     if request.purpose_statement is not None:
-        update_data["purpose_statement"] = request.purpose_statement
+        prefs["purpose_statement"] = request.purpose_statement
     if request.long_term_goals is not None:
-        update_data["long_term_goals"] = request.long_term_goals
+        prefs["long_term_goals"] = request.long_term_goals
     if request.known_challenges is not None:
-        update_data["known_challenges"] = request.known_challenges
+        prefs["known_challenges"] = request.known_challenges
     if request.preferred_feedback_style is not None:
-        update_data["preferred_feedback_style"] = request.preferred_feedback_style
+        prefs["preferred_feedback_style"] = request.preferred_feedback_style
     if request.personal_glossary is not None:
-        update_data["personal_glossary"] = request.personal_glossary
+        prefs["personal_glossary"] = request.personal_glossary
     
-    if update_data:
-        prefs = await prefs_repo.update_by_user_id(db, current_user.id, **update_data)
+    # Save updated preferences
+    await user_repo.update_user_preferences(db, current_user.id, prefs)
     
     return UserPreferencesResponse(
-        user_id=prefs.user_id,
-        purpose_statement=prefs.purpose_statement,
-        long_term_goals=prefs.long_term_goals,
-        known_challenges=prefs.known_challenges,
-        preferred_feedback_style=prefs.preferred_feedback_style,
-        personal_glossary=prefs.personal_glossary,
-        created_at=prefs.created_at,
-        updated_at=prefs.updated_at
+        user_id=current_user.id,
+        name=prefs.get("name"),
+        purpose_statement=prefs.get("purpose_statement"),
+        long_term_goals=prefs.get("long_term_goals", []),
+        known_challenges=prefs.get("known_challenges", []),
+        preferred_feedback_style=prefs.get("preferred_feedback_style", "supportive"),
+        personal_glossary=prefs.get("personal_glossary", {}),
+        created_at=current_user.created_at,
+        updated_at=current_user.updated_at
     )
 
 

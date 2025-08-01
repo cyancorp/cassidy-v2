@@ -5,7 +5,7 @@ from datetime import datetime
 import hashlib
 
 from .base import BaseRepository
-from app.models.user import UserDB, AuthSessionDB, UserPreferencesDB, UserTemplateDB
+from app.models.user import UserDB, AuthSessionDB, UserTemplateDB
 from app.core.security import SecurityService
 
 
@@ -32,18 +32,78 @@ class UserRepository(BaseRepository[UserDB]):
         db: AsyncSession, 
         username: str, 
         email: Optional[str], 
-        password_hash: str
+        password_hash: str,
+        preferences: Optional[dict] = None
     ) -> UserDB:
-        """Create a new user"""
+        """Create a new user with default preferences"""
+        if preferences is None:
+            preferences = {
+                "name": None,
+                "purpose_statement": None,
+                "long_term_goals": [],
+                "known_challenges": [],
+                "preferred_feedback_style": "supportive",
+                "personal_glossary": {}
+            }
+        
         user = UserDB(
             username=username,
             email=email,
-            password_hash=password_hash
+            password_hash=password_hash,
+            preferences=preferences
         )
         db.add(user)
         await db.commit()
         await db.refresh(user)
         return user
+    
+    async def get_user_preferences(self, db: AsyncSession, user_id: str) -> Optional[dict]:
+        """Get user preferences"""
+        result = await db.execute(
+            select(UserDB.preferences).where(UserDB.id == user_id, UserDB.is_active == True)
+        )
+        return result.scalar_one_or_none()
+    
+    async def update_user_preferences(self, db: AsyncSession, user_id: str, preferences: dict) -> bool:
+        """Update user preferences"""
+        result = await db.execute(
+            update(UserDB)
+            .where(UserDB.id == user_id, UserDB.is_active == True)
+            .values(preferences=preferences, updated_at=datetime.utcnow())
+        )
+        await db.commit()
+        return result.rowcount > 0
+    
+    async def merge_user_preferences(self, db: AsyncSession, user_id: str, preference_updates: dict) -> bool:
+        """Merge new preferences with existing ones"""
+        # Get current preferences
+        current_prefs = await self.get_user_preferences(db, user_id)
+        if current_prefs is None:
+            current_prefs = {
+                "name": None,
+                "purpose_statement": None,
+                "long_term_goals": [],
+                "known_challenges": [],
+                "preferred_feedback_style": "supportive",
+                "personal_glossary": {}
+            }
+        
+        # Merge updates
+        merged_prefs = current_prefs.copy()
+        for key, value in preference_updates.items():
+            if key in ["long_term_goals", "known_challenges"] and isinstance(value, list):
+                # For lists, add new items without duplicates
+                existing_set = set(merged_prefs.get(key, []))
+                new_items = [item for item in value if item not in existing_set]
+                merged_prefs[key] = merged_prefs.get(key, []) + new_items
+            elif key == "personal_glossary" and isinstance(value, dict):
+                # For glossary, merge dictionaries
+                merged_prefs[key] = {**merged_prefs.get(key, {}), **value}
+            else:
+                # For other fields, replace value
+                merged_prefs[key] = value
+        
+        return await self.update_user_preferences(db, user_id, merged_prefs)
 
 
 class AuthSessionRepository(BaseRepository[AuthSessionDB]):
@@ -104,28 +164,6 @@ class AuthSessionRepository(BaseRepository[AuthSessionDB]):
         await db.commit()
         return result.rowcount
 
-
-class UserPreferencesRepository(BaseRepository[UserPreferencesDB]):
-    def __init__(self):
-        super().__init__(UserPreferencesDB)
-    
-    async def get_by_user_id(self, db: AsyncSession, user_id: str) -> Optional[UserPreferencesDB]:
-        """Get preferences by user ID"""
-        result = await db.execute(
-            select(UserPreferencesDB).where(UserPreferencesDB.user_id == user_id)
-        )
-        return result.scalar_one_or_none()
-    
-    async def update_by_user_id(self, db: AsyncSession, user_id: str, **kwargs) -> Optional[UserPreferencesDB]:
-        """Update preferences by user ID"""
-        kwargs['updated_at'] = datetime.utcnow()
-        await db.execute(
-            update(UserPreferencesDB)
-            .where(UserPreferencesDB.user_id == user_id)
-            .values(**kwargs)
-        )
-        await db.commit()
-        return await self.get_by_user_id(db, user_id)
 
 
 class UserTemplateRepository(BaseRepository[UserTemplateDB]):
